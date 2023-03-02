@@ -14,6 +14,7 @@ Currently we have 2 environments, namely `development` and `production`. Develop
 - Assign the issue to yourself.
 - Assign the PR labels which are explained in [labels](https://github.com/swe574-spring23/SWE574/docs/github/labels.md) section.
 - Assign project as `SWE574`.
+- Assign progress status from the project.
 **If the feature is still work in progress you can create a draftt PR by clicking the down arrow next to `Create pull request`and select `Create a draft pull request`**
 5. Go to related issue and select your previous PR for development part from the right sidebar.
 6. After the PR is approved by reviwers, merge it and test it on `development`.
