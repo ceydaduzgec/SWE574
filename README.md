@@ -13,7 +13,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/swe574-spring23/SWE574">
-    <img src="images/boun.png" alt="Logo" width="380" height="200">
+    <img src="docs/boun.png" alt="Logo" width="380" height="200">
   </a>
 
 <h3 align="center">SWE 574 Software Development Practice</h3>
