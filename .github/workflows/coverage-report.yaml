@@ -1,12 +1,14 @@
-name: 'Coverage Report'
+name: Coverage Report
+
 on:
+    push:
     pull_request:
         branches:
-            - master
-            - main
+            - production
+            - development
 jobs:
     coverage:
         runs-on: ubuntu-latest
         steps:
-          - name: Get Cover
+          - name: Get Coverage Report
             uses: orgoro/coverage@v3
