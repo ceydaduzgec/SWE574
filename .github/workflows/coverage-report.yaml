@@ -10,5 +10,10 @@ jobs:
     coverage:
         runs-on: ubuntu-latest
         steps:
-          - name: Get Coverage Report
-            uses: orgoro/coverage@v3
+          - name: Checkout action
+            uses: actions/checkout@v2
+          - name: Django Coverage action
+            uses: actions/python-django-coverage-gitHub-action@0.9
+            with:
+              django-app: 'authenticator'
+              minimum-coverage: '70'
