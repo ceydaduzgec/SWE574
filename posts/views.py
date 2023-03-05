@@ -18,14 +18,27 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from .models import Contact
 from .common.decorators import ajax_required
-
-
-# from posts.common.decorators import ajax_required
-
-
-# Create your views here.
-
 from .models import Space
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import SpaceCreationForm
+
+@login_required
+def create_space(request):
+    if request.method == 'POST':
+        form = SpaceCreationForm(request.POST)
+        if form.is_valid():
+            space = form.save(commit=False)
+            space.owner = request.user
+            space.save()
+            form.save_m2m()
+            return redirect('space_detail', pk=space.pk)
+    else:
+        form = SpaceCreationForm()
+    return render(request, 'create_space.html', {'form': form})
+
+
 @login_required
 def space_list(request):
     spaces = Space.objects.all()

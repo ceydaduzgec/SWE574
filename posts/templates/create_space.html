@@ -1,0 +1,10 @@
+{% extends 'posts/base.html' %}
+{% block content %}
+    {% load crispy_forms_tags %}
+  <h1>Create a new space</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% crispy form %}
+    <button type="submit" class="btn btn-primary">Create space</button>
+  </form>
+{% endblock %}
