@@ -9,4 +9,4 @@ django-crispy-forms
 Pillow==9.3.0
 django-taggit==1.2.0
 psycopg2==2.9.5
-easy-thumbnails==2.8.1
+#easy-thumbnails==2.8.1
