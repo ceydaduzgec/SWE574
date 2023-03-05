@@ -173,12 +173,21 @@ def search(request):
     if request.method == "POST":
         searched = request.POST['searched']
         searched = searched.lower()
-        posts_s_ = Post.objects.filter(
-            Q(title__icontains=searched) | Q(text__icontains=searched))
 
-        # posts_s_ = Post.objects.filter(title__contains=searched | text__contains=searched)
+        # Search posts
+        posts_s = Post.objects.filter(
+            Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
+        ).distinct()
+        
 
-        return render(request, 'posts/search.html', {'searched': searched, 'posts_s_': posts_s_})
+        # Search spaces
+        spaces_s = Space.objects.filter(
+            Q(name__icontains=searched) | Q(description__icontains=searched)
+        )
+
+        return render(request, 'posts/search.html', {'searched': searched,
+                                                     'posts_s': posts_s,
+                                                     'spaces_s': spaces_s,})
     else:
         return render(request, 'posts/search.html', {})
 
