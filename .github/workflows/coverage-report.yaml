@@ -13,7 +13,7 @@ jobs:
           - name: Checkout action
             uses: actions/checkout@v2
           - name: Django Coverage action
-            uses: actions/python-django-coverage-gitHub-action@0.9
+            uses: actions/python-django-coverage-github-action@0.9
             with:
               django-app: 'authenticator'
               minimum-coverage: '70'
