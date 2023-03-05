@@ -178,7 +178,7 @@ def search(request):
         posts_s = Post.objects.filter(
             Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
         ).distinct()
-        
+
 
         # Search spaces
         spaces_s = Space.objects.filter(
