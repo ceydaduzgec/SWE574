@@ -15,6 +15,7 @@ class PostAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Comment)
+admin.site.register(Space)
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('author', 'post', 'created_date', 'approved_comment')

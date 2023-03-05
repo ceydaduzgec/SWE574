@@ -7,7 +7,8 @@ from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
 from django.contrib.auth import get_user_model
 from authenticator.models import Profile
-
+from django.conf import settings
+from django.utils import timezone
 
 # Create your models here.
 
@@ -26,9 +27,10 @@ class Post(models.Model):
     upload = models.FileField(upload_to='uploads/', null=True, blank=True, unique=False)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
-    likes = models.ManyToManyField(User, null=True, related_name='blog_post')
+    likes = models.ManyToManyField(User, blank=True, related_name='blog_post')
     title_tag = models.CharField(max_length=200, null=True, blank=True, unique=False)
     image = models.ImageField(upload_to='images/', null=True, blank=True)
+    spaces = models.ManyToManyField('posts.Space', related_name='posts', blank=True)
     # status = models.CharField(max_length=10,
     #                           choices=STATUS_CHOICES,
     #                           default='draft')
@@ -71,7 +73,21 @@ class Comment(models.Model):
         return self.text
         return f'Comment by {self.name} on {self.post}'
 
+class Space(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='owned_spaces')
+    name = models.CharField(max_length=200)
+    description = models.TextField()
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='spaces')
+    moderators = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='moderated_spaces')
+    is_all_members_post_allowed = models.BooleanField(default=True)
+    is_only_moderators_post_allowed = models.BooleanField(default=False)
+    created_date = models.DateTimeField(default=timezone.now)
 
+    class Meta:
+        ordering = ('-created_date',)
+
+    def __str__(self):
+        return self.name
 class Contact(models.Model):
     user_from = models.ForeignKey('auth.User',
                                   related_name='rel_from_set',
@@ -96,3 +112,4 @@ user_model.add_to_class('following',
                                                through=Contact,
                                                related_name='followers',
                                                symmetrical=False))
+

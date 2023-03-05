@@ -25,6 +25,19 @@ from .common.decorators import ajax_required
 
 # Create your views here.
 
+from .models import Space
+@login_required
+def space_list(request):
+    spaces = Space.objects.all()
+    return render(request, 'space_list.html', {'spaces': spaces})
+
+def space_detail(request, pk):
+    space = get_object_or_404(Space, pk=pk)
+    posts = space.posts.all()
+    context = {'space': space, 'posts': posts}
+    return render(request, 'space_detail.html', context)
+
+
 @login_required
 def post_list(request, tag_slug=None):
 
