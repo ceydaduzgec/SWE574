@@ -161,9 +161,7 @@ typings/
 
 # Local History for Visual Studio Code
 .history/
-
-
-
+.idea
 
 
 ### Windows template
