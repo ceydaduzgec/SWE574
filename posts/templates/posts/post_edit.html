@@ -1,0 +1,69 @@
+{% extends 'posts/base.html' %}
+
+{% block content %}
+
+    <h2>Box Your Post</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="Title" class="form-label">KTitle:</label>
+            <input name="title" type="Title" class="form-control" id="exampleTitle" aria-describedby="TitleHelp">
+            <div id="TitleHelp" class="form-text">Provide a Title</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="Link" class="form-label">Link:</label>
+            <input name="link" type="Link" class="form-control" id="exampleLink" aria-describedby="LinkHelp">
+            <div id="LinkHelp" class="form-text">Provide source Link</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="tags" class="form-label">Tags:</label>
+            <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp">
+            <div id="TagsHelp" class="form-text">Provide a Tag</div>
+        </div>
+
+        <div class="form-floating">
+             <select name="labels" class="form-select" aria-label="Default select example">
+                <option selected>Select a Label</option>
+                <option value="Macro Economy">Macro Economy</option>
+                <option value="Equity">Equity</option>
+                <option value="Fixed Income">Fixed Income</option>
+                <option value="Company News">Company News</option>
+            </select>
+
+        </div>
+
+        <br>
+
+        <p>
+            <label for="id_upload">Upload:</label>
+            <input type="file" name="upload" id="id_upload">
+        </p>
+             <br>
+        <p>
+            <label for="id_text">Text:</label>
+            <textarea name="text" cols="40" rows="10" required="" id="id_text" data-gramm="false"
+                      wt-ignore-input="true"></textarea>
+        </p>
+
+
+        <button type="submit" class="btn btn-primary">Save</button>
+    {% if form.errors %}
+            <ul>
+                {% for error in form.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+    {% endif %}
+
+    </form>
+
+
+{% comment %} <form method="POST" class="post-form">{% csrf_token %}
+        {{ form.as_p }}
+       <button type="submit" class="save btn btn-secondary">Save</button>
+    </form>{% endcomment %}
+{% endblock %}

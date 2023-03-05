@@ -1,0 +1,19 @@
+{% extends 'posts/base.html' %}
+
+{% block content %}
+ <h1>Spaces</h1>
+    <ul>
+        {% for space in spaces %}
+            <li>
+                <h2>{{ space.name }}</h2>
+                <p>{{ space.description }}</p>
+                <p>Owner: {{ space.owner.username }}</p>
+                <p>Members: {{ space.members.count }}</p>
+                <p>Moderators: {{ space.moderators.count }}</p>
+                <p>Posts: {{ space.posts.count }}</p>
+                <a href="{% url 'space_detail' space.id %}">View Space</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
