@@ -34,14 +34,26 @@ annotations.
 - Who will decide on which badges we will have?
 - Can we use Azure?
 
-# Meeting Notes on 2 March 2023:
 
-Time: 18.00 - 19.00
-
-Attendees: Semih, Cemre, Ceyda, Maria, Eralp, Şehmuz, Emre, Şahin
 
 ## DISCUSSED:
-- We will be divide into 2 groups of for mockups:
+
+| Meeting Details |   |
+| ------------- | ------------- |
+| Date  | 2 March 2023  |
+| Time  | 18.00 - 19.00  |
+| Attendees  | Semih, Cemre, Ceyda, Maria, Eralp, Şehmuz, Emre, Şahin  |
+| Tasks  | Assigned to  |
+| ------------- | ------------- |
+| User badges  | Eralp, Şehmuz, Şahin  |
+| Annotate posts  | Eralp, Şehmuz, Şahin |
+| Recommendations ( User, space, post)  | Eralp, Şehmuz, Şahin  |
+| Search posts and spaces according to posts, spaces, tags and annotations  | Eralp, Şehmuz, Şahin  |
+|  User space area  | Semih, Cemre, Ceyda, Maria |
+| User space management (Members, Moderators)  | Semih, Cemre, Ceyda, Maria|
+| Moderator Actions ( Management inspect remove content, Warn disruptive people)  | Semih, Cemre, Ceyda, Maria  |
+| Discussion  |      |
+| - We will be divide into 2 groups of for mockups:
 Semih, Cemre, Ceyda, Maria
 1. User space area
 2. User space management (Members, Moderators)
@@ -58,4 +70,5 @@ Eralp, Şehmuz, Şahin
 - We will take a look at the Reddit for communities and badges.
 - We will use Balsamic for mock-ups.
 - We will use PostgreSQL but we will discuss this again next week.
-- We will look at other repos for reference: https://github.com/koglak/bounswe574-2022-gr2/wiki/Week-1
+- We will look at other repos for reference: https://github.com/koglak/bounswe574-2022-gr2/wiki/Week-1   |    |
+| Questions  |     |
