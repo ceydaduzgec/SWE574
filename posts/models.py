@@ -21,7 +21,7 @@ class Post(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, blank=True)
     link = models.CharField(max_length=200, null=True, blank=True, unique=False)
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
     labels = models.CharField(max_length=200, blank=True)
     text = models.CharField(max_length=2000, blank=True)
     upload = models.FileField(upload_to='uploads/', null=True, blank=True, unique=False)
