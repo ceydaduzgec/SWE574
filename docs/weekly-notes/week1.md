@@ -36,7 +36,7 @@ annotations.
 
 
 
-## DISCUSSED:
+## Meeting Details :
 
 | Meeting Details |   |
 | ------------- | ------------- |
@@ -53,22 +53,9 @@ annotations.
 | User space management (Members, Moderators)  | Semih, Cemre, Ceyda, Maria|
 | Moderator Actions ( Management inspect remove content, Warn disruptive people)  | Semih, Cemre, Ceyda, Maria  |
 | Discussion  |      |
-| - We will be divide into 2 groups of for mockups:
-Semih, Cemre, Ceyda, Maria
-1. User space area
-2. User space management (Members, Moderators)
-3. Moderator Actions ( Management inspect remove content, Warn disruptive people)
-
-Eralp, Şehmuz, Şahin
-1. User badges
-2. Annotate posts
-3. Recommendations ( User, space, post)
-4. Search posts and spaces according to posts, spaces, tags and annotations
-
-- We will be using [Eralp's repo](https://github.com/eralp85/SWE-573.01).
-- We will meet at 12.00 on Thursdays each week.
-- We will take a look at the Reddit for communities and badges.
-- We will use Balsamic for mock-ups.
-- We will use PostgreSQL but we will discuss this again next week.
-- We will look at other repos for reference: https://github.com/koglak/bounswe574-2022-gr2/wiki/Week-1   |    |
-| Questions  |     |
+| - We will be divide into 2 groups of for mockups:||
+|Group A |Semih, Cemre, Ceyda, Maria|
+|Assigned Tasks|User space area, user space management (Members, Moderators) and Moderator Actions ( Management inspect remove content, Warn disruptive people)|
+|Group B |Eralp, Şehmuz, Şahin|
+|Assigned Tasks|User badges, Annotate posts, Recommendations ( User, space, post), Search posts and spaces according to posts, spaces, tags and annotations|
+| Others  | * We will be using [Eralp's repo](https://github.com/eralp85/SWE-573.01).*We will meet at 12.00 on Thursdays each week.* We will take a look at the Reddit for communities and badges.*We will use Balsamic for mock-ups.*We will use PostgreSQL but we will discuss this again next week.* We will look at other repos for reference: https://github.com/koglak/bounswe574-2022-gr2/wiki/Week-1   |
