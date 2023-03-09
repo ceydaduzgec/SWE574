@@ -19,10 +19,16 @@ from django.views.decorators.http import require_POST
 from .models import Contact
 from .common.decorators import ajax_required
 from .models import Space
-
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import SpaceCreationForm
+from django.http import JsonResponse
+from .models import Post
+
+def check_link(request):
+    link = request.GET.get('link', None)
+    exists = Post.objects.filter(link=link).exists()
+    return JsonResponse({'exists': exists})
 
 @login_required
 def create_space(request):

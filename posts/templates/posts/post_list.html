@@ -8,9 +8,6 @@
         {% for post in posts %}
             <div class="col">
                 <div class="card shadow-sm">
-      {#           <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-image">#}
-
-
                     <div class="card-body">
                         <a href="/post/{{ post.id }}" class="text-decoration-none">
                             <h3 class="text-overflow" title="{{ post.title }}">{{ post.title }}</h3>
@@ -19,8 +16,7 @@
      {% if post.image %}
                            <img src="{{ post.image.url }}" alt="{{ post.title }}" width="160" height="160">
                     {% endif %}
-                     {#  <p class="card-text card-summary">{{ post.text }}</p> #}
-                     <small class="text-muted"> {{ post.text }}</small>
+                                        <small class="text-muted"> {{ post.text }}</small>
 
                         <p class="tags">
                             Tags:
@@ -48,16 +44,6 @@
                                 {% else %}
                                     There is no Link
                                 {% endif %}
-
-                                {#                                <form method="POST" action="{% url 'like_post' post.pk %}">#}
-                                {##}
-                                {#                                    {% csrf_token %}#}
-                                {##}
-                                {#                                    <button type="submit" name="post_id" value="{{ post.id }}"#}
-                                {#                                            class="btn btn-secondary "> {{ total_likes }} Like#}
-                                {#                                    </button>#}
-                                {##}
-                                {#                                </form>#}
 
                             </div>
 
