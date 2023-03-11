@@ -69,6 +69,7 @@ celerybeat-schedule
 .venv
 venv/
 ENV/
+pyvenv.cfg
 
 # Rope project settings
 .ropeproject
@@ -161,10 +162,6 @@ typings/
 
 # Local History for Visual Studio Code
 .history/
-
-
-
-
 
 ### Windows template
 # Windows thumbnail cache files
@@ -270,7 +267,7 @@ Session.vim
 tags
 
 ### Project template
-sole/media/
+uploads/*
 
 .pytest_cache/
 .ipython/
