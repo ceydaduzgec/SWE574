@@ -47,9 +47,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey(
-        "posts.Post", on_delete=models.CASCADE, related_name="comments"
-    )
+    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE, related_name="comments")
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     text = models.TextField()
     created_date = models.DateTimeField(default=timezone.now)
@@ -70,9 +68,7 @@ class Comment(models.Model):
 
 
 class Space(models.Model):
-    owner = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="owned_spaces"
-    )
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owned_spaces")
     name = models.CharField(max_length=200)
     description = models.TextField()
     members = models.ManyToManyField(User, related_name="spaces")

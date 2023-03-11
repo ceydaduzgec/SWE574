@@ -16,9 +16,7 @@ urlpatterns = [
     path("check_link/", views.check_link, name="check_link"),
     path("post/<int:pk>/edit/", views.post_edit, name="post_edit"),
     path("post/<int:pk>/remove/", views.post_remove, name="post_remove"),
-    path(
-        "post/<int:pk>/comment/", views.add_comment_to_post, name="add_comment_to_post"
-    ),
+    path("post/<int:pk>/comment/", views.add_comment_to_post, name="add_comment_to_post"),
     path("post/search/", views.search, name="search"),
     path("myresearch/", views.my_research, name="my_research"),
     path("myaccount/", views.my_account, name="my_account"),
