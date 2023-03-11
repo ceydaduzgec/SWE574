@@ -1,7 +1,7 @@
 from django.urls import path
 from django.conf.urls import include, url
 from . import views
-from authenticator.views import *
+from users.views import *
 from .views import *
 
 urlpatterns = [

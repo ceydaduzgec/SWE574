@@ -31,7 +31,7 @@ def login_request(request):
         else:
             messages.error(request, "Invalid username or password.")
     form = AuthenticationForm()
-    return render(request=request, template_name="authenticator/templates/login.html", context={"login_form": form})
+    return render(request=request, template_name="users/templates/login.html", context={"login_form": form})
 
 
 def register_request(request):
@@ -57,7 +57,7 @@ def register_request(request):
         messages.error(
             request, "Unsuccessful registration. Invalid information.")
     form = NewUserForm()
-    return render(request=request, template_name="authenticator/templates/register.html",
+    return render(request=request, template_name="users/templates/register.html",
                   context={"register_form": form})
 
 

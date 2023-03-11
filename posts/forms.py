@@ -1,7 +1,7 @@
 from django import forms
 from .models import *
-from authenticator.forms import *
-from authenticator.models import Profile
+from users.forms import *
+from users.models import Profile
 from django import forms
 from .models import Space
 class SpaceCreationForm(forms.ModelForm):

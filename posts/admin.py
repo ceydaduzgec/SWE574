@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import *
+from .models import Comment, Space, Post
+from users.models import Contact
+
 
 admin.site.register(Post)
-# Register your models here.
-
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ['author', 'title', 'link', 'tags', 'labels', 'text', 'created_date', 'status']
