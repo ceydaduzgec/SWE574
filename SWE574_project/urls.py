@@ -1,4 +1,4 @@
-"""DJ573 URL Configuration
+"""SWE574_project URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
@@ -22,7 +22,7 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('posts.urls')),
-    path('', include('authenticator.urls')),
+    path('', include('users.urls')),
     path('', include('django.contrib.auth.urls')),
 
 ]
