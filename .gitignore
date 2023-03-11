@@ -3,6 +3,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -154,11 +155,12 @@ typings/
 
 ### VisualStudioCode template
 .vscode/*
-!.vscode/settings.json
+*.vscode/settings.json
+*.code-workspace
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-*.code-workspace
+
 
 # Local History for Visual Studio Code
 .history/

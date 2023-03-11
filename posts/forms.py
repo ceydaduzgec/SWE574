@@ -1,31 +1,42 @@
 from django import forms
-from .models import *
+
 from users.forms import *
 from users.models import Profile
-from django import forms
+
+from .models import *
 from .models import Space
+
+
 class SpaceCreationForm(forms.ModelForm):
     class Meta:
         model = Space
-        fields = ['name', 'description', 'members', 'moderators', 'is_all_members_post_allowed', 'is_only_moderators_post_allowed']
+        fields = [
+            "name",
+            "description",
+            "members",
+            "moderators",
+            "is_all_members_post_allowed",
+            "is_only_moderators_post_allowed",
+        ]
 
 
 class PostForm(forms.ModelForm):
-
     class Meta:
         model = Post
-        fields = ('title', 'link', 'tags', 'labels', 'upload', 'text', 'image' )
+        fields = ("title", "link", "tags", "labels", "upload", "text", "image")
+
 
 class SpaceForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'link', 'text')
+        fields = ("title", "link", "text")
+
 
 class CommentForm(forms.ModelForm):
-
     class Meta:
         model = Comment
-        fields = ('text',)
+        fields = ("text",)
+
 
 # class ProfileForm(forms.ModelForm):
 #
@@ -35,7 +46,6 @@ class CommentForm(forms.ModelForm):
 
 
 class EmailPostForm(forms.Form):
-
     to = forms.EmailField()
     comments = forms.CharField(required=False, widget=forms.Textarea)
 
@@ -43,10 +53,10 @@ class EmailPostForm(forms.Form):
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'email')
+        fields = ("first_name", "last_name", "email")
 
 
 class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ('date_of_birth', 'photo')
+        fields = ("date_of_birth", "photo")

@@ -1,9 +1,11 @@
 from django.contrib import admin
-from .models import Comment, Space, Post
+
 from users.models import Contact
 
+from .models import Comment, Post, Space
 
 admin.site.register(Post)
+
 
 class PostAdmin(admin.ModelAdmin):
     list_display = ['author', 'title', 'link', 'tags', 'labels', 'text', 'created_date', 'status']
@@ -16,6 +18,7 @@ class PostAdmin(admin.ModelAdmin):
 
 admin.site.register(Comment)
 admin.site.register(Space)
+
 
 class CommentAdmin(admin.ModelAdmin):
     list_display = ('author', 'post', 'created_date', 'approved_comment')

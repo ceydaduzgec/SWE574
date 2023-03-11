@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os.path
 from pathlib import Path
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -158,10 +160,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
-from django.urls import reverse_lazy
-
-
 ABSOLUTE_URL_OVERRIDES = {
     'settings.AUTH_USER_MODEL': lambda u: reverse_lazy('user_detail', args=[u.username])
 }
-
