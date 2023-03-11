@@ -1,29 +1,26 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
-from .models import *
 from django.shortcuts import render, get_object_or_404
 from .forms import *
-from authenticator.forms import UserEditForm, ProfileEditForm
+from users.forms import UserEditForm, ProfileEditForm
 from django.shortcuts import redirect
 from django.db.models import Q, Count
 from django.core.mail import send_mail
 from taggit.models import Tag
-from authenticator.models import Profile
+from users.models import Profile
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
-from .models import Contact
-from .common.decorators import ajax_required
-from .models import Space
+from users.models import Contact
+from .models import Space, Post
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import SpaceCreationForm
 from django.http import JsonResponse
-from .models import Post
 
 def check_link(request):
     link = request.GET.get('link', None)
