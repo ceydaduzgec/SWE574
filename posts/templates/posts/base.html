@@ -9,7 +9,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{% static 'css/blog.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <title> Eralp Unver Page </title>
+    <title> Research Box </title>
 
 
 </head>
@@ -37,15 +37,15 @@
                     </a>
                 </li>
                 <li><a href="/home" class="nav-link px-2 text-white">Main</a></li>
-                <li><a href="/macro_economy" class="nav-link px-2 text-white">Macro Economy</a></li>
-                <li><a href="/equity" class="nav-link px-2 text-white">Equity </a></li>
-                <li><a href="/fixed_income" class="nav-link px-2 text-white">Fixed Income</a></li>
-                <li><a href="/company_news" class="nav-link px-2 text-white">Company News</a></li>
+                <li><a href="/spaces" class="nav-link px-2 text-white">Spaces</a></li>
             </ul>
             <a href="{% url 'post_new' %}" class="btn btn-warning"> BOX_it =
 
                 {% include './icons/box.svg' %}
             </a>
+             <a href="{% url 'create_space' %}" class="btn btn-warning"> SPACE_it
+            </a>
+
             <form class="mb-3 mb-lg-0 me-lg-3 d-flex align-items-center" role="search" method=POST
                   action="{% url 'search' %}">
 

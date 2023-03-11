@@ -7,9 +7,16 @@
         <h1> You Searched for {{ searched }}</h1>
 
         <br/>
-        {% for post in posts_s_ %}
+        <h2> Post Results </h2>
+        {% for post in posts_s %}
             <a href="/post/{{ post.id }}">{{ post}} - {{ post.title}}  </a><br/>
         {% endfor %}
+
+          <br>
+  <h2>Space Results</h2>
+  {% for space in spaces_s %}
+    <a href="/spaces/{{ space.id }}">{{ space }} - {{ space.name }}</a><br>
+  {% endfor %}
 
     {% else %}
         <h1> You forgot to search ... </h1>

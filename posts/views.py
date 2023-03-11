@@ -18,14 +18,33 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from .models import Contact
 from .common.decorators import ajax_required
-
-
-# from posts.common.decorators import ajax_required
-
-
-# Create your views here.
-
 from .models import Space
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import SpaceCreationForm
+from django.http import JsonResponse
+from .models import Post
+
+def check_link(request):
+    link = request.GET.get('link', None)
+    exists = Post.objects.filter(link=link).exists()
+    return JsonResponse({'exists': exists})
+
+@login_required
+def create_space(request):
+    if request.method == 'POST':
+        form = SpaceCreationForm(request.POST)
+        if form.is_valid():
+            space = form.save(commit=False)
+            space.owner = request.user
+            space.save()
+            form.save_m2m()
+            return redirect('space_detail', pk=space.pk)
+    else:
+        form = SpaceCreationForm()
+    return render(request, 'create_space.html', {'form': form})
+
+
 @login_required
 def space_list(request):
     spaces = Space.objects.all()
@@ -160,12 +179,21 @@ def search(request):
     if request.method == "POST":
         searched = request.POST['searched']
         searched = searched.lower()
-        posts_s_ = Post.objects.filter(
-            Q(title__icontains=searched) | Q(text__icontains=searched))
 
-        # posts_s_ = Post.objects.filter(title__contains=searched | text__contains=searched)
+        # Search posts
+        posts_s = Post.objects.filter(
+            Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
+        ).distinct()
 
-        return render(request, 'posts/search.html', {'searched': searched, 'posts_s_': posts_s_})
+
+        # Search spaces
+        spaces_s = Space.objects.filter(
+            Q(name__icontains=searched) | Q(description__icontains=searched)
+        )
+
+        return render(request, 'posts/search.html', {'searched': searched,
+                                                     'posts_s': posts_s,
+                                                     'spaces_s': spaces_s,})
     else:
         return render(request, 'posts/search.html', {})
 

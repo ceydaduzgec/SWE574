@@ -1,22 +1,31 @@
 {% extends 'posts/base.html' %}
 
 {% block content %}
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <h2>Box Your Post</h2>
 
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         <div class="mb-3">
-            <label for="Title" class="form-label">KTitle:</label>
+            <label for="Title" class="form-label">Title:</label>
             <input name="title" type="Title" class="form-control" id="exampleTitle" aria-describedby="TitleHelp">
             <div id="TitleHelp" class="form-text">Provide a Title</div>
         </div>
 
         <div class="mb-3">
             <label for="Link" class="form-label">Link:</label>
-            <input name="link" type="Link" class="form-control" id="exampleLink" aria-describedby="LinkHelp">
+            <input name="link" type="Link" class="form-control" id="link-input" aria-describedby="LinkHelp">
             <div id="LinkHelp" class="form-text">Provide source Link</div>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message.tags == 'warning' %}
+                        <div class="alert alert-warning" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
         </div>
 
         <div class="mb-3">
@@ -25,23 +34,12 @@
             <div id="TagsHelp" class="form-text">Provide a Tag</div>
         </div>
 
-        <div class="form-floating">
-             <select name="labels" class="form-select" aria-label="Default select example">
-                <option selected>Select a Label</option>
-                <option value="Macro Economy">Macro Economy</option>
-                <option value="Equity">Equity</option>
-                <option value="Fixed Income">Fixed Income</option>
-                <option value="Company News">Company News</option>
-            </select>
-
-        </div>
-
         <br>
 
-        <p>
-            <label for="id_upload">Upload:</label>
-            <input type="file" name="upload" id="id_upload">
-        </p>
+<p>
+    <label for="id_upload">Upload Image:</label>
+    <input type="file" name="image" id="id_upload">
+</p>
              <br>
         <p>
             <label for="id_text">Text:</label>
@@ -61,9 +59,35 @@
 
     </form>
 
+<script>
+$(document).ready(function() {
+    $('#link-input').on('change', function() {
+        var linkValue = $(this).val();
+        $.ajax({
+            url: '/check_link/',
+            data: {
+                'link': linkValue
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.exists) {
+                    // If the error message is displayed and the user updates the link
+                    if ($('#link-error').length) {
+                        $('#link-error').remove(); // Remove the error message
+                    }
+                    $('#link-input').after('<div id="link-error" class="alert alert-warning" role="alert">This link already exists in the database. You may update the link.</div>');
+                } else {
+                    // Removal of error message when link does not exist in database
+                    if ($('#link-error').length) {
+                        $('#link-error').remove();
+                    }
+                }
+            }
+        });
+    });
+});
+</script>
 
-{% comment %} <form method="POST" class="post-form">{% csrf_token %}
-        {{ form.as_p }}
-       <button type="submit" class="save btn btn-secondary">Save</button>
-    </form>{% endcomment %}
+
+
 {% endblock %}
