@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import (
+from posts.views import (
     add_comment_to_post,
     check_link,
     company_news,
@@ -10,7 +10,6 @@ from .views import (
     fixed_income,
     like_post,
     macro_economy,
-    my_account,
     my_research,
     post_detail,
     post_edit,
@@ -37,7 +36,6 @@ urlpatterns = [
     path("post/<int:pk>/comment/", add_comment_to_post, name="add_comment_to_post"),
     path("post/search/", search, name="search"),
     path("myresearch/", my_research, name="my_research"),  # TODO: what is the difference between search
-    path("myaccount/", my_account, name="my_account"),
     path("tag/<slug:tag_slug>/", post_list, name="post_list_by_tag"),
     path("like/<int:pk>", like_post, name="like_post"),
     path("check_link/", check_link, name="check_link"),

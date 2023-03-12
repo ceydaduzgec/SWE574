@@ -38,13 +38,6 @@ class CommentForm(forms.ModelForm):
         fields = ("text",)
 
 
-# class ProfileForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = Author
-#         fields = '__all__'
-
-
 class EmailPostForm(forms.Form):
     to = forms.EmailField()
     comments = forms.CharField(required=False, widget=forms.Textarea)
