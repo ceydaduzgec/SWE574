@@ -5,14 +5,13 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.http import require_POST
 from taggit.models import Tag
 
+from posts.models import Post, Space
 from users.forms import ProfileEditForm, UserEditForm
 from users.models import Contact
 
-from .forms import *
-from .forms import SpaceCreationForm
+from .forms import CommentForm, EmailPostForm, PostForm, SpaceCreationForm, SpaceForm
 
 User = get_user_model()
 
@@ -286,80 +285,6 @@ def post_share(request, pk):
     else:
         form = EmailPostForm()
     return render(request, "posts/share.html", {"post": post, "form": form, "sent": sent})
-
-
-def edit(request):
-    if request.method == "POST":
-        user_form = UserEditForm(instance=request.user, data=request.POST)
-        profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, "Profile updated successfully")
-        else:
-            messages.error(request, "Error updating your profile")
-    else:
-        user_form = UserEditForm(instance=request.user)
-        profile_form = ProfileEditForm(instance=request.user.profile)
-    return render(
-        request,
-        "posts:my_account.html",
-        {"user_form": user_form, "profile_form": profile_form},
-        "posts:my_account.html",
-    )
-
-
-@login_required
-def user_list(request):
-    users = User.objects.filter(is_active=True)
-    return render(request, "posts/user/list.html", {"section": "people", "users": users})
-
-
-@login_required
-def user_detail(request, username):
-    user = get_object_or_404(User, username=username, is_active=True)
-
-    all_posts = Post.objects.filter(author=user.id)
-    # most_commented_posts = Post.objects.filter(author_id=request.user.id).annotate(
-    #     total_comments=Count('comments')).order_by('-total_comments')[:3]
-    most_commented_posts = (
-        Post.objects.filter(author_id=user.id)
-        .annotate(total_comments=Count("comments"))
-        .order_by("-total_comments")[:4]
-    )
-    print(len(most_commented_posts))
-
-    return render(
-        request,
-        "posts/user/detail.html",
-        {
-            "section": "people",
-            "userToSee": user,
-            "id": user.id,
-            "latest_posts_db": all_posts[:4],
-            "count": all_posts.count(),
-            "most_commented_posts": most_commented_posts,
-        },
-    )
-
-
-@require_POST
-@login_required
-def user_follow(request):
-    user_id = request.POST.get("id")
-    action = request.POST.get("action")
-    if user_id and action:
-        try:
-            user = User.objects.get(id=user_id)
-            if action == "follow":
-                Contact.objects.get_or_create(user_from=request.user, user_to=user)
-
-            else:
-                Contact.objects.filter(user_from=request.user, user_to=user).delete()
-            return JsonResponse({"status": "ok"})
-        except User.DoesNotExist:
-            return JsonResponse({"status": "error"})
-    return JsonResponse({"status": "error"})
 
 
 def like_post(request, pk):

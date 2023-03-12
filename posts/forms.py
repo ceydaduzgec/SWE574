@@ -1,10 +1,10 @@
 from django import forms
+from django.contrib.auth import get_user_model
 
-from users.forms import *
+from posts.models import Comment, Post, Space
 from users.models import Profile
 
-from .models import *
-from .models import Space
+User = get_user_model()
 
 
 class SpaceCreationForm(forms.ModelForm):
