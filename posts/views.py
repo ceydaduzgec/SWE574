@@ -1,5 +1,5 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.db.models import Count, Q
 from django.http import JsonResponse
@@ -13,7 +13,8 @@ from users.models import Contact
 
 from .forms import *
 from .forms import SpaceCreationForm
-from .models import Post, Space
+
+User = get_user_model()
 
 
 def check_link(request):

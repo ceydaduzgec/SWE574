@@ -1,12 +1,9 @@
 from django.contrib.auth import authenticate, get_user_model
-
-# from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 from django.test import TestCase
 
 from users.factory import UserFactory
 
-# from .forms import ProfileEditForm
 from .models import Post
 
 User = get_user_model()
