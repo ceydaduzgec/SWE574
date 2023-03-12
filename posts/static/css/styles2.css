@@ -1,0 +1,38 @@
+.sidenav {
+    height: 100%;
+    width: 21.8%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 15px;
+    list-style: none;
+    border-right: .5px solid #e6ecf0;
+    z-index: 100;
+    padding-left: 3%;
+    background-color: white;
+}
+.sidenav ul{
+    list-style: none;
+    padding-left: 0px;
+    margin-top: 3vh;
+}
+.sidenav li{
+    margin-top: 7px;
+}
+.sidenav .nav-link{
+    color: #14171a;
+    line-height: .7em;
+    font-weight: 700;
+    padding: 0px;
+}
+.sidenav .nav-link > div{
+    padding: 10px 20px 8px 12px;
+    border-radius: 25px;
+    line-height: 0.9em;
+    width: max-content;
+}
+.sidenav .nav-link > div:hover{
+    color: #dbb3c9;
+    background-color: #e7f8ef;
+    transition-duration: .2s;
+}

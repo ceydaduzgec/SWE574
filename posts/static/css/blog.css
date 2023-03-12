@@ -80,6 +80,7 @@ h4 {
 .links {
     text-align: right;
     color: #FFFFFF;
+    
 }
 .links>a {
     color: #FFFFFF;
@@ -94,3 +95,4 @@ h4 {
   height: 80px;
   object-fit: cover; /* or object-fit: contain; depending on how you want the image to be displayed */
 }
+
