@@ -2,6 +2,7 @@ Django Coding Style Guide
 The following guide outlines the recommended coding style for writing Django applications.
 
 ### General
+- Read official [Django Coding Style Guide] (https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/coding-style/)
 - Use 4 spaces for indentation.
 - Use double quotes for strings.
 - Use clear and descriptive names for variables, functions, and classes.
