@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "users",
     "crispy_forms",
     "taggit",
-    # "easy_thumbnails"
+    "easy_thumbnails"
 ]
 
 

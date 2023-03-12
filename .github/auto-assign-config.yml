@@ -1,0 +1,13 @@
+addReviewers: true
+
+addAssignees: author
+
+reviewers:
+  - ceydaduzgec
+
+numberOfReviewers: 1
+
+assignees:
+  - author
+
+runOnDraft: true
