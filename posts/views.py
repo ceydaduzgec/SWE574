@@ -12,7 +12,6 @@ from users.models import Profile
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse_lazy, reverse
-from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from users.models import Contact
@@ -21,6 +20,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from .forms import SpaceCreationForm
 from django.http import JsonResponse
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 def check_link(request):
     link = request.GET.get('link', None)

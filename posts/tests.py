@@ -1,12 +1,13 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.test import TestCase
 from .models import Post, Tag, Comment
-from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
+from django.contrib.auth import get_user_model
 
-# Create your tests here.
+
+User = get_user_model()
 
 class PostTestCase(TestCase):
 
