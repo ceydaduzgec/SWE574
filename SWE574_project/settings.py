@@ -43,8 +43,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'taggit',
     'easy_thumbnails',
-    'annotation',
-
+    'annotations',
 
 ]
 
