@@ -242,10 +242,6 @@ def my_account(request):
     )
 
 
-def faq(request):
-    return render(request, "posts/faq.html")
-
-
 def macro_economy(request):
     posts = Post.objects.filter(labels__contains="Macro")
     return render(request, "posts/my_research.html", {"posts": posts})
