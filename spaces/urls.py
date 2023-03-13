@@ -1,10 +1,6 @@
 from django.urls import path
 
-from spaces.views import (
-    create_space,
-    space_detail,
-    space_list,
-)
+from spaces.views import create_space, space_detail, space_list
 
 urlpatterns = [
     path("spaces/", space_list, name="space_list"),

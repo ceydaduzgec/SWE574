@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from spaces.models import Space
 from spaces.forms import SpaceCreationForm, SpaceForm
+from spaces.models import Space
 
 User = get_user_model()
 

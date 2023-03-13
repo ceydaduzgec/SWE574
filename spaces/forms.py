@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from posts.models import Post
 from spaces.models import Space
 
-
 User = get_user_model()
 
 
