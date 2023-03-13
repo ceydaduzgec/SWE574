@@ -1,5 +1,5 @@
 ---
-name: Refactor Issue Template
+name: Refactor
 about: Refactors that should be done in the future should be issued
 title: REFACTOR -
 labels: 'Type: Technical Debt'
