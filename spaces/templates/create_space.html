@@ -15,26 +15,10 @@
     </div>
 
     <div class="form-group">
-      <label for="id_members">Members:</label>
-      {{ form.members }}
-    </div>
-
-    <div class="form-group">
-      <label for="id_moderators">Moderators:</label>
-      {{ form.moderators }}
-    </div>
-
-    <div class="form-group">
-      <label for="id_is_all_members_post_allowed">Allow all members to post:</label>
-      {{ form.is_all_members_post_allowed }}
-    </div>
-
-    <div class="form-group">
-      <label for="id_is_only_moderators_post_allowed">Allow only moderators to post:</label>
-      {{ form.is_only_moderators_post_allowed }}
+      <label for="id_posting_permission">Posting Permission:</label>
+      {{ form.posting_permission }}
     </div>
 
     <button type="submit" class="btn btn-primary">Create space</button>
   </form>
 {% endblock %}
-
