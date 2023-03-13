@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import RegexValidator
 from django.db import models
-from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -32,9 +31,6 @@ class User(AbstractUser):
     )
     following = models.ManyToManyField("User", related_name="following_users", verbose_name=_("Following"), blank=True)
     objects = UserManager()
-
-    def get_absolute_url(self):
-        return reverse("users:list", args=[self.username])
 
     def save(self, *args, **kwargs):
         self.full_clean()
