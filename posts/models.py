@@ -24,7 +24,7 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, blank=True, related_name="blog_post")
     title_tag = models.CharField(max_length=200, null=True, blank=True, unique=False)
     image = models.ImageField(upload_to="images/", null=True, blank=True)
-    spaces = models.ManyToManyField("posts.Space", related_name="posts", blank=True)
+    spaces = models.ManyToManyField("spaces.Space", related_name="posts", blank=True)
     # status = models.CharField(max_length=10,
     #                           choices=STATUS_CHOICES,
     #                           default='draft')
@@ -47,7 +47,9 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
-    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE, related_name="comments")
+    post = models.ForeignKey(
+        "posts.Post", on_delete=models.CASCADE, related_name="comments"
+    )
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
     text = models.TextField()
     created_date = models.DateTimeField(default=timezone.now)

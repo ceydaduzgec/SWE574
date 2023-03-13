@@ -7,10 +7,11 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from taggit.models import Tag
 
-from posts.models import Post, Space
+from posts.models import Post
+from spaces.models import Space
 from users.models import Contact
 
-from .forms import CommentForm, EmailPostForm, PostForm, SpaceCreationForm, SpaceForm
+from .forms import CommentForm, EmailPostForm, PostForm
 
 User = get_user_model()
 
@@ -29,7 +30,9 @@ def post_list(request, tag_slug=None):
     # Mapping friends of users
     friendsofUser = map(lambda x: x.user_to, friendsofUser)
 
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by("-published_date")
+    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by(
+        "-published_date"
+    )
 
     # filtering posts
     posts = (
@@ -56,7 +59,9 @@ def post_detail(request, pk):
     total_likes = stuff.total_likes()
     post_tags_ids = post.tags.values_list("id", flat=True)
     similar_posts = Post.objects.filter(tags__in=post_tags_ids).exclude(id=post.id)
-    similar_posts = similar_posts.annotate(same_tags=Count("tags")).order_by("-same_tags", "-published_date")[:10]
+    similar_posts = similar_posts.annotate(same_tags=Count("tags")).order_by(
+        "-same_tags", "-published_date"
+    )[:10]
 
     return render(
         request,
@@ -135,11 +140,15 @@ def search(request):
 
         # Search posts
         posts_s = Post.objects.filter(
-            Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
+            Q(title__icontains=searched)
+            | Q(text__icontains=searched)
+            | Q(tags__name__icontains=searched)
         ).distinct()
 
         # Search spaces
-        spaces_s = Space.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
+        spaces_s = Space.objects.filter(
+            Q(name__icontains=searched) | Q(description__icontains=searched)
+        )
 
         return render(
             request,
@@ -157,7 +166,9 @@ def search(request):
 def my_research(request):
     posts = Post.objects.filter(author_id=request.user.id).order_by("-published_date")
 
-    most_recent_posts = Post.objects.filter(author_id=request.user.id).order_by("-published_date")[:3]
+    most_recent_posts = Post.objects.filter(author_id=request.user.id).order_by(
+        "-published_date"
+    )[:3]
 
     most_commented_posts = (
         Post.objects.filter(author_id=request.user.id)
@@ -219,7 +230,9 @@ def post_share(request, pk):
             sent = True
     else:
         form = EmailPostForm()
-    return render(request, "posts/share.html", {"post": post, "form": form, "sent": sent})
+    return render(
+        request, "posts/share.html", {"post": post, "form": form, "sent": sent}
+    )
 
 
 def like_post(request, pk):
