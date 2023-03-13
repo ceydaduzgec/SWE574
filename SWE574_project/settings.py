@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "posts",
     "spaces",
-    "crispy_forms",
     "taggit",
     "easy_thumbnails",
 ]
