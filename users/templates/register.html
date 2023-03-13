@@ -1,7 +1,6 @@
 {% extends "eralp.html" %}
 
 {% block content %}
-    {% load crispy_forms_tags %}
 
     <div class="container d-flex justify-content-center">
         <div class="col-3">
@@ -24,7 +23,7 @@
                 <div class="d-flex flex-column justify-content-center">
                     <form method="POST" class="col-9">
                         {% csrf_token %}
-                        {{ register_form|crispy }}
+                        {{ register_form.as_p }}
                         <button class="btn btn-primary" type="submit">Register</button>
                     </form>
                     <p class="text-center">If you already have an account, <a href="/login">login</a> instead.</p>

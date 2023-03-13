@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "posts",
     "users",
-    "crispy_forms",
     "taggit",
     "easy_thumbnails",
 ]
@@ -152,4 +151,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
-ABSOLUTE_URL_OVERRIDES = {"settings.AUTH_USER_MODEL": lambda u: reverse_lazy("user_detail", args=[u.username])}
+ABSOLUTE_URL_OVERRIDES = {
+    "settings.AUTH_USER_MODEL": lambda u: reverse_lazy("user_detail", args=[u.username])
+}
