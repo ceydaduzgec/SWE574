@@ -34,14 +34,15 @@ AUTH_USER_MODEL = "users.User"
 
 # Application definition
 INSTALLED_APPS = [
+    "users",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "spaces",
     "posts",
-    "users",
     "taggit",
     "easy_thumbnails",
 ]
@@ -151,6 +152,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
-ABSOLUTE_URL_OVERRIDES = {
-    "settings.AUTH_USER_MODEL": lambda u: reverse_lazy("user_detail", args=[u.username])
-}
+ABSOLUTE_URL_OVERRIDES = {"settings.AUTH_USER_MODEL": lambda u: reverse_lazy("user_detail", args=[u.username])}

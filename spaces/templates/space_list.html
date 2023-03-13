@@ -1,4 +1,4 @@
-{% extends 'posts/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
  <h1>Spaces</h1>
@@ -11,7 +11,7 @@
                 <p>Members: {{ space.members.count }}</p>
                 <p>Moderators: {{ space.moderators.count }}</p>
                 <p>Posts: {{ space.posts.count }}</p>
-                <a href="{% url 'space_detail' space.id %}">View Space</a>
+                 <a href="{% url 'space_detail' space.id %}">View Space</a>
             </li>
         {% endfor %}
     </ul>
