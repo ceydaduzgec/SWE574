@@ -4,7 +4,6 @@ from posts.views import (
     add_comment_to_post,
     check_link,
     company_news,
-    create_space,
     equity,
     faq,
     fixed_income,
@@ -18,15 +17,10 @@ from posts.views import (
     post_remove,
     post_share,
     search,
-    space_detail,
-    space_list,
 )
 
 urlpatterns = [
     path("home", post_list, name="post_list"),
-    path("spaces/", space_list, name="space_list"),
-    path("spaces/new/", create_space, name="create_space"),
-    path("spaces/<int:pk>/", space_detail, name="space_detail"),
     path("<int:labels>/", post_list, name="post_list"),
     path("post/new/", post_new, name="post_new"),
     path("post/<int:pk>/share/", post_share, name="post_share"),
