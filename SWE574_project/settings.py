@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "posts",
     "spaces",
+    "posts",
     "taggit",
     "easy_thumbnails",
 ]
