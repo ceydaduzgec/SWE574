@@ -113,7 +113,7 @@ def user_detail(request, username):
 
     return render(
         request,
-        "posts/user/detail.html",
+        "user_detail.html",
         {
             "section": "people",
             "userToSee": user,
@@ -147,7 +147,7 @@ def user_follow(request):
 @login_required
 def user_list(request):
     users = User.objects.filter(is_active=True)
-    return render(request, "posts/user/list.html", {"section": "people", "users": users})
+    return render(request, "user_list.html", {"section": "people", "users": users})
 
 
 def my_account(request):
@@ -163,6 +163,6 @@ def my_account(request):
         profile_form = ProfileEditForm(instance=request.user.profile)
     return render(
         request,
-        "posts/my_account.html",
+        "my_account.html",
         {"user_form": user_form, "profile_form": profile_form},
     )
