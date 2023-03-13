@@ -45,7 +45,7 @@ def post_list(request, tag_slug=None):
         tag = get_object_or_404(Tag, slug=tag_slug)
         posts = posts.filter(tags__in=[tag])
 
-    return render(request, "posts/post_list.html", {"posts": posts, "tag": tag})
+    return render(request, "post_list.html", {"posts": posts, "tag": tag})
 
 
 @login_required
@@ -61,7 +61,7 @@ def post_detail(request, pk):
 
     return render(
         request,
-        "posts/post_detail.html",
+        "post_detail.html",
         {
             "post": post,
             "comments": comments,
@@ -86,7 +86,7 @@ def post_new(request):
             return redirect("post_detail", pk=post.pk)
     else:
         form = PostForm()
-    return render(request, "posts/post_edit.html", {"form": form})
+    return render(request, "post_edit.html", {"form": form})
 
 
 @login_required
@@ -102,7 +102,7 @@ def post_edit(request, pk):
             return redirect("post_detail", pk=post.pk)
     else:
         form = PostForm(instance=post)
-    return render(request, "posts/post_edit.html", {"form": form})
+    return render(request, "post_edit.html", {"form": form})
 
 
 @login_required
@@ -126,7 +126,7 @@ def add_comment_to_post(request, pk):
         form = CommentForm()
     # List of similar posts
 
-    return render(request, "posts/add_comment_to_post.html", {"form": form})
+    return render(request, "add_comment_to_post.html", {"form": form})
 
 
 def search(request):
@@ -144,7 +144,7 @@ def search(request):
 
         return render(
             request,
-            "posts/search.html",
+            "search.html",
             {
                 "searched": searched,
                 "posts_s": posts_s,
@@ -152,7 +152,7 @@ def search(request):
             },
         )
     else:
-        return render(request, "posts/search.html", {})
+        return render(request, "search.html", {})
 
 
 def my_research(request):
@@ -168,7 +168,7 @@ def my_research(request):
 
     return render(
         request,
-        "posts/my_research.html",
+        "my_research.html",
         {
             "posts": posts,
             "most_recent_posts": most_recent_posts,
@@ -179,22 +179,22 @@ def my_research(request):
 
 def macro_economy(request):
     posts = Post.objects.filter(labels__contains="Macro")
-    return render(request, "posts/my_research.html", {"posts": posts})
+    return render(request, "my_research.html", {"posts": posts})
 
 
 def equity(request):
     posts = Post.objects.filter(labels__contains="Equity")
-    return render(request, "posts/my_research.html", {"posts": posts})
+    return render(request, "my_research.html", {"posts": posts})
 
 
 def fixed_income(request):
     posts = Post.objects.filter(labels__contains="Fixed")
-    return render(request, "posts/my_research.html", {"posts": posts})
+    return render(request, "my_research.html", {"posts": posts})
 
 
 def company_news(request):
     posts = Post.objects.filter(labels__contains="company")
-    return render(request, "posts/my_research.html", {"posts": posts})
+    return render(request, "my_research.html", {"posts": posts})
 
 
 def post_share(request, pk):
@@ -216,7 +216,7 @@ def post_share(request, pk):
             sent = True
     else:
         form = EmailPostForm()
-    return render(request, "posts/share.html", {"post": post, "form": form, "sent": sent})
+    return render(request, "share.html", {"post": post, "form": form, "sent": sent})
 
 
 def like_post(request, pk):

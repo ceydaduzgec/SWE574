@@ -5,7 +5,6 @@ from posts.views import (
     check_link,
     company_news,
     equity,
-    faq,
     fixed_income,
     like_post,
     macro_economy,
@@ -33,7 +32,6 @@ urlpatterns = [
     path("tag/<slug:tag_slug>/", post_list, name="post_list_by_tag"),
     path("like/<int:pk>", like_post, name="like_post"),
     path("check_link/", check_link, name="check_link"),
-    path("faq/", faq, name="faq"),
     path("macro_economy/", macro_economy, name="macro_economy"),  # TODO: delete these  urls
     path("equity/", equity, name="equity"),
     path("fixed_income/", fixed_income, name="fixed_income"),

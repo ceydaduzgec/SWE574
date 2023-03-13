@@ -52,4 +52,4 @@ def space_new(request):
             return redirect("post_detail", pk=post.pk)
     else:
         form = SpaceForm()
-    return render(request, "posts/post_edit.html", {"form": form})
+    return render(request, "post_edit.html", {"form": form})
