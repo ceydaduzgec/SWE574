@@ -1,13 +1,15 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.db.models import Q
+
 from spaces.forms import SpaceCreationForm, SpaceForm
 from spaces.models import Space
-from .forms import SpacePolicyForm
-from django.contrib import messages
 
+from .forms import SpacePolicyForm
 
 User = get_user_model()
 
@@ -57,6 +59,7 @@ def space_new(request):
     else:
         form = SpaceForm()
     return render(request, "post_edit.html", {"form": form})
+
 
 @login_required
 def space_policies(request, pk):
