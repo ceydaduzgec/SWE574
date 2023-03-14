@@ -3,6 +3,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -69,6 +70,7 @@ celerybeat-schedule
 .venv
 venv/
 ENV/
+pyvenv.cfg
 
 # Rope project settings
 .ropeproject
@@ -153,18 +155,16 @@ typings/
 
 ### VisualStudioCode template
 .vscode/*
-!.vscode/settings.json
+*.vscode/settings.json
+*.code-workspace
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-*.code-workspace
+
 
 # Local History for Visual Studio Code
 .history/
-
-
-
-
+.idea
 
 ### Windows template
 # Windows thumbnail cache files
@@ -271,7 +271,7 @@ Session.vim
 tags
 
 ### Project template
-sole/media/
+uploads/*
 
 .pytest_cache/
 .ipython/
