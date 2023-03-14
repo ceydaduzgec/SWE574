@@ -13,7 +13,6 @@
 
 
 </head>
-
 <body>
 <nav class="py-2 bg-light border-bottom">
     <div class="container d-flex flex-wrap justify-content-center">
@@ -36,13 +35,13 @@
                     </a>
                 </li>
                 <li><a href="/home" class="nav-link px-2 text-white">Main</a></li>
-                <li><a href="/spaces" class="nav-link px-2 text-white">Spaces</a></li>
+                <li><a href="/spaces" class="nav-link px-2 text-white">All Spaces</a></li>
+                <li><a href="/spaces/myspaces" class="nav-link px-2 text-white">My Spaces</a></li>
             </ul>
             <a href="{% url 'post_new' %}" class="btn btn-warning"> BOX_it =
-
                 {% include './icons/box.svg' %}
             </a>
-             <a href="{% url 'create_space' %}" class="btn btn-warning"> SPACE_it
+             <a href="{% url 'create_space' %}" class="btn btn-warning"> Create Space
             </a>
 
             <form class="mb-3 mb-lg-0 me-lg-3 d-flex align-items-center" role="search" method=POST
@@ -65,7 +64,7 @@
 </header>
 
 {% comment %}<div class="page-header">
-    <h1><a href="/">SWE-573 Project</a></h1>
+    <h1><a href="/">SWE-574 Project</a></h1>
     <div class="links">
         {% if user.is_authenticated %}
             <a href="{% url 'logout' %}">Logout</a>
@@ -91,7 +90,7 @@
 
 <footer class="footer mt-5 py-3 bg-light">
     <div class="container">
-        <span class="text-muted">SWE-573</span>
+        <span class="text-muted">SWE-574</span>
     </div>
 </footer>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
