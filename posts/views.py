@@ -30,14 +30,16 @@ def post_list(request, tag_slug=None):
     # Mapping friends of users
     friendsofUser = map(lambda x: x.user_to, friendsofUser)
 
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by("-published_date")
-
-    # filtering posts
-    posts = (
-        posts.filter(Q(author__in=friendsofUser) | Q(author=request.user))
-        .annotate(total_comments=Count("comments"))
-        .order_by("-published_date")
+    # Getting spaces where user is an owner, member, granted member or moderator
+    spaces = Space.objects.filter(
+        Q(owner=request.user) | Q(members=request.user) | Q(granted_members=request.user) | Q(moderators=request.user)
     )
+
+    # Getting posts of the user and their friends, and posts from the spaces
+    posts = Post.objects.filter(
+        Q(author__in=friendsofUser) | Q(author=request.user) | Q(spaces__in=spaces),
+        published_date__lte=timezone.now()
+    ).annotate(total_comments=Count("comments")).order_by("-published_date")
 
     tag = None
 
@@ -46,6 +48,7 @@ def post_list(request, tag_slug=None):
         posts = posts.filter(tags__in=[tag])
 
     return render(request, "post_list.html", {"posts": posts, "tag": tag})
+
 
 
 @login_required
@@ -98,11 +101,25 @@ def post_edit(request, pk):
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
+            post.image = request.FILES.get('image')
+            post.tags.clear()  # clear existing tags
+            tags = form.cleaned_data['tags']
+            if isinstance(tags, list):
+                tags = ','.join(tags)
+            tags_list = [tag.strip() for tag in tags.split(',')]
+            for tag in tags_list:
+                if tag:
+                    t, created = Tag.objects.get_or_create(name=tag)
+                    post.tags.add(t)
             post.save()
             return redirect("post_detail", pk=post.pk)
     else:
         form = PostForm(instance=post)
-    return render(request, "post_edit.html", {"form": form})
+    return render(request, "post_editor.html", {"form": form, "post": post})
+
+
+
+
 
 
 @login_required

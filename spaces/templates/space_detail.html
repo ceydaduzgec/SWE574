@@ -3,6 +3,17 @@
 {% block content %}
   <h1>{{ space.name }}</h1>
   <p>{{ space.description }}</p>
+  {% if not request.user in space.members.all and not request.user in space.granted_members.all and not request.user in space.moderators.all %}
+    <form method="POST" action="{% url 'join_space' pk=space.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Join Space</button>
+    </form>
+  {% elif request.user in space.members.all or request.user in space.granted_members.all %}
+    <form method="POST" action="{% url 'leave_space' pk=space.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Leave Space</button>
+    </form>
+  {% endif %}
   <hr>
   <div class="row row-cols-1 row-cols-sm-1 row-cols-mr-6 g-3">
     {% if space.posts.all %}

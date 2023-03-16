@@ -16,19 +16,11 @@ class SpaceCreationForm(forms.ModelForm):
             "posting_permission",
         ]
 
-
-class SpaceForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ("title", "link", "text")
-
-
 POSTING_PERMISSION_CHOICES = (
     ("all", "Any member can post"),
     ("granted", "Only granted members can post"),
     ("moderators", "Only moderators can post"),
 )
-
 
 class SpacePolicyForm(forms.ModelForm):
     class Meta:
