@@ -4,8 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
-from django.shortcuts import redirect
+
 from spaces.forms import SpaceCreationForm
 from spaces.models import Space
 
@@ -13,10 +12,12 @@ from .forms import SpacePolicyForm
 
 User = get_user_model()
 
+
 def join_space(request, pk):
     space = get_object_or_404(Space, pk=pk)
     space.members.add(request.user)
     return redirect("space_detail", pk=pk)
+
 
 def leave_space(request, pk):
     space = get_object_or_404(Space, pk=pk)
@@ -54,6 +55,7 @@ def space_detail(request, pk):
     context = {"space": space, "posts": posts, "is_owner": is_owner}
     return render(request, "space_detail.html", context)
 
+
 @login_required
 def space_policies(request, pk):
     space = get_object_or_404(Space, pk=pk)
@@ -70,9 +72,6 @@ def space_policies(request, pk):
         form = SpacePolicyForm(instance=space)
     return render(request, "spaces/templates/space_policies.html", {"space": space, "form": form})
 
-# views.py
-from django.shortcuts import render, get_object_or_404
-from .models import Space
 
 def space_members(request, pk):
     space = get_object_or_404(Space, pk=pk)
@@ -88,6 +87,7 @@ def space_members(request, pk):
         "combined_members": combined_members,
     }
     return render(request, "spaces/templates/space_members.html", context)
+
 
 @login_required
 def my_spaces_list(request):

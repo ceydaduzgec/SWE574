@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from posts.models import Post
 from spaces.models import Space
 
 User = get_user_model()
@@ -16,11 +15,13 @@ class SpaceCreationForm(forms.ModelForm):
             "posting_permission",
         ]
 
+
 POSTING_PERMISSION_CHOICES = (
     ("all", "Any member can post"),
     ("granted", "Only granted members can post"),
     ("moderators", "Only moderators can post"),
 )
+
 
 class SpacePolicyForm(forms.ModelForm):
     class Meta:
