@@ -1,76 +1,49 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.utils import timezone
-from django.shortcuts import render, get_object_or_404
-from .forms import *
-from users.forms import UserEditForm, ProfileEditForm
-from django.shortcuts import redirect
-from django.db.models import Q, Count
 from django.core.mail import send_mail
+from django.db.models import Count, Q
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from taggit.models import Tag
-from users.models import Profile
-from django.contrib.auth import get_user_model
-from django.http import HttpResponseRedirect, HttpResponse
-from django.urls import reverse_lazy, reverse
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from users.models import Contact
-from .models import Space, Post
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import SpaceCreationForm
-from django.http import JsonResponse
-from django.contrib.auth import get_user_model
 
+from posts.models import Post
+from spaces.models import Space
+from users.models import Contact
+
+from .forms import CommentForm, EmailPostForm, PostForm
 
 User = get_user_model()
 
+
 def check_link(request):
-    link = request.GET.get('link', None)
+    link = request.GET.get("link", None)
     exists = Post.objects.filter(link=link).exists()
-    return JsonResponse({'exists': exists})
-
-@login_required
-def create_space(request):
-    if request.method == 'POST':
-        form = SpaceCreationForm(request.POST)
-        if form.is_valid():
-            space = form.save(commit=False)
-            space.owner = request.user
-            space.save()
-            form.save_m2m()
-            return redirect('space_detail', pk=space.pk)
-    else:
-        form = SpaceCreationForm()
-    return render(request, 'create_space.html', {'form': form})
-
-
-@login_required
-def space_list(request):
-    spaces = Space.objects.all()
-    return render(request, 'space_list.html', {'spaces': spaces})
-
-def space_detail(request, pk):
-    space = get_object_or_404(Space, pk=pk)
-    posts = space.posts.all()
-    context = {'space': space, 'posts': posts}
-    return render(request, 'space_detail.html', context)
+    return JsonResponse({"exists": exists})
 
 
 @login_required
 def post_list(request, tag_slug=None):
-
-    #Getting friends of users
+    # Getting friends of users
     friendsofUser = Contact.objects.filter(user_from=request.user).all()
 
-    #Mapping friends of users
-    friendsofUser=map(lambda x: x.user_to, friendsofUser)
+    # Mapping friends of users
+    friendsofUser = map(lambda x: x.user_to, friendsofUser)
 
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+    # Getting spaces where user is an owner, member, granted member or moderator
+    spaces = Space.objects.filter(
+        Q(owner=request.user) | Q(members=request.user) | Q(granted_members=request.user) | Q(moderators=request.user)
+    )
 
-    #filtering posts
-    posts = posts.filter(
-        Q(author__in=friendsofUser) | Q(author=request.user)).annotate(total_comments=Count('comments')).order_by('-published_date')
+    # Getting posts of the user and their friends, and posts from the spaces
+    posts = (
+        Post.objects.filter(
+            Q(author__in=friendsofUser) | Q(author=request.user) | Q(spaces__in=spaces),
+            published_date__lte=timezone.now(),
+        )
+        .annotate(total_comments=Count("comments"))
+        .order_by("-published_date")
+    )
 
     tag = None
 
@@ -78,7 +51,7 @@ def post_list(request, tag_slug=None):
         tag = get_object_or_404(Tag, slug=tag_slug)
         posts = posts.filter(tags__in=[tag])
 
-    return render(request, 'posts/post_list.html', {'posts': posts, 'tag': tag})
+    return render(request, "post_list.html", {"posts": posts, "tag": tag})
 
 
 @login_required
@@ -88,14 +61,20 @@ def post_detail(request, pk):
 
     stuff = get_object_or_404(Post, id=pk)
     total_likes = stuff.total_likes()
-    post_tags_ids = post.tags.values_list('id', flat=True)
-    similar_posts = Post.objects.filter(tags__in=post_tags_ids) \
-        .exclude(id=post.id)
-    similar_posts = similar_posts.annotate(same_tags=Count('tags')) \
-        .order_by('-same_tags', '-published_date')[:10]
+    post_tags_ids = post.tags.values_list("id", flat=True)
+    similar_posts = Post.objects.filter(tags__in=post_tags_ids).exclude(id=post.id)
+    similar_posts = similar_posts.annotate(same_tags=Count("tags")).order_by("-same_tags", "-published_date")[:10]
 
-    return render(request, 'posts/post_detail.html', {'post': post, 'comments': comments,
-                                                      'similar_posts': similar_posts, 'total_likes': total_likes})
+    return render(
+        request,
+        "post_detail.html",
+        {
+            "post": post,
+            "comments": comments,
+            "similar_posts": similar_posts,
+            "total_likes": total_likes,
+        },
+    )
 
 
 @login_required
@@ -108,31 +87,12 @@ def post_new(request):
             post.author = request.user
             post.published_date = timezone.now()
             post.save()
-            post.tags.add(*form.cleaned_data['tags'])
+            post.tags.add(*form.cleaned_data["tags"])
 
-            return redirect('post_detail', pk=post.pk)
+            return redirect("post_detail", pk=post.pk)
     else:
         form = PostForm()
-    return render(request, 'posts/post_edit.html', {'form': form})
-
-
-
-@login_required
-def space_new(request):
-    if request.method == "POST":
-        form = SpaceForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            post.tags.add(*form.cleaned_data['tags'])
-
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = SpaceForm()
-    return render(request, 'posts/post_edit.html', {'form': form})
+    return render(request, "post_edit.html", {"form": form})
 
 
 @login_required
@@ -144,18 +104,28 @@ def post_edit(request, pk):
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
+            post.image = request.FILES.get("image")
+            post.tags.clear()  # clear existing tags
+            tags = form.cleaned_data["tags"]
+            if isinstance(tags, list):
+                tags = ",".join(tags)
+            tags_list = [tag.strip() for tag in tags.split(",")]
+            for tag in tags_list:
+                if tag:
+                    t, created = Tag.objects.get_or_create(name=tag)
+                    post.tags.add(t)
             post.save()
-            return redirect('post_detail', pk=post.pk)
+            return redirect("post_detail", pk=post.pk)
     else:
         form = PostForm(instance=post)
-    return render(request, 'posts/post_edit.html', {'form': form})
+    return render(request, "post_editor.html", {"form": form, "post": post})
 
 
 @login_required
 def post_remove(request, pk):
     post = get_object_or_404(Post, pk=pk)
     post.delete()
-    return redirect('post_list')
+    return redirect("post_list")
 
 
 def add_comment_to_post(request, pk):
@@ -167,17 +137,17 @@ def add_comment_to_post(request, pk):
             comment.author = request.user
             comment.post = post
             comment.save()
-            return redirect('post_detail', pk=post.pk)
+            return redirect("post_detail", pk=post.pk)
     else:
         form = CommentForm()
     # List of similar posts
 
-    return render(request, 'posts/add_comment_to_post.html', {'form': form})
+    return render(request, "add_comment_to_post.html", {"form": form})
 
 
 def search(request):
     if request.method == "POST":
-        searched = request.POST['searched']
+        searched = request.POST["searched"]
         searched = searched.lower()
 
         # Search posts
@@ -185,174 +155,93 @@ def search(request):
             Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
         ).distinct()
 
-
         # Search spaces
-        spaces_s = Space.objects.filter(
-            Q(name__icontains=searched) | Q(description__icontains=searched)
-        )
+        spaces_s = Space.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
 
-        return render(request, 'posts/search.html', {'searched': searched,
-                                                     'posts_s': posts_s,
-                                                     'spaces_s': spaces_s,})
+        return render(
+            request,
+            "search.html",
+            {
+                "searched": searched,
+                "posts_s": posts_s,
+                "spaces_s": spaces_s,
+            },
+        )
     else:
-        return render(request, 'posts/search.html', {})
+        return render(request, "search.html", {})
 
 
 def my_research(request):
-    posts = Post.objects.filter(author_id=request.user.id).order_by('-published_date')
+    posts = Post.objects.filter(author_id=request.user.id).order_by("-published_date")
 
-    most_recent_posts = Post.objects.filter(author_id=request.user.id).order_by('-published_date')[:3]
+    most_recent_posts = Post.objects.filter(author_id=request.user.id).order_by("-published_date")[:3]
 
-    most_commented_posts = Post.objects.filter(author_id=request.user.id).annotate(total_comments=Count('comments')).order_by('-total_comments')[:3]
+    most_commented_posts = (
+        Post.objects.filter(author_id=request.user.id)
+        .annotate(total_comments=Count("comments"))
+        .order_by("-total_comments")[:3]
+    )
 
-    return render(request, 'posts/my_research.html', {'posts': posts, 'most_recent_posts': most_recent_posts, 'most_commented_posts': most_commented_posts})
-
-
-def my_account(request):
-    if request.method == 'POST':
-        user_form = UserEditForm(instance=request.user,
-                                 data=request.POST)
-        profile_form = ProfileEditForm(
-            instance=request.user.profile,
-            data=request.POST,
-            files=request.FILES)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-
-    else:
-        user_form = UserEditForm(instance=request.user)
-        profile_form = ProfileEditForm(instance=request.user.profile)
-    return render(request, 'posts/my_account.html',
-                  {'user_form': user_form,
-                   'profile_form': profile_form}, )
-
-
-def faq(request):
-    return render(request, 'posts/faq.html')
+    return render(
+        request,
+        "my_research.html",
+        {
+            "posts": posts,
+            "most_recent_posts": most_recent_posts,
+            "most_commented_posts": most_commented_posts,
+        },
+    )
 
 
 def macro_economy(request):
-    posts = Post.objects.filter(labels__contains='Macro')
-    return render(request, 'posts/my_research.html', {'posts': posts})
+    posts = Post.objects.filter(labels__contains="Macro")
+    return render(request, "my_research.html", {"posts": posts})
 
 
 def equity(request):
-    posts = Post.objects.filter(labels__contains='Equity')
-    return render(request, 'posts/my_research.html', {'posts': posts})
+    posts = Post.objects.filter(labels__contains="Equity")
+    return render(request, "my_research.html", {"posts": posts})
 
 
 def fixed_income(request):
-    posts = Post.objects.filter(labels__contains='Fixed')
-    return render(request, 'posts/my_research.html', {'posts': posts})
+    posts = Post.objects.filter(labels__contains="Fixed")
+    return render(request, "my_research.html", {"posts": posts})
 
 
 def company_news(request):
-    posts = Post.objects.filter(labels__contains='company')
-    return render(request, 'posts/my_research.html', {'posts': posts})
+    posts = Post.objects.filter(labels__contains="company")
+    return render(request, "my_research.html", {"posts": posts})
 
 
 def post_share(request, pk):
     # Retrieve post by id
     post = get_object_or_404(Post, id=pk)
     sent = False
-    if request.method == 'POST':
+    if request.method == "POST":
         # Form was submitted
         form = EmailPostForm(request.POST)
         if form.is_valid():
             # Form fields passed validation
             cd = form.cleaned_data
-            post_url = request.build_absolute_uri(
-                post.get_absolute_url())
+            post_url = request.build_absolute_uri(post.get_absolute_url())
             subject = f"{post.author} recommends you read {post.title} "
 
             message = f"Read {post.title} at {post_url}\n\n"
 
-            send_mail(subject, message, 'swebogazici@gmail.com',
-                      [cd['to']])
+            send_mail(subject, message, "swebogazici@gmail.com", [cd["to"]])
             sent = True
     else:
         form = EmailPostForm()
-    return render(request, 'posts/share.html', {'post': post, 'form': form, 'sent': sent})
+    return render(request, "share.html", {"post": post, "form": form, "sent": sent})
 
 
-def edit(request):
-    if request.method == 'POST':
-        user_form = UserEditForm(instance=request.user,
-                                 data=request.POST)
-        profile_form = ProfileEditForm(
-            instance=request.user.profile,
-            data=request.POST,
-            files=request.FILES)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, 'Profile updated successfully')
-        else:
-            messages.error(request, 'Error updating your profile')
-    else:
-        user_form = UserEditForm(instance=request.user)
-        profile_form = ProfileEditForm(instance=request.user.profile)
-    return render(request, 'posts:my_account.html',
-                  {'user_form': user_form,
-                   'profile_form': profile_form},
-                  'posts:my_account.html')
-
-
-
-@login_required
-def user_list(request):
-    users = User.objects.filter(is_active=True)
-    return render(request,
-                  'posts/user/list.html',
-                  {'section': 'people', 'users': users})
-
-
-@login_required
-def user_detail(request, username):
-    user = get_object_or_404(User,
-                             username=username,
-                             is_active=True)
-
-    all_posts = Post.objects.filter(author=user.id)
-    # most_commented_posts = Post.objects.filter(author_id=request.user.id).annotate(
-    #     total_comments=Count('comments')).order_by('-total_comments')[:3]
-    most_commented_posts = Post.objects.filter(author_id=user.id).annotate(total_comments=Count('comments')).order_by('-total_comments')[:4]
-    print(len(most_commented_posts))
-
-    return render(request,
-                  'posts/user/detail.html',
-                  {'section': 'people', 'userToSee': user, 'id': user.id, 'latest_posts_db':all_posts[:4], 'count': all_posts.count(), 'most_commented_posts': most_commented_posts})
-
-
-@require_POST
-@login_required
-def user_follow(request):
-    user_id = request.POST.get('id')
-    action = request.POST.get('action')
-    if user_id and action:
-        try:
-            user = User.objects.get(id=user_id)
-            if action == 'follow':
-                Contact.objects.get_or_create(
-                    user_from=request.user,
-                    user_to=user)
-
-            else:
-                Contact.objects.filter(user_from=request.user,
-                                       user_to=user).delete()
-            return JsonResponse({'status': 'ok'})
-        except User.DoesNotExist:
-            return JsonResponse({'status': 'error'})
-    return JsonResponse({'status': 'error'})
-
-def like_post(request,pk):
+def like_post(request, pk):
     user_id = request.user.id
-    post = get_object_or_404(Post , id=pk)
+    post = get_object_or_404(Post, id=pk)
     if user_id:
         if post.likes.filter(id=user_id).exists():
             post.likes.remove(request.user)
         else:
             post.likes.add(request.user)
-        return JsonResponse({'status': 'ok', 'likes_count': post.total_likes()})
-    return JsonResponse({'status': 'error'})
+        return JsonResponse({"status": "ok", "likes_count": post.total_likes()})
+    return JsonResponse({"status": "error"})
