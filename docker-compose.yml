@@ -16,6 +16,10 @@ services:
     volumes:
       - ./:/app  #
     restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
       - "80:8000"  # map port 8000 on host to port 8000 in container
     image: app:latest  # tag the image as app:latest
