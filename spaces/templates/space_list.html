@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Spaces</h1>
+  <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for space in spaces %}
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body">
+            <h2 class="card-title">{{ space.name }}</h2>
+            <p class="card-text">{{ space.description }}</p>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">Owner: {{ space.owner.username }}</li>
+              <li class="list-group-item">Members: {{ space.members.count }}</li>
+              <li class="list-group-item">Moderators: {{ space.moderators.count }}</li>
+              <li class="list-group-item">Posts: {{ space.posts.count }}</li>
+            </ul>
+            <a href="{% url 'space_detail' space.id %}" class="btn btn-primary mt-3">View Space</a>
+            <a href="{% url 'space_members' space.id %}" class="btn btn-primary mt-3">View Members</a>
+            {% if user.is_authenticated and user == space.owner %}
+              <a href="{% url 'space_policies' space.id %}" class="btn btn-secondary mt-3">Define Policies</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endblock %}

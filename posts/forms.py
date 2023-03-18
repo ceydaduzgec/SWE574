@@ -1,23 +1,10 @@
 from django import forms
+from django.contrib.auth import get_user_model
 
-from users.forms import *
+from posts.models import Comment, Post
 from users.models import Profile
 
-from .models import *
-from .models import Space
-
-
-class SpaceCreationForm(forms.ModelForm):
-    class Meta:
-        model = Space
-        fields = [
-            "name",
-            "description",
-            "members",
-            "moderators",
-            "is_all_members_post_allowed",
-            "is_only_moderators_post_allowed",
-        ]
+User = get_user_model()
 
 
 class PostForm(forms.ModelForm):
@@ -26,23 +13,10 @@ class PostForm(forms.ModelForm):
         fields = ("title", "link", "tags", "labels", "upload", "text", "image")
 
 
-class SpaceForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ("title", "link", "text")
-
-
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ("text",)
-
-
-# class ProfileForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = Author
-#         fields = '__all__'
 
 
 class EmailPostForm(forms.Form):

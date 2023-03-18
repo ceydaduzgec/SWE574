@@ -2,8 +2,6 @@
 
 {% block content %}
 
-    {% load crispy_forms_tags %}
-
     <div class="container d-flex justify-content-center">
         <div class="col-3">
             <img class="img-fluid" src="{{ '/images/image/logo.jpeg' }}" />
@@ -24,7 +22,6 @@
                 {% endif %}
                 {#                <form method="POST">#}
                 {#                    {% csrf_token %}#}
-                {#                    {{ login_form|crispy }}#}
                 {#                    <div class="row mt-2">#}
                 {#                        <button class="btn btn-primary" type="submit">Login</button>#}
                 {#                        <a class="btn btn-primary" href="/register">Register</a>#}
