@@ -1,10 +1,21 @@
-version: "3.8"
+version: '3'
+
 services:
-  annotation_db:
+  annotations_app:
     build: .
-    volumes:
-    - .:/annotation_app
     ports:
       - "8000:8000"
+    depends_on:
+      - postgres
+    volumes:
+    - .:/annotation_app
     image: annotation_db:latest
     container_name: annotation_db
+
+  postgres:
+    image: postgres:13-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: example_password
+      POSTGRES_DB: annotations_db

@@ -1,11 +1,14 @@
-FROM python:3.8
+FROM python:3.9-slim-buster
 
-ENV PYTHONBUFFERED 1
+WORKDIR /app
 
-WORKDIR /annotation_app
+COPY . /app
 
-COPY requirements.txt /annotation_app/
+RUN apk add --no-cache postgresql-libs && \
+    apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apk --purge del .build-deps
 
-RUN pip install --upgrade pip
+EXPOSE 8000
 
-RUN pip install -r requirements.txt
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
