@@ -1,26 +1,22 @@
 version: "3.8"
 services:
   db:
-    image: postgres:13-alpine  # use the latest postgres image
-    environment:
-      - POSTGRES_DB=swe574
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=adminpassword
+    image: postgres:13-alpine
     ports:
-      - "5432:5432"  # map port 8000 on host to port 8000 in container
+      - "5432:5432"
     container_name: postgres_db
     volumes:
-      - my_dbdata:/var/lib/postgresql/data  # add a volume for persistent data
+      - my_dbdata:/var/lib/postgresql/data
 
   app:
-    build: .  # build from Dockerfile in current directory
+    build: .
     volumes:
-      - ./:/app  #
+      - postgres_data:/var/lib/postgresql/data/
     restart: always
-    image: app:latest  # tag the image as app:latest
-    container_name: swe574_term_project  # name the container as swe574_term_project
+    image: app:latest
+    container_name: swe574_term_project
     depends_on:
-      - db  # start the db container before starting the app container
+      - db
     environment:
       - DB_HOST=db
       - DB_NAME=swe574
@@ -29,13 +25,9 @@ services:
       - SECRET_KEY=developmentSecretKey
       - DEBUG=1
     ports:
-      - "80:8000"  # map port 8000 on host to port 8000 in container
-    command: >
-      sh -c "python manage.py wait_for_db &&
-             python manage.py makemigrations &&
-             python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+      - "80:8000"
 
 
 volumes:
-  my_dbdata:  # define the volume for persistent data
+  my_dbdata:
+  postgres_data:
