@@ -1,0 +1,10 @@
+version: "3.8"
+services:
+  annotation_db:
+    build: .
+    volumes:
+    - .:/annotation_app
+    ports:
+      - "8000:8000"
+    image: annotation_db:latest
+    container_name: annotation_db
