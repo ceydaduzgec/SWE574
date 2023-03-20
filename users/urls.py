@@ -46,4 +46,6 @@ urlpatterns = [
     path("users/<username>/", user_detail, name="user_detail"),
     path("users/follow", user_follow, name="user_follow"),
     path("myaccount/", my_account, name="my_account"),
+    path("user_badges/", views.user_badges, name = "user_badges"),
+
 ]
