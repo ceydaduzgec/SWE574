@@ -21,7 +21,7 @@
         .sidenav {
             margin-top: 70px;
             margin-left: -15px;
-            position: fixed;
+            position: sticky;
             top: 0;
             left: 0;
             height: 100%;
@@ -86,7 +86,7 @@
                         <div class="text-end ms-2">
                             <a class="btn btn-warning" href="{% url 'logout' %}">Logout</a>
                         </div>
-                        <div class="ps-2 small">
+                        <div class="ps-2 small" style="color:white">
                             Hello, <br><strong>{{ user.username }}</strong>
                         </div>
                     </form>
@@ -114,9 +114,9 @@
 </div>{% endcomment %}
 
     
-
+<div class="container">
     <div class="row" style="margin-right: -300px">
-        <div class="sidenav col-md-2" style="margin-left: -15px;">
+        <div class="sidenav col-md-2">
             <ul class="nav" style="display: block; list-style: none; padding-left: 0;">
                 <li class="nav-item" style="padding-left: 50px;"><a href="/home" class="nav-link link-dark px-2 active" aria-current="page">Home</a>
                 </li>
@@ -137,7 +137,7 @@
             
         </div>
     </div>
-
+</div>
 
 
 <footer class="footer mt-5 py-3 bg-light" style="position: fixed; bottom: 0;">
