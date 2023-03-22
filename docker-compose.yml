@@ -6,12 +6,10 @@ services:
       - "5432:5432"
     container_name: postgres_db
     volumes:
-      - my_dbdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
 
   app:
     build: .
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
     restart: always
     image: app:latest
     container_name: swe574_term_project
@@ -29,5 +27,4 @@ services:
 
 
 volumes:
-  my_dbdata:
   postgres_data:
