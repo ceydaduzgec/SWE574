@@ -1,0 +1,15 @@
+name: Check Base Branch
+run-name: Check Base Branch
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+jobs:
+  check-base-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title starts with the base branch name
+        if: "!startsWith(github.event.pull_request.title, github.base_ref)"
+        run: |
+          echo "PR title: ${{ github.event.pull_request.title }}"
+          echo "Base Ref: ${{ github.base_ref }}"
+          exit 1
