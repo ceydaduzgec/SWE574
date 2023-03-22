@@ -1,26 +1,13 @@
 ## Git Flow
 
-Currently we have 2 environments, namely `development` and `production`. Development is an environment that all of the implemented features are being tested together, so `development` is almost always ahead of the `production` branch. `production` branch is the stable branch, which is actively being used by real people (not just our QA and Product teams like `Development`) so it should only contain features that have been approved and teste by team. We make deployments feature by feature, every feature should have their own branch which is created from `production`.
-More can be found in [Working with Git and GitHub](https://docs.djangoproject.com/en/dev/internals/contributing/writing-code/working-with-git/)
+Currently we have 2 environments, namely `dev` and `prod`. dev is an environment that all of the implemented features are being tested together, so `dev` is almost always ahead of the `prod` branch. `prod` branch is the stable branch, which is actively being used by real people (not just our QA and Product teams like `dev`) so it should only contain features that have been approved and teste by team. We make deployments feature by feature, every feature should have their own branch which is created from `prod`.
 
 ### Sample Git Flow
 
-1. Create the feature branch from `production` branch.
-  ```git
-  git checkout production
-  git checkout -b featureName-developerName
-  ```
-2. You may merge `production` branch to the feature branch any time (for example to resolve conflicts).
-  ```git
-  git merge origin/production
-  ```
-3. Implement the feature and move issue to `In Progress` column from [Github board](https://github.com/orgs/swe574-spring23/projects/1).
-  ```git
-  git add .
-  git commit -m "Feature name"
-  git push
-  ```
-4. Create a Pull Request (PR) from your feature branch to `development`, and request a review from other developers.
+1. Create the feature branch from `prod` branch.
+2. Implement the feature and move issue to `In Progress` column from [Github board](https://github.com/orgs/swe574-spring23/projects/1).
+3. You may merge `prod` branch to the feature branch any time (for example to resolve conflicts).
+4. Create a Pull Request (PR) from your feature branch to `dev`, and request a review from other developers.
 - Add title as `DEV | Feature name`.
 - Add description of the feature.
 - Assign your teammates to reviewers.
@@ -30,11 +17,11 @@ More can be found in [Working with Git and GitHub](https://docs.djangoproject.co
 - Assign progress status from the project.
 - Mention the issue number in the description.
 **If the feature is still work in progress you can create a draftt PR by clicking the down arrow next to `Create pull request`and select `Create a draft pull request`**
-5. Go to related issue and select your previous PR for development part from the right sidebar.
-6. After the PR is approved by reviwers, merge it and test it on `development`.
-7. After your feature branch is merged into `development`, create another PR to `production` from your feature branch. Apply same PR rules as `development` except name it as `PROD | Feature name`.
-8. After the PR is tested by other team members, merge it and test it on `production`.
-9. After your feature branch is merged into `production`, go to [Github board](https://github.com/orgs/swe574-spring23/projects/1) and move it to `Done`.
+5. Go to related issue and select your previous PR for dev part from the right sidebar.
+6. After the PR is approved by reviwers, merge it and test it on `dev`.
+7. After your feature branch is merged into `dev`, create another PR to `prod` from your feature branch. Apply same PR rules as `dev` except name it as `PROD | Feature name`.
+8. After the PR is tested by other team members, merge it and test it on `prod`.
+9. After your feature branch is merged into `prod`, go to [Github board](https://github.com/orgs/swe574-spring23/projects/1) and move it to `Done`.
 
 More about git commands can be found in [Cheat Sheet](https://education.github.com/git-cheat-sheet-education.pdf)
 
@@ -63,6 +50,7 @@ More can be found:
 
 
 ### Pull Request Acceptence Criteria
+- The PR name should start with the target branch name like `DEV | Feature name` or `PROD | Feature name`.
 - The linter test should pass.
 - All tests should pass.
 - The migrations shouldn't have any conflicts.
@@ -79,14 +67,14 @@ More can be found:
 
 ### Don'ts :no_entry_sign:
 
-- Never merge `development` into your feature branch.
-  - `development` branch contains untested and possibly backward incompatible features. By doing so, your feature branch would deploy this changes to `production` at the end of the git flow.
-- Again, NEVER merge `development` into your feature branch. :)
-- Never merge `development` into `production` branch if there are untested features in `development`.
+- Never merge `dev` into your feature branch.
+  - `dev` branch contains untested and possibly backward incompatible features. By doing so, your feature branch would deploy this changes to `prod` at the end of the git flow.
+- Again, NEVER merge `dev` into your feature branch. :)
+- Never merge `dev` into `prod` branch if there are untested features in `dev`.
   - :point_up:
-- Never create a feature branch from `development`.
+- Never create a feature branch from `dev`.
   - :point_up:
-- Never push commits directly to `development` or `production` branch, always create PRs and make sure that your PR is reviewed by another developer.
+- Never push commits directly to `dev` or `prod` branch, always create PRs and make sure that your PR is reviewed by another developer.
 - Never use force-pushes.
   - If anyone else has checked out your branch (say, to review/test your changes), they will have to delete their copy of your branch and re-fetch it from the remote repository.
   - Rebase/force-push can have a tendency to mess up the placement of comments made on your PR in GitHub/Bitbucket — sometimes they will disappear entirely!
@@ -109,16 +97,14 @@ More can be found:
 With Python 3.7 we have `breakpoint()` available. The default debugger is [`pudb`](https://pypi.org/project/pudb/). To change it set the environment variable `PYTHONBREAKPOINT`. For more info read [this awesome article](https://hackernoon.com/python-3-7s-new-builtin-breakpoint-a-quick-tour-4f1aebc444c).
 
 ### Test Coverage
-1. Bash to `PROJECT_CONT` container via `docker-compose exec PROJECT_CONT bash`
+1. Bash to `app` container via `docker-compose exec app bash`
 2. `pip install coverage`
-3. `coverage run --source='.' --settings=PROJECT_CONT.settings.testing manage.py test`
+3. `coverage run --source='.' manage.py test`
 4. `coverage html -i` (printing html report)
 5. Report is stored generated in `htmlcov/index.html`
 
 ## Admin panel
-Use `PROJECT_CONT/admin/` for admin panel.
-
-
+Use `127.0.0.1/admin/` for admin panel.
 
 ### Project Dependencies
 - All project and package dependencies should be included in related files, i.e. [requirements.txt](requirements.txt) or [Dockerfile](python.Dockerfile).
