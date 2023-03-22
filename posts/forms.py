@@ -7,10 +7,23 @@ from users.models import Profile
 User = get_user_model()
 
 
+from django import forms
+from spaces.models import Space
+
 class PostForm(forms.ModelForm):
+    spaces = forms.ModelMultipleChoiceField(queryset=Space.objects.all(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['spaces'].queryset = Space.objects.filter(
+                Q(owner=user) | Q(moderators=user) | (Q(members=user) & Q(posting_permission='all')) | Q(granted_members=user)
+            )
+
     class Meta:
         model = Post
-        fields = ("title", "link", "tags", "labels", "upload", "text", "image")
+        fields = ('title', 'link', 'tags', 'labels', 'text', 'upload', 'image', 'spaces')
 
 
 class CommentForm(forms.ModelForm):
