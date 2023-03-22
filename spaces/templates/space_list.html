@@ -16,6 +16,7 @@
               <li class="list-group-item">Posts: {{ space.posts.count }}</li>
             </ul>
             <a href="{% url 'space_detail' space.id %}" class="btn btn-primary mt-3">View Space</a>
+            <a href="{% url 'space_members' space.id %}" class="btn btn-primary mt-3">View Members</a>
             {% if user.is_authenticated and user == space.owner %}
               <a href="{% url 'space_policies' space.id %}" class="btn btn-secondary mt-3">Define Policies</a>
             {% endif %}

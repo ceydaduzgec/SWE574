@@ -30,11 +30,17 @@ def post_list(request, tag_slug=None):
     # Mapping friends of users
     friendsofUser = map(lambda x: x.user_to, friendsofUser)
 
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by("-published_date")
+    # Getting spaces where user is an owner, member, granted member or moderator
+    spaces = Space.objects.filter(
+        Q(owner=request.user) | Q(members=request.user) | Q(granted_members=request.user) | Q(moderators=request.user)
+    )
 
-    # filtering posts
+    # Getting posts of the user and their friends, and posts from the spaces
     posts = (
-        posts.filter(Q(author__in=friendsofUser) | Q(author=request.user))
+        Post.objects.filter(
+            Q(author__in=friendsofUser) | Q(author=request.user) | Q(spaces__in=spaces),
+            published_date__lte=timezone.now(),
+        )
         .annotate(total_comments=Count("comments"))
         .order_by("-published_date")
     )
@@ -73,6 +79,14 @@ def post_detail(request, pk):
 
 @login_required
 def post_new(request):
+    duplicatespaces = (
+            request.user.owned_spaces.all()
+            | request.user.moderated_spaces.all()
+            | Space.objects.filter(posting_permission='all', members=request.user)
+            | Space.objects.filter(posting_permission='granted', granted_members=request.user)
+    )
+    spaces = duplicatespaces.values('id', 'name').distinct()
+
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
 
@@ -81,12 +95,17 @@ def post_new(request):
             post.author = request.user
             post.published_date = timezone.now()
             post.save()
+            # Get the selected spaces from the form and add them to the post
+            selected_spaces = form.cleaned_data.get('spaces')
+            if selected_spaces:
+                post.spaces.set(selected_spaces)
+
             post.tags.add(*form.cleaned_data["tags"])
 
             return redirect("post_detail", pk=post.pk)
     else:
         form = PostForm()
-    return render(request, "post_edit.html", {"form": form})
+    return render(request, "post_edit.html", {'form': form, 'spaces': spaces})
 
 
 @login_required
@@ -98,11 +117,21 @@ def post_edit(request, pk):
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
+            post.image = request.FILES.get("image")
+            post.tags.clear()  # clear existing tags
+            tags = form.cleaned_data["tags"]
+            if isinstance(tags, list):
+                tags = ",".join(tags)
+            tags_list = [tag.strip() for tag in tags.split(",")]
+            for tag in tags_list:
+                if tag:
+                    t, created = Tag.objects.get_or_create(name=tag)
+                    post.tags.add(t)
             post.save()
             return redirect("post_detail", pk=post.pk)
     else:
         form = PostForm(instance=post)
-    return render(request, "post_edit.html", {"form": form})
+    return render(request, "post_editor.html", {"form": form, "post": post})
 
 
 @login_required
@@ -177,24 +206,6 @@ def my_research(request):
     )
 
 
-def macro_economy(request):
-    posts = Post.objects.filter(labels__contains="Macro")
-    return render(request, "my_research.html", {"posts": posts})
-
-
-def equity(request):
-    posts = Post.objects.filter(labels__contains="Equity")
-    return render(request, "my_research.html", {"posts": posts})
-
-
-def fixed_income(request):
-    posts = Post.objects.filter(labels__contains="Fixed")
-    return render(request, "my_research.html", {"posts": posts})
-
-
-def company_news(request):
-    posts = Post.objects.filter(labels__contains="company")
-    return render(request, "my_research.html", {"posts": posts})
 
 
 def post_share(request, pk):

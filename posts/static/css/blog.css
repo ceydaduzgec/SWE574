@@ -92,5 +92,6 @@ h4 {
 .post-image {
   width: 80px;
   height: 80px;
-  object-fit: cover; /* or object-fit: contain; depending on how you want the image to be displayed */
+  object-fit: cover;
 }
+
