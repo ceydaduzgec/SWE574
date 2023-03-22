@@ -3,10 +3,12 @@
 
 name: Django Tester
 
-on: [pull_request]
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
 
 jobs:
-  django-test:
+  test-django:
     runs-on: ubuntu-latest
     services:
       postgres:
