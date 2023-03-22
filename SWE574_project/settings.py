@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     "easy_thumbnails",
 ]
 
+# it came with django 3.2, to avoid unwanted migrations in the future we set it to AutoField.
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

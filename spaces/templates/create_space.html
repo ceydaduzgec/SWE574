@@ -1,24 +1,36 @@
 {% extends 'base.html' %}
+
 {% block content %}
-  <h1>Create a new space</h1>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-
-    <div class="form-group">
-      <label for="id_name">Name:</label>
-      {{ form.name }}
-    </div>
-
-    <div class="form-group">
-      <label for="id_description">Description:</label>
-      {{ form.description }}
-    </div>
-
-    <div class="form-group">
-      <label for="id_posting_permission">Posting Permission:</label>
-      {{ form.posting_permission }}
-    </div>
-
-    <button type="submit" class="btn btn-primary">Create space</button>
-  </form>
+  <div class="create-space">
+    <h1>Create a New Space</h1>
+    <br/>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label  for="id_name">Name:</label>
+        <br/><br/>
+        <input type="text" class="form-control" id="id_name" name="name" required>
+      </div>
+      <br/>
+      <div class="form-group">
+        <label for="id_description" >Description:</label>
+        <br/><br/>
+        <textarea class="form-control" id="id_description" name="description" rows="4" required></textarea>
+      </div>
+      <br/>
+      <div class="form-group">
+        <label for="id_posting_permission" >Posting Permission:</label>
+        <br/><br/>
+        <select  class="form-control" id="id_posting_permission" name="posting_permission" required>
+          <option  value="">-- Select --</option>
+          <option  value="public">Public</option>
+          <option  value="private">Private</option>
+        </select>
+      </div>
+      <br/>
+      <br/>
+      <br/>
+      <button style="background-color: rgba(245, 194, 68, 1); color: black"; type="submit" class="btn btn-primary">Create Space</button>
+    </form>
+  </div>
 {% endblock %}
