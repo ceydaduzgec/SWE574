@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Web Annotations</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Annotation</button>
+    </form>
+    <ul>
+        {% for annotation in annotations %}
+            <li>
+                <a href="{{ annotation.target }}">{{ annotation.target }}</a>: {{ annotation.body }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
