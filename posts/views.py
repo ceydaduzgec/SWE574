@@ -163,7 +163,7 @@ def search(request):
         searched = request.POST["searched"]
         searched = searched.lower()
 
-        # Search posts
+        # Search posts with the given keyword
         posts_s = Post.objects.filter(
             Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
         ).distinct()
