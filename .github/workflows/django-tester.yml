@@ -3,12 +3,10 @@
 
 name: Django Tester
 
-on:
-  pull_request:
-    types: [opened, edited, reopened, synchronize]
+on: [pull_request]
 
 jobs:
-  test-django:
+  build:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -17,7 +15,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: github_actions
-         ports:
+        ports:
           - 5433:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
