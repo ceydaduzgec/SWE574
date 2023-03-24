@@ -1,15 +1,30 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
 from django.db.models import Q
-from spaces.forms import SpaceCreationForm, SpaceForm
-from spaces.models import Space
-from .forms import SpacePolicyForm
-from django.contrib import messages
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect, render
 
+from spaces.forms import SpaceCreationForm
+from spaces.models import Space
+
+from .forms import SpacePolicyForm
 
 User = get_user_model()
+
+
+def join_space(request, pk):
+    space = get_object_or_404(Space, pk=pk)
+    space.members.add(request.user)
+    return redirect("space_detail", pk=pk)
+
+
+def leave_space(request, pk):
+    space = get_object_or_404(Space, pk=pk)
+    if request.user in space.members.all() or request.user in space.granted_members.all():
+        space.members.remove(request.user)
+        space.granted_members.remove(request.user)
+    return redirect("space_detail", pk=pk)
 
 
 @login_required
@@ -42,23 +57,6 @@ def space_detail(request, pk):
 
 
 @login_required
-def space_new(request):
-    if request.method == "POST":
-        form = SpaceForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            post.tags.add(*form.cleaned_data["tags"])
-
-            return redirect("post_detail", pk=post.pk)
-    else:
-        form = SpaceForm()
-    return render(request, "post_edit.html", {"form": form})
-
-@login_required
 def space_policies(request, pk):
     space = get_object_or_404(Space, pk=pk)
     if not request.user == space.owner:
@@ -73,6 +71,22 @@ def space_policies(request, pk):
     else:
         form = SpacePolicyForm(instance=space)
     return render(request, "spaces/templates/space_policies.html", {"space": space, "form": form})
+
+
+def space_members(request, pk):
+    space = get_object_or_404(Space, pk=pk)
+    moderators = space.moderators.all()
+    members = space.members.all()
+    granted_members = space.granted_members.all()
+    combined_members = members | granted_members
+    context = {
+        "space": space,
+        "moderators": moderators,
+        "members": members,
+        "granted_members": granted_members,
+        "combined_members": combined_members,
+    }
+    return render(request, "spaces/templates/space_members.html", context)
 
 
 @login_required
