@@ -10,7 +10,7 @@
 ### TODO: Do these steps and delete them.
 
 - Assign progress status from the project.
-- Create interface for recommendations.
+- Create interface for the recommendations.
 - Create annotation framework.
 
 ## Meeting Details :
