@@ -75,11 +75,14 @@ class Badge(models.Model):
     def __str__(self):
         return self.name
 
-class UserBadge(models.Model):
+class BadgeTasks(models.Model):
+    title = models.CharField(max_length=150)
+    description = models.TextField()
+    completed = models.BooleanField(default = False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
+    badge = models.ForeignKey(Badge, on_delete=models.CASCADE, null=True, blank=True)
     date_awarded = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'{self.user.username} - {self.badge.name}'
+        return self.title
 

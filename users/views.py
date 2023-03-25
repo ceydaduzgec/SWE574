@@ -7,8 +7,6 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
-from .models import UserBadge
 from posts.models import Post
 from users.forms import NewUserForm, ProfileEditForm, UserEditForm
 from users.models import Contact, Profile
@@ -168,7 +166,5 @@ def my_account(request):
     )
 
 
-def user_badges(request):
-    user_badges= UserBadge.objects.filter(user=request.user)
-    return render(request,"badges/user_badges.html", {'user_badges':user_badges})
+
 
