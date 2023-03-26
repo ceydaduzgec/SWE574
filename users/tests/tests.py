@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
+from users.forms import UserEditForm
 from users.tests.factories import UserFactory
 
 
@@ -90,3 +91,21 @@ class UserAccountTests(TestCase):
                 first_name="Josh",
                 password="asdsad",
             )
+
+    def test_absolute_url(self):
+        self.assertEqual(self.user.get_absolute_url(), "/users/johnnyjoe/")
+
+
+class UserEditTestCase(TestCase):
+    def setUp(cls):
+        cls.user = UserFactory()
+        cls.form_data = {"first_name": "tester", "last_name": "joe", "email": "tester@gmail.com"}
+
+    def test_form_update(self):
+        form = UserEditForm(self.form_data, instance=self.user)
+        form.save()
+        self.assertTrue(form.is_valid())
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.first_name, "tester")
+        self.assertTrue(self.user.last_name, "joe")
+        self.assertTrue(self.user.email, "tester@gmail.com")

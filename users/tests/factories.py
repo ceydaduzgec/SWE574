@@ -16,6 +16,7 @@ class UserFactory(DjangoModelFactory):
     username = factory.Sequence(lambda n: "user{}".format(n))
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
+    password = factory.Faker("password")
     is_active = True
     is_staff = False
     is_superuser = False
