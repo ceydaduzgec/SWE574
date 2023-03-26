@@ -1,5 +1,3 @@
-import datetime
-
 import factory
 from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -21,8 +19,8 @@ class PostFactory(factory.django.DjangoModelFactory):
     upload = factory.LazyAttribute(
         lambda o: SimpleUploadedFile(name="image.jpg", content=b"", content_type="image/jpeg")
     )
-    created_date = factory.fuzzy.FuzzyDateTime(datetime.datetime(2023, 3, 1, tzinfo=datetime.timezone.utc))
-    published_date = factory.fuzzy.FuzzyDateTime(datetime.datetime(2023, 6, 1, tzinfo=datetime.timezone.utc))
+    # created_date = factory.fuzzy.FuzzyDateTime(datetime.datetime(2023, 3, 1, tzinfo=datetime.timezone.utc))
+    # published_date = factory.fuzzy.FuzzyDateTime(datetime.datetime(2023, 6, 1, tzinfo=datetime.timezone.utc))
     title_tag = factory.fuzzy.FuzzyText(length=100)
     image = factory.LazyAttribute(
         lambda o: SimpleUploadedFile(name="image.jpg", content=b"", content_type="image/jpeg")
@@ -34,8 +32,8 @@ class PostFactory(factory.django.DjangoModelFactory):
             return
 
         if extracted:
-            for help in extracted:
-                self.likes.add(help)
+            for object in extracted:
+                self.likes.add(object)
         else:
             for _ in range(2):
                 self.likes.add(UserFactory())
@@ -46,8 +44,8 @@ class PostFactory(factory.django.DjangoModelFactory):
             return
 
         if extracted:
-            for help in extracted:
-                self.likes.add(help)
+            for object in extracted:
+                self.spaces.add(object)
         else:
             for _ in range(2):
-                self.likes.add(SpaceFactory())
+                self.spaces.add(SpaceFactory())

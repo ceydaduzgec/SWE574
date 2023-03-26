@@ -20,11 +20,11 @@ class SpaceFactory(factory.django.DjangoModelFactory):
             return
 
         if extracted:
-            for help in extracted:
-                self.likes.add(help)
+            for object in extracted:
+                self.members.add(object)
         else:
             for _ in range(2):
-                self.likes.add(UserFactory())
+                self.members.add(UserFactory())
 
     @factory.post_generation
     def moderators(self, create, extracted, **kwargs):
@@ -32,11 +32,11 @@ class SpaceFactory(factory.django.DjangoModelFactory):
             return
 
         if extracted:
-            for help in extracted:
-                self.likes.add(help)
+            for object in extracted:
+                self.moderators.add(object)
         else:
             for _ in range(2):
-                self.likes.add(UserFactory())
+                self.moderators.add(UserFactory())
 
     @factory.post_generation
     def granted_members(self, create, extracted, **kwargs):
@@ -44,8 +44,8 @@ class SpaceFactory(factory.django.DjangoModelFactory):
             return
 
         if extracted:
-            for help in extracted:
-                self.likes.add(help)
+            for object in extracted:
+                self.granted_members.add(object)
         else:
             for _ in range(2):
-                self.likes.add(UserFactory())
+                self.granted_members.add(UserFactory())
