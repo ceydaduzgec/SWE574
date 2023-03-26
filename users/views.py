@@ -10,6 +10,8 @@ from django.views.decorators.http import require_POST
 from posts.models import Post
 from users.forms import NewUserForm, ProfileEditForm, UserEditForm
 from users.models import Contact, Profile
+
+from .forms import BadgeTasksForm, BadgeForm
 from .models import Badge, BadgeTasks, Contact, Profile
 
 User = get_user_model()
@@ -190,6 +192,35 @@ def complete_task(request, task_id):
         return redirect('list_tasks')
 
     return render(request, 'complete_task.html', {'task': task})
+
+
+@login_required
+def create_task(request):
+    if request.method == 'POST':
+        form = BadgeTasksForm(request.POST)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.user = request.user
+            task.save()
+            return redirect('list_tasks')
+    else:
+        form = BadgeTasksForm()
+
+    return render(request, 'create_task.html', {'form': form})
+
+
+@login_required
+def create_badge(request):
+    if request.method == 'POST':
+        form = BadgeForm(request.POST)
+        if form.is_valid():
+            badge = form.save(commit=False)
+            badge.save()
+            return redirect('list_tasks')
+    else:
+        form = BadgeForm()
+
+    return render(request, 'create_badge.html', {'form': form})
 
 
 

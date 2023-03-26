@@ -54,7 +54,6 @@ class Contact(models.Model):
         return f"{self.user_from} follows {self.user_to}"
 
 
-
 class Badge(models.Model):
     name = models.CharField(max_length=150)
     description = models.TextField()
@@ -73,7 +72,7 @@ class BadgeTasks(models.Model):
     date_awarded = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.title
+        return f"{self.user.username} - {self.badge.name}"
 
 
 class Profile(models.Model):

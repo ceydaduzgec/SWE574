@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Profile
+from .models import Profile, BadgeTasks, Badge
 
 User = get_user_model()
 
@@ -32,3 +32,15 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ("date_of_birth", "photo")
+
+
+class BadgeTasksForm(forms.ModelForm):
+    class Meta:
+        model = BadgeTasks
+        fields = ('title', 'description', 'badge')
+
+
+class BadgeForm(forms.ModelForm):
+    class Meta:
+        model = Badge
+        fields = ('name', 'description', 'image',)

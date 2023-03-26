@@ -48,4 +48,7 @@ urlpatterns = [
     path("myaccount/", my_account, name="my_account"),
     path('tasks/', views.list_tasks, name='list_tasks'),
     path('complete_task/<int:task_id>/', views.complete_task, name='complete_task'),
+    path('create_badge/', views.create_badge, name='create_badge'),
+    path('create_task/', views.create_task, name='create_task'),
+
 ]
