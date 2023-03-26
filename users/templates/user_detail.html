@@ -32,6 +32,64 @@
         </div>
     {% endwith %}
 
+
+    <h2>Tasks</h2>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task.title }}
+                {% if task.completed %}
+                    (Completed)
+                {% else %}
+                    <a href="{% url 'complete_task' task.id %}">Complete task</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+       <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center mb-3" id="Badges">
+                    <div class="card-header">
+                        <h5 class="card-title"> Space Badges</h5>
+                    </div>
+                    {% for badge in badges %}
+                    <li>
+                        <img src="{{ badge.image.url }}" alt="{{ badge.title }}" title="{{ badge.description }}"/>
+                        {{ badge.title }}
+                    </li>
+                    {% endfor %}
+                    <div class="card-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center mb-3" id="Badges">
+                    <div class="card-header">
+                        <h5 class="card-title"> Post Badges</h5>
+                    </div>
+                    {% for badge in badges %}
+                    <li>
+                        <img src="{{ badge.image.url }}" alt="{{ badge.title }}" title="{{ badge.description }}"/>
+                        {{ badge.title }}
+                    </li>
+                    {% endfor %}
+                    <div class="card-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <div class="row">
         <div class="col">
             <div class="col-md">

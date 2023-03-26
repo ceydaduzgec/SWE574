@@ -174,16 +174,23 @@ def list_tasks(request):
     return render(request, 'list_tasks.html', {'tasks': tasks, 'badges': badges})
 
 
-
+@login_required
 def complete_task(request, task_id):
     task = get_object_or_404(BadgeTasks, id=task_id, user=request.user)
 
-    if not task.completed:
-        task.completed = True
-        task.save()
+    if request.method == 'POST':
+        if not task.completed:
+            task.completed = True
+            task.save()
 
-        # Reward a badge if the task has an associated badge
-        if task.badge:
-            request.user.userprofile.badges.add(task.badge)
+            # Reward a badge if the task has an associated badge
+            if task.badge:
+                request.user.userprofile.badges.add(task.badge)
 
-    return redirect('list_tasks')  # Replace 'tasks' with the name of the view that displays tasks
+        return redirect('list_tasks')
+
+    return render(request, 'complete_task.html', {'task': task})
+
+
+
+
