@@ -81,27 +81,9 @@ More can be found:
   - Any changes that someone else has made to this branch between when you checked it out and now will be obliterated — as though they never happened.
 - It's better to let the reviewer resolve conversations, since they should after check what is requested and what is done.
 
-
-# TODO: review the parts after this
-
-## Testing
-
-### Traditional Django tests
-1. Bash to container PROJECT_CONT via `docker-compose exec app bash`
-2. `python manage.py test`
-
-**Note**: If you want to run tests with different settings configurations you can use ---settings option for example: `python manage.py --settings=PROJECT.settings.dev test`
-
-
 ### Debugging
 With Python 3.7 we have `breakpoint()` available. The default debugger is [`pudb`](https://pypi.org/project/pudb/). To change it set the environment variable `PYTHONBREAKPOINT`. For more info read [this awesome article](https://hackernoon.com/python-3-7s-new-builtin-breakpoint-a-quick-tour-4f1aebc444c).
 
-### Test Coverage
-1. Bash to `app` container via `docker-compose exec app bash`
-2. `pip install coverage`
-3. `coverage run --source='.' manage.py test`
-4. `coverage html -i` (printing html report)
-5. Report is stored generated in `htmlcov/index.html`
 
 ## Admin panel
 Use `127.0.0.1/admin/` for admin panel.
