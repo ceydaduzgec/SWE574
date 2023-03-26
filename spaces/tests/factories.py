@@ -1,5 +1,3 @@
-import datetime
-
 import factory
 
 from spaces.models import Space
@@ -14,7 +12,7 @@ class SpaceFactory(factory.django.DjangoModelFactory):
     name = factory.fuzzy.FuzzyText(length=10)
     description = factory.fuzzy.FuzzyText(length=100)
     posting_permission = factory.fuzzy.FuzzyChoice(Space.POSTING_PERMISSION_CHOICES)
-    created_date = factory.fuzzy.FuzzyDateTime(datetime.datetime(2023, 3, 1, tzinfo=datetime.timezone.utc))
+    # created_date = factory.fuzzy.FuzzyDateTime(datetime.datetime(2023, 3, 1, tzinfo=datetime.timezone.utc))
 
     @factory.post_generation
     def members(self, create, extracted, **kwargs):
