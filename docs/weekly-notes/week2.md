@@ -4,12 +4,8 @@
 - Requirements shall be updated.
 - Framework and todo's based on requirements shall be strong.
 - Mock-ups shall be revised. Not required features exists.
-- Annotation feature is important. 
+- Annotation feature is important.
 - Web Annotation Data Model shall be followed.
-
-### TODO: Do these steps and delete them.
-
-- Assign progress status from the project.
 - Create interface for recommendations.
 - Create annotation framework.
 
@@ -20,7 +16,7 @@
 | Date                                                                           | 9 March 2023                                                                                                                                                                                      |
 | Time                                                                           | 12.00 - 13.00                                                                                                                                                                                     |
 | Attendees                                                                      | Semih, Cemre,  Maria, Eralp, Şehmuz, Şahin                                                                                                                                                        |
-| Absentees                                                                      | Ceyda (out of town), Emre (registration issues)                                                                                                                                                   
+| Absentees                                                                      | Ceyda (out of town), Emre (registration issues)
 | Tasks                                                                          | Assigned to                                                                                                                                                                                       |
 | -------------                                                                  | -------------                                                                                                                                                                                     |
 | User badges                                                                    | Eralp, Şehmuz, Şahin                                                                                                                                                                              |
@@ -37,7 +33,7 @@
 | Group B                                                                        | Şehmuz, Şahin                                                                                                                                                                                     |
 | Assigned Tasks                                                                 | User badges, Search posts and spaces according to posts, spaces, tags and annotations                                                                                                             |
 | Group C                                                                        | Eralp, Ceyda                                                                                                                                                                                      |
-| Assigned Tasks                                                                 | Annotate posts                                                                                                                                                                                    
+| Assigned Tasks                                                                 | Annotate posts
 
 
 

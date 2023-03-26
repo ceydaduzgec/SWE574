@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from users.factory import UserFactory
+from users.tests.factories import UserFactory
 
 
 class UserAccountTests(TestCase):
