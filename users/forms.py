@@ -23,4 +23,9 @@ class NewUserForm(UserCreationForm):
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ("username", "photo", "email")
+        fields = (
+            "first_name",
+            "last_name",
+            "bio",
+            "email",
+        )
