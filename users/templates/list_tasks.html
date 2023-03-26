@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Tasks</h2>
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task.title }}
+                {% if task.completed %}
+                    (Completed)
+                {% else %}
+                    <a href="{% url 'complete_task' task.id %}">Complete task</a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Badges</h2>
+    <ul>
+        {% for badge in badges %}
+            <li>
+                <img src="{{ badge.image.url }}" alt="{{ badge.title }}" title="{{ badge.description }}" />
+                {{ badge.title }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
