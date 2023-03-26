@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 from posts.models import Post
 from users.forms import NewUserForm, ProfileEditForm, UserEditForm
 from users.models import Contact, Profile
+from .models import Badge, BadgeTasks, Contact, Profile
 
 User = get_user_model()
 
@@ -166,5 +167,23 @@ def my_account(request):
     )
 
 
+@login_required
+def list_tasks(request):
+    tasks = BadgeTasks.objects.filter(user=request.user)
+    badges = Profile.objects.get(user=request.user).badges.all()
+    return render(request, 'list_tasks.html', {'tasks': tasks, 'badges': badges})
 
 
+
+def complete_task(request, task_id):
+    task = get_object_or_404(BadgeTasks, id=task_id, user=request.user)
+
+    if not task.completed:
+        task.completed = True
+        task.save()
+
+        # Reward a badge if the task has an associated badge
+        if task.badge:
+            request.user.userprofile.badges.add(task.badge)
+
+    return redirect('list_tasks')  # Replace 'tasks' with the name of the view that displays tasks

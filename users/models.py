@@ -13,7 +13,8 @@ class User(AbstractUser):
         blank=False,
         validators=[
             RegexValidator(
-                r"^[a-z0-9._]{3,}$",  # Only lowercase English letters, period and underscore characters are allowed. Minimum length is three characters.
+                r"^[a-z0-9._]{3,}$",
+                # Only lowercase English letters, period and underscore characters are allowed. Minimum length is three characters.
                 _(
                     "Username is invalid. Only lowercase English letters, period and underscore characters are allowed. Minimum length is three characters."
                 ),
@@ -53,19 +54,6 @@ class Contact(models.Model):
         return f"{self.user_from} follows {self.user_to}"
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    date_of_birth = models.DateField(blank=True, null=True)
-    photo = models.ImageField(
-        default="blank-profile-photo.jpeg",
-        null=True,
-        upload_to="users/%Y/%m/%d/",
-        blank=True,
-    )
-
-    def __str__(self):
-        return f"Profile for user {self.user.username}"
-
 
 class Badge(models.Model):
     name = models.CharField(max_length=150)
@@ -75,10 +63,11 @@ class Badge(models.Model):
     def __str__(self):
         return self.name
 
+
 class BadgeTasks(models.Model):
     title = models.CharField(max_length=150)
     description = models.TextField()
-    completed = models.BooleanField(default = False)
+    completed = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     badge = models.ForeignKey(Badge, on_delete=models.CASCADE, null=True, blank=True)
     date_awarded = models.DateTimeField(auto_now_add=True)
@@ -86,3 +75,17 @@ class BadgeTasks(models.Model):
     def __str__(self):
         return self.title
 
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    date_of_birth = models.DateField(blank=True, null=True)
+    badges = models.ManyToManyField(Badge)
+    photo = models.ImageField(
+        default="blank-profile-photo.jpeg",
+        null=True,
+        upload_to="users/%Y/%m/%d/",
+        blank=True,
+    )
+
+    def __str__(self):
+        return f"Profile for user {self.user.username}"

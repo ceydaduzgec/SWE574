@@ -1,6 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
-
+from . import views
 from users.views import (
     edit,
     login_request,
@@ -46,5 +46,5 @@ urlpatterns = [
     path("users/<username>/", user_detail, name="user_detail"),
     path("users/follow", user_follow, name="user_follow"),
     path("myaccount/", my_account, name="my_account"),
-
+    path('complete_task/<int:task_id>/', views.complete_task, name='complete_task'),
 ]
