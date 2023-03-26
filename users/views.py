@@ -10,7 +10,6 @@ from django.views.decorators.http import require_POST
 
 from posts.models import Post
 from users.forms import NewUserForm, UserEditForm
-from users.models import Contact
 
 User = get_user_model()
 
@@ -131,10 +130,10 @@ def user_follow(request):
         try:
             user = User.objects.get(id=user_id)
             if action == "follow":
-                Contact.objects.get_or_create(user_from=request.user, user_to=user)
+                User.objects.get_or_create(followers=request.user, following=user)
 
             else:
-                Contact.objects.filter(user_from=request.user, user_to=user).delete()
+                User.objects.filter(followers=request.user, following=user).delete()
             return JsonResponse({"status": "ok"})
         except User.DoesNotExist:
             return JsonResponse({"status": "error"})

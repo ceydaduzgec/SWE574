@@ -29,15 +29,9 @@ class User(AbstractUser):
         upload_to="users/%Y/%m/%d/",
         blank=True,
     )
-    followers = models.ManyToManyField(
-        "User",
-        through="Contact",
-        related_name="follower_users",
-        symmetrical=False,
-        verbose_name=_("Followers"),
-        blank=True,
-    )
+    followers = models.ManyToManyField("User", related_name="follower_users", verbose_name=_("Followers"), blank=True)
     following = models.ManyToManyField("User", related_name="following_users", verbose_name=_("Following"), blank=True)
+
     objects = UserManager()
 
     def __str__(self):
@@ -46,15 +40,3 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         self.full_clean()
         return super().save(*args, **kwargs)
-
-
-class Contact(models.Model):
-    user_from = models.ForeignKey(User, related_name="rel_from_set", on_delete=models.CASCADE)
-    user_to = models.ForeignKey(User, related_name="rel_to_set", on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
-
-    class Meta:
-        ordering = ("-created",)
-
-    def __str__(self):
-        return f"{self.user_from} follows {self.user_to}"
