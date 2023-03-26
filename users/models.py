@@ -19,8 +19,16 @@ class User(AbstractUser):
             )
         ],
     )
+    name = models.CharField(_("Name"), max_length=150, blank=True)
     email = models.EmailField(_("Email"), unique=True, blank=False)
     bio = models.TextField(_("Bio"), blank=True, null=False)
+    date_of_birth = models.DateField(blank=True, null=True)
+    photo = models.ImageField(
+        default="blank-profile-photo.jpeg",
+        null=True,
+        upload_to="users/%Y/%m/%d/",
+        blank=True,
+    )
     followers = models.ManyToManyField(
         "User",
         through="Contact",
@@ -31,6 +39,9 @@ class User(AbstractUser):
     )
     following = models.ManyToManyField("User", related_name="following_users", verbose_name=_("Following"), blank=True)
     objects = UserManager()
+
+    def __str__(self):
+        return f"{self.username}"
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -47,17 +58,3 @@ class Contact(models.Model):
 
     def __str__(self):
         return f"{self.user_from} follows {self.user_to}"
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    date_of_birth = models.DateField(blank=True, null=True)
-    photo = models.ImageField(
-        default="blank-profile-photo.jpeg",
-        null=True,
-        upload_to="users/%Y/%m/%d/",
-        blank=True,
-    )
-
-    def __str__(self):
-        return f"Profile for user {self.user.username}"
