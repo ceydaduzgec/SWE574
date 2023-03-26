@@ -8,24 +8,19 @@ User = get_user_model()
 
 
 class NewUserForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
     class Meta:
         model = User
         fields = ("username", "email", "password1", "password2")
 
-    def save(self, commit=True):
-        user = super(NewUserForm, self).save(commit=False)
-        user.email = self.cleaned_data["email"]
-        if commit:
-            user.save()
+    def save(self):
+        user = super().save()
         return user
 
 
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "email")
+        fields = ("username", "first_name", "last_name", "email")
 
 
 class ProfileEditForm(forms.ModelForm):

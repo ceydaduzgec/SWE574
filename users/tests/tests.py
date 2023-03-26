@@ -1,8 +1,11 @@
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
-from users.forms import UserEditForm
+from users.forms import NewUserForm, UserEditForm
 from users.tests.factories import UserFactory
+
+User = get_user_model()
 
 
 class UserAccountTests(TestCase):
@@ -99,7 +102,7 @@ class UserAccountTests(TestCase):
 class UserEditTestCase(TestCase):
     def setUp(cls):
         cls.user = UserFactory()
-        cls.form_data = {"first_name": "tester", "last_name": "joe", "email": "tester@gmail.com"}
+        cls.form_data = {"first_name": "tester", "last_name": "joe", "email": "tester@gmail.com", "username": "tester"}
 
     def test_form_update(self):
         form = UserEditForm(self.form_data, instance=self.user)
@@ -109,3 +112,42 @@ class UserEditTestCase(TestCase):
         self.assertTrue(self.user.first_name, "tester")
         self.assertTrue(self.user.last_name, "joe")
         self.assertTrue(self.user.email, "tester@gmail.com")
+
+
+class NewUserTestCase(TestCase):
+    def setUp(cls):
+        cls.form_data = {
+            "username": "user",
+            "email": "tester@gmail.com",
+            "password1": "123asd.FGH",
+            "password2": "123asd.FGH",
+        }
+
+    def test_valid_form(self):
+        form = NewUserForm(self.form_data)
+        form.save()
+        self.assertTrue(form.is_valid())
+
+        user = User.objects.get(username="user")
+        self.assertTrue(user.username, "tester")
+        self.assertTrue(user.email, "tester@gmail.com")
+
+    def test_invalid_form(self):
+        with self.assertRaisesMessage(
+            ValueError,
+            "The User could not be created because the data didn't validate.",
+        ):
+            form = NewUserForm(self.form_data)
+            form.data["password1"] = "pass"
+            form.data["password2"] = "pass"
+            self.assertFalse(form.is_valid())
+            self.assertEqual(
+                form.errors,
+                {
+                    "password2": [
+                        "This password is too short. It must contain at least 8 characters.",
+                        "This password is too common.",
+                    ]
+                },
+            )
+            form.save()
