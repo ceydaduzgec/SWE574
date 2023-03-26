@@ -1,6 +1,5 @@
-from rest_framework import serializers
-
 from annotations.models import Annotation
+from rest_framework import serializers
 
 
 class AnnotationSerializer(serializers.ModelSerializer):

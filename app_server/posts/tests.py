@@ -1,7 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from django.db.models import Q
 from django.test import TestCase
-
 from users.factory import UserFactory
 
 from .models import Post

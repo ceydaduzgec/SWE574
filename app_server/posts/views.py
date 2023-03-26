@@ -5,10 +5,9 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from taggit.models import Tag
-
 from posts.models import Post
 from spaces.models import Space
+from taggit.models import Tag
 from users.models import Contact
 
 from .forms import CommentForm, EmailPostForm, PostForm

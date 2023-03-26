@@ -1,5 +1,4 @@
 from django.urls import path
-
 from posts.views import (
     add_comment_to_post,
     check_link,

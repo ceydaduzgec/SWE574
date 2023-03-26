@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.postgres.fields import JSONField
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -39,3 +39,14 @@ class Annotation(models.Model):
         if self.selector:
             annotation_dict["selector"] = self.selector
         return annotation_dict
+
+
+class WebAnnotation(models.Model):
+    owner = models.ForeignKey("auth.User", related_name="annotations", on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    data = models.TextField()
+
+    class Meta:
+        ordering = ["created"]
+        verbose_name = "annotation"
+        verbose_name_plural = "annotations"

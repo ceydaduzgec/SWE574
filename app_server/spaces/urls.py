@@ -1,5 +1,4 @@
 from django.urls import path
-
 from spaces.views import (
     create_space,
     my_spaces_list,

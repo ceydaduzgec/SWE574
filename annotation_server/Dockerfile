@@ -1,14 +1,15 @@
-FROM python:3.9-slim-buster
+FROM python:3.8
+
+ENV PYTHONBUFFERED 1
 
 WORKDIR /app
 
-COPY . /app
+COPY requirements.txt /app/
 
-RUN apk add --no-cache postgresql-libs && \
-    apk add --no-cache --virtual .build-deps gcc musl-dev postgresql-dev && \
-    pip install --no-cache-dir -r requirements.txt && \
-    apk --purge del .build-deps
+RUN pip install --upgrade pip
 
-EXPOSE 8000
+RUN pip install --upgrade setuptools
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+RUN pip install ez_setup
+
+RUN pip install -r requirements.txt

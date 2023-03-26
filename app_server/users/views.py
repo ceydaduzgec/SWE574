@@ -7,7 +7,6 @@ from django.db.models import Count
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
-
 from posts.models import Post
 from users.forms import NewUserForm, ProfileEditForm, UserEditForm
 from users.models import Contact, Profile
