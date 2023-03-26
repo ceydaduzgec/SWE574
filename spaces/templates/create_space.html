@@ -1,40 +1,30 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+
 {% block content %}
-  <h1>Create a new space</h1>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+  <div style="width: 500px; margin: 0 auto;">
+    <h1 style="font-size: 24px; margin-bottom: 20px;">Create a New Space</h1>
 
-    <div class="form-group">
-      <label for="id_name">Name:</label>
-      {{ form.name }}
-    </div>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
 
-    <div class="form-group">
-      <label for="id_description">Description:</label>
-      {{ form.description }}
-    </div>
+      <div style="margin-bottom: 20px;">
+        <label for="id_name" style="display: block; font-size: 16px; margin-bottom: 10px;">Name:</label>
+        {{ form.name }}
+      </div>
 
-    <div class="form-group">
-      <label for="id_members">Members:</label>
-      {{ form.members }}
-    </div>
+      <div style="margin-bottom: 20px;">
+        <label for="id_description" style="display: block; font-size: 16px; margin-bottom: 10px;">Description:</label>
+        {{ form.description }}
+      </div>
 
-    <div class="form-group">
-      <label for="id_moderators">Moderators:</label>
-      {{ form.moderators }}
-    </div>
+      <div style="margin-bottom: 20px;">
+        <label for="id_posting_permission" style="display: block; font-size: 16px; margin-bottom: 10px;">Posting Permission:</label>
+        {{ form.posting_permission }}
+      </div>
 
-    <div class="form-group">
-      <label for="id_is_all_members_post_allowed">Allow all members to post:</label>
-      {{ form.is_all_members_post_allowed }}
-    </div>
-
-    <div class="form-group">
-      <label for="id_is_only_moderators_post_allowed">Allow only moderators to post:</label>
-      {{ form.is_only_moderators_post_allowed }}
-    </div>
-
-    <button type="submit" class="btn btn-primary">Create space</button>
-  </form>
+      <div style="text-align: center;">
+        <button type="submit" style="width: 150px; height: 40px; font-size: 16px; margin-top: 20px;background-color: rgba(245, 194, 68, 1);">Create Space</button>
+      </div>
+    </form>
+  </div>
 {% endblock %}
-

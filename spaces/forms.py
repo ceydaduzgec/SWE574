@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from posts.models import Post
 from spaces.models import Space
 
 User = get_user_model()
@@ -13,14 +12,32 @@ class SpaceCreationForm(forms.ModelForm):
         fields = [
             "name",
             "description",
-            "members",
-            "moderators",
-            "is_all_members_post_allowed",
-            "is_only_moderators_post_allowed",
+            "posting_permission",
         ]
 
 
-class SpaceForm(forms.ModelForm):
+POSTING_PERMISSION_CHOICES = (
+    ("all", "Any member can post"),
+    ("granted", "Only granted members can post"),
+    ("moderators", "Only moderators can post"),
+)
+
+
+class SpacePolicyForm(forms.ModelForm):
     class Meta:
-        model = Post
-        fields = ("title", "link", "text")
+        model = Space
+        fields = ["posting_permission", "granted_members"]
+        widgets = {
+            "posting_permission": forms.RadioSelect(attrs={"class": "form-check-input"}),
+            "granted_members": forms.CheckboxSelectMultiple(attrs={"class": "form-check-input"}),
+        }
+        labels = {
+            "posting_permission": "Posting Permission",
+            "granted_members": "Granted Members",
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.posting_permission != "granted":
+            self.fields["granted_members"].widget = forms.HiddenInput()
+        self.fields["posting_permission"].choices = POSTING_PERMISSION_CHOICES

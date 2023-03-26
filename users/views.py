@@ -105,7 +105,6 @@ def user_detail(request, username):
         .annotate(total_comments=Count("comments"))
         .order_by("-total_comments")[:4]
     )
-    print(len(most_commented_posts))
 
     return render(
         request,
