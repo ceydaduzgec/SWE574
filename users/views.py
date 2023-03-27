@@ -88,7 +88,7 @@ def edit(request):
         "edit.html",
         {"user_form": user_form},
         # "posts:my_account.html",
-        # {"user_form": user_form, "profile_form": profile_form},  # TODO: which html should be used
+        # {"user_form": user_form},  # TODO: which html should be used
         # "posts:my_account.html",
     )
 
