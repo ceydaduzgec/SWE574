@@ -5,7 +5,6 @@ from users.views import (
     login_request,
     logout_request,
     my_account,
-    newspace,
     register_request,
     user_detail,
     user_follow,
@@ -45,5 +44,4 @@ urlpatterns = [
     path("users/<username>/", user_detail, name="user_detail"),
     path("users/follow", user_follow, name="user_follow"),
     path("myaccount/", my_account, name="my_account"),
-    path("newspace/", newspace, name="newspace"),
 ]

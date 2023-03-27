@@ -94,3 +94,8 @@ def my_spaces_list(request):
     spaces = Space.objects.filter(Q(owner=request.user) | Q(moderators=request.user)).distinct()
     context = {"spaces": spaces}
     return render(request, "my_spaces_list.html", context)
+
+
+@login_required
+def newspace(request):
+    return render(request, "spaces/templates/spaces_initial.html")
