@@ -128,6 +128,7 @@ def user_list(request):
     return render(request, "user_list.html", {"section": "people", "users": users})
 
 
+@login_required
 def my_account(request):
     if request.method == "POST":
         user_form = UserEditForm(instance=request.user, data=request.POST)

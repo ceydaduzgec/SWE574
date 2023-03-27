@@ -14,7 +14,7 @@ class Post(models.Model):
     # )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    link = models.URLField(max_length=200, blank=True)
+    link = models.URLField(max_length=200, blank=True, unique=False)
     tags = TaggableManager(blank=True)
     labels = models.CharField(max_length=200, blank=True)
     text = models.CharField(max_length=2000, blank=True)
