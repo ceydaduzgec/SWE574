@@ -46,8 +46,11 @@ def register_request(request):
     if request.method == "POST":
         form = NewUserForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            User.objects.create(user=user)
+            user = User.objects.create(
+                username=form.cleaned_data["username"],
+                email=form.cleaned_data["email"],
+                password=form.cleaned_data["password1"],
+            )
 
             login(request, user)
             messages.success(request, "Registration successful.")

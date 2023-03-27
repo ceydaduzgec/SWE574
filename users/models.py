@@ -20,8 +20,6 @@ class User(AbstractUser):
             )
         ],
     )
-    name = models.CharField(_("Name"), max_length=150, blank=True)
-    email = models.EmailField(_("Email"), unique=True, blank=False)
     bio = models.TextField(_("Bio"), blank=True, null=False)
     date_of_birth = models.DateField(blank=True, null=True)
     photo = models.ImageField(
