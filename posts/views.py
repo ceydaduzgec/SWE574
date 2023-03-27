@@ -79,6 +79,14 @@ def post_detail(request, pk):
 
 @login_required
 def post_new(request):
+    duplicatespaces = (
+        request.user.owned_spaces.all()
+        | request.user.moderated_spaces.all()
+        | Space.objects.filter(posting_permission="all", members=request.user)
+        | Space.objects.filter(posting_permission="granted", granted_members=request.user)
+    )
+    spaces = duplicatespaces.values("id", "name").distinct()
+
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
 
@@ -87,12 +95,17 @@ def post_new(request):
             post.author = request.user
             post.published_date = timezone.now()
             post.save()
+            # Get the selected spaces from the form and add them to the post
+            selected_spaces = form.cleaned_data.get("spaces")
+            if selected_spaces:
+                post.spaces.set(selected_spaces)
+
             post.tags.add(*form.cleaned_data["tags"])
 
             return redirect("post_detail", pk=post.pk)
     else:
         form = PostForm()
-    return render(request, "post_edit.html", {"form": form})
+    return render(request, "post_edit.html", {"form": form, "spaces": spaces})
 
 
 @login_required
@@ -150,12 +163,12 @@ def search(request):
         searched = request.POST["searched"]
         searched = searched.lower()
 
-        # Search posts
+        # Search posts with the given keyword
         posts_s = Post.objects.filter(
             Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
         ).distinct()
 
-        # Search spaces
+        # Search spaces with the given keyword
         spaces_s = Space.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
 
         return render(
@@ -191,26 +204,6 @@ def my_research(request):
             "most_commented_posts": most_commented_posts,
         },
     )
-
-
-def macro_economy(request):
-    posts = Post.objects.filter(labels__contains="Macro")
-    return render(request, "my_research.html", {"posts": posts})
-
-
-def equity(request):
-    posts = Post.objects.filter(labels__contains="Equity")
-    return render(request, "my_research.html", {"posts": posts})
-
-
-def fixed_income(request):
-    posts = Post.objects.filter(labels__contains="Fixed")
-    return render(request, "my_research.html", {"posts": posts})
-
-
-def company_news(request):
-    posts = Post.objects.filter(labels__contains="company")
-    return render(request, "my_research.html", {"posts": posts})
 
 
 def post_share(request, pk):

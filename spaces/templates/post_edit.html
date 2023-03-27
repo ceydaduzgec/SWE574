@@ -2,62 +2,83 @@
 
 {% block content %}
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <h2>Box Your Post</h2>
+    
 
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
+    <div class="d-flex justify-content-end">
+        <h2 style="color: white;" >Box Your Post</h2>
+        
+        <div class="container" >
+            <div class="d-flex justify-content-start">
+                <h2 >Box Your Post</h2>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
 
-        <div class="mb-3">
-            <label for="Title" class="form-label">Title:</label>
-            <input name="title" type="Title" class="form-control" id="exampleTitle" aria-describedby="TitleHelp">
-            <div id="TitleHelp" class="form-text">Provide a Title</div>
-        </div>
+                <div class="mb-3">
+                    <label  for="Title" class="form-label">Title:</label>
+                    <input name="title" type="Title" class="form-control" id="exampleTitle" aria-describedby="TitleHelp">
+                    <div id="TitleHelp" class="form-text">Provide a Title</div>
+                </div>
 
-        <div class="mb-3">
-            <label for="Link" class="form-label">Link:</label>
-            <input name="link" type="Link" class="form-control" id="link-input" aria-describedby="LinkHelp">
-            <div id="LinkHelp" class="form-text">Provide source Link</div>
-            {% if messages %}
-                {% for message in messages %}
-                    {% if message.tags == 'warning' %}
-                        <div class="alert alert-warning" role="alert">
-                            {{ message }}
-                        </div>
+                <div class="mb-3">
+                    <label for="Link" class="form-label">Link:</label>
+                    <input name="link" type="Link" class="form-control" id="link-input" aria-describedby="LinkHelp">
+                    <div id="LinkHelp" class="form-text">Provide source Link</div>
+                    {% if messages %}
+                        {% for message in messages %}
+                            {% if message.tags == 'warning' %}
+                                <div class="alert alert-warning" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
                     {% endif %}
-                {% endfor %}
-            {% endif %}
-        </div>
+                </div>
 
-        <div class="mb-3">
-            <label for="tags" class="form-label">Tags:</label>
-            <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp">
-            <div id="TagsHelp" class="form-text">Provide a Tag</div>
-        </div>
+                <div class="mb-3">
+                    <label  for="tags" class="form-label">Tags:</label>
+                    <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp">
+                    <div id="TagsHelp" class="form-text">Provide a Tag</div>
+                </div>
 
-        <br>
+                <br>
+
+                <p>
+                    <label  for="id_upload">Upload Image:</label>
+                    <br/>
+                    <br/>
+                    <input type="file" name="image" id="id_upload">
+                </p>
+                <br>
+                <p>
+                    <label  for="id_text">Text:</label>
+                    <br/>
+                    <textarea name="text" cols="40" rows="10" required="" id="id_text" data-gramm="false"
+                            wt-ignore-input="true"></textarea>
+                </p>
 
 <p>
-    <label for="id_upload">Upload Image:</label>
-    <input type="file" name="image" id="id_upload">
+    <label for="id_spaces">Select spaces:</label>
+    <select name="spaces" id="id_spaces" multiple>
+        {% for space in spaces %}
+         <option value="{{ space.id }}">{{ space.name }}</option>
+        {% endfor %}
+    </select>
 </p>
-             <br>
-        <p>
-            <label for="id_text">Text:</label>
-            <textarea name="text" cols="40" rows="10" required="" id="id_text" data-gramm="false"
-                      wt-ignore-input="true"></textarea>
-        </p>
 
 
-        <button type="submit" class="btn btn-primary">Save</button>
-    {% if form.errors %}
-            <ul>
-                {% for error in form.errors %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-    {% endif %}
+                <button style="background-color: rgba(245, 194, 68, 1); color:black" type="submit" class="btn btn-primary">Save</button>
+                {% if form.errors %}
+                        <ul>
+                            {% for error in form.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                {% endif %}
 
-    </form>
+            </form>
+    </div>
+    </div>
 
 <script>
 $(document).ready(function() {
