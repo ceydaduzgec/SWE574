@@ -73,26 +73,6 @@ def logout_request(request):
     return redirect("login")
 
 
-def edit(request):
-    if request.method == "POST":
-        user_form = UserEditForm(instance=request.user, data=request.POST)
-        if user_form.is_valid():
-            user_form.save()
-            messages.success(request, "Profile updated successfully")
-        else:
-            messages.error(request, "Error updating your profile")
-    else:
-        user_form = UserEditForm(instance=request.user)
-    return render(
-        request,
-        "edit.html",
-        {"user_form": user_form},
-        # "posts:my_account.html",
-        # {"user_form": user_form},  # TODO: which html should be used
-        # "posts:my_account.html",
-    )
-
-
 @login_required
 def user_detail(request, username):
     user = get_object_or_404(User, username=username, is_active=True)
