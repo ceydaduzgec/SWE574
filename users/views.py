@@ -165,3 +165,8 @@ def my_account(request):
         "my_account.html",
         {"user_form": user_form, "profile_form": profile_form},
     )
+
+
+@login_required
+def newspace(request):
+    return render(request, "spaces_initial.html")
