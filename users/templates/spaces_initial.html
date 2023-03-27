@@ -5,20 +5,20 @@
 {% endblock %}
 
 {% block content %}
-    
+
     <nav class="py-2 bg-light border-bottom">
         <div class="container d-flex flex-wrap justify-content-center">
             <ul class="nav">
-                <li class="nav-item"><a href="/newspacers" class="nav-link link-dark px-2 active" aria-current="page">For New Spacers</a>
+                <li class="nav-item"><a href="{% url 'newspacers' %}" class="nav-link link-dark px-2 active" aria-current="page">For New Spacers</a>
                 </li>
-                <li class="nav-item"><a href="/topposts" class="nav-link link-dark px-2">Top Posts</a></li>
-                <li class="nav-item"><a href="/discover" class="nav-link link-dark px-2">Discover</a></li>
-                <li class="nav-item"><a href="/newest" class="nav-link link-dark px-2">Newest</a></li>
+                <li class="nav-item"><a href="{% url 'topposts' %}" class="nav-link link-dark px-2">Top Posts</a></li>
+                <li class="nav-item"><a href="{% url 'discover' %}" class="nav-link link-dark px-2">Discover</a></li>
+                <li class="nav-item"><a hhref="{% url 'newest' %}" class="nav-link link-dark px-2">Newest</a></li>
             </ul>
         </div>
-    </nav>   
+    </nav>
 
-    </br> 
+    </br>
 
     <table border="2">
         <tr>
@@ -26,7 +26,7 @@
         </td>
         </tr>
     </table>
- 
+
     <div class="container">
         <div style="border: 3px solid red; padding: 10px; float:left;">Choose your interest:
             <label class="clickable" style="color: blue; border:2px solid blue;">Business</label>
@@ -58,5 +58,5 @@
               </tr>
         </div>
     </div>
-    
+
 {% endblock %}

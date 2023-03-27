@@ -60,14 +60,14 @@
                 <div class="d-flex flex-wrap align-items-center justify-content-between">
                     <ul class="nav col-12 col-lg-auto mb-2 justify-content-center mb-md-0">
                         <li>
-                            <a href="/home">
+                            <a href="{% url 'post_list' %}">
                                 <img class="img-fluid" src="{{ '/images/image/logo.jpeg' }}" style="width:100px;"/>
                             </a>
                         </li>
-                        <li><a href="/home" class="nav-link px-2 text-white">Main</a></li>
+                        <li><a href="{% url 'post_list' %}" class="nav-link px-2 text-white">Main</a></li>
 
-                <li><a href="/spaces" class="nav-link px-2 text-white">All Spaces</a></li>
-                <li><a href="/spaces/myspaces" class="nav-link px-2 text-white">My Spaces</a></li>
+                <li><a href="{% url 'space_list' %}" class="nav-link px-2 text-white">All Spaces</a></li>
+                <li><a href="{% url 'my_spaces_list' %}" class="nav-link px-2 text-white">My Spaces</a></li>
                     </ul>
                     <a href="{% url 'post_new' %}" class="btn btn-warning"> BOX_it =
 
@@ -96,33 +96,16 @@
         </header>
 </div>
 </div>
-{% comment %}<div class="page-header">
-    <h1><a href="/">SWE-573 Project</a></h1>
-    <div class="links">
-        {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}">Logout</a>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'register' %}">Register</a>
-        {% endif %}
-    </div>
-
-    <a href="{% url 'post_new' %}" class="top-menu">
-
-        {% include './icons/file-earmark-plus.svg' %}
-    </a>
-</div>{% endcomment %}
-
 
 <div class="container">
     <div class="row" style="margin-right: -300px">
         <div class="sidenav col-md-2">
             <ul class="nav" style="display: block; list-style: none; padding-left: 0;">
-                <li class="nav-item" style="padding-left: 50px;"><a href="/home" class="nav-link link-dark px-2 active" aria-current="page">Home</a>
+                <li class="nav-item" style="padding-left: 50px;"><a href="{% url 'post_list' %}" class="nav-link link-dark px-2 active" aria-current="page">Home</a>
                 </li>
-                <li class="nav-item" style="padding-left: 50px;"><a href="/myresearch" class="nav-link link-dark px-2">My Research</a></li>
-                <li class="nav-item" style="padding-left: 50px;"><a href="/users" class="nav-link link-dark px-2">Friends</a></li>
-                <li class="nav-item" style="padding-left: 50px;"><a href="/myaccount" class="nav-link link-dark px-2">My Account</a></li>
+                <li class="nav-item" style="padding-left: 50px;"><a href="{% url 'my_research' %}" class="nav-link link-dark px-2">My Research</a></li>
+                <li class="nav-item" style="padding-left: 50px;"><a href="{% url 'user_list' %}" class="nav-link link-dark px-2">Friends</a></li>
+                <li class="nav-item" style="padding-left: 50px;"><a href="{% url 'my_account' %}" class="nav-link link-dark px-2">My Account</a></li>
             </ul>
         </div>
         <div class="col-md-10">

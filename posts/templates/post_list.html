@@ -9,14 +9,14 @@
             <div class="col">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <a href="/post/{{ post.id }}" class="text-decoration-none">
+                        <a href="{% url 'post_detail' post.id %}" class="text-decoration-none">
                             <h3 class="text-overflow" title="{{ post.title }}">{{ post.title }}</h3>
                         </a>
 
-     {% if post.image %}
-                           <img src="{{ post.image.url }}" alt="{{ post.title }}" width="160" height="160">
-                    {% endif %}
-                                        <small class="text-muted"> {{ post.text }}</small>
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" alt="{{ post.title }}" width="160" height="160">
+                        {% endif %}
+                        <small class="text-muted"> {{ post.text }}</small>
 
                         <p class="tags">
                             Tags:
@@ -34,7 +34,7 @@
                                 <a class="btn btn-outline-dark" href="{% url 'post_share' pk=post.id %}">Share this
                                     post </a>
 
-                                <a href="/post/{{ post.id }}/comment/" class="btn btn-outline-success">
+                                <a href="{% url 'add_comment_to_post' post.id %}" class="btn btn-outline-success">
                                     Comment> ({{ post.total_comments }})</a>
                                 <a class="btn btn-secondary like-button" style="" data-id="{{ post.id }}">Like
                                     {% if post.total_likes %}({{ post.total_likes }}){% endif %}</a>
@@ -56,19 +56,6 @@
 
                 </div>
             </div>
-
-            {% comment %}<article>
-            <time>
-                Published: {{ post.published_date }}
-            </time>
-            <h2>
-                <a href="/post/{{ post.id }}">
-                    {{ post.title }}
-                </a>
-            </h2>
-            <p> {{ post.text|linebreaksbr }} </p>
-
-        </article>{% endcomment %}
         {% endfor %}
     </div>
 {% endblock %}
