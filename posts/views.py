@@ -9,7 +9,6 @@ from taggit.models import Tag
 
 from posts.models import Post
 from spaces.models import Space
-from users.models import Contact
 
 from .forms import CommentForm, EmailPostForm, PostForm
 
@@ -25,10 +24,10 @@ def check_link(request):
 @login_required
 def post_list(request, tag_slug=None):
     # Getting friends of users
-    friendsofUser = Contact.objects.filter(user_from=request.user).all()
+    friendsofUser = User.objects.filter(followers=request.user).all()
 
     # Mapping friends of users
-    friendsofUser = map(lambda x: x.user_to, friendsofUser)
+    friendsofUser = map(lambda x: x.following, friendsofUser)
 
     # Getting spaces where user is an owner, member, granted member or moderator
     spaces = Space.objects.filter(
@@ -163,12 +162,12 @@ def search(request):
         searched = request.POST["searched"]
         searched = searched.lower()
 
-        # Search posts
+        # Search posts with the given keyword
         posts_s = Post.objects.filter(
             Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
         ).distinct()
 
-        # Search spaces
+        # Search spaces with the given keyword
         spaces_s = Space.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
 
         return render(

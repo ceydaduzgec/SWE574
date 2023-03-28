@@ -1,4 +1,4 @@
-{% extends "eralp.html" %}
+{% extends "header.html" %}
 
 {% block content %}
 
@@ -20,13 +20,7 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-                {#                <form method="POST">#}
-                {#                    {% csrf_token %}#}
-                {#                    <div class="row mt-2">#}
-                {#                        <button class="btn btn-primary" type="submit">Login</button>#}
-                {#                        <a class="btn btn-primary" href="/register">Register</a>#}
-                {#                    </div>#}
-                {#                </form>#}
+
                 <div class="d-flex justify-content-center">
                     <form method="POST" class="col-9">
                         {% csrf_token %}
@@ -40,7 +34,7 @@
                         </div>
                         <div class="d-flex flex-column align-items-center mt-2">
                             <button class="btn btn-primary mb-3" type="submit">Login</button>
-                            <a class="btn btn-primary" href="/register">Register</a>
+                            <a class="btn btn-primary" href="{% url 'register' %}">Register</a>
                         </div>
                     </form>
                 </div>

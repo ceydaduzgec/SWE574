@@ -272,6 +272,10 @@ tags
 
 ### Project template
 uploads/*
+*jpeg
+*jpg
+*png
+*gif
 
 .pytest_cache/
 .ipython/
