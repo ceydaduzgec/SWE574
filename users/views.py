@@ -9,8 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from posts.models import Post
-from users.forms import NewUserForm, ProfileEditForm, UserEditForm
-from users.models import Contact, Profile
+from users.forms import NewUserForm, UserEditForm
 
 User = get_user_model()
 
@@ -47,8 +46,11 @@ def register_request(request):
     if request.method == "POST":
         form = NewUserForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            Profile.objects.create(user=user)
+            user = User.objects.create(
+                username=form.cleaned_data["username"],
+                email=form.cleaned_data["email"],
+                password=form.cleaned_data["password1"],
+            )
 
             login(request, user)
             messages.success(request, "Registration successful.")
@@ -72,29 +74,6 @@ def logout_request(request):
     # messages.info(request, "Logged out successfully!"),
     auth.logout(request)
     return redirect("login")
-
-
-def edit(request):
-    if request.method == "POST":
-        user_form = UserEditForm(instance=request.user, data=request.POST)
-        profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, "Profile updated successfully")
-        else:
-            messages.error(request, "Error updating your profile")
-    else:
-        user_form = UserEditForm(instance=request.user)
-        profile_form = ProfileEditForm(instance=request.user.profile)
-    return render(
-        request,
-        "edit.html",
-        {"user_form": user_form, "profile_form": profile_form},
-        # "posts:my_account.html",
-        # {"user_form": user_form, "profile_form": profile_form},  # TODO: which html should be used
-        # "posts:my_account.html",
-    )
 
 
 @login_required
@@ -133,10 +112,10 @@ def user_follow(request):
         try:
             user = User.objects.get(id=user_id)
             if action == "follow":
-                Contact.objects.get_or_create(user_from=request.user, user_to=user)
+                User.objects.get_or_create(followers=request.user, following=user)
 
             else:
-                Contact.objects.filter(user_from=request.user, user_to=user).delete()
+                User.objects.filter(followers=request.user, following=user).delete()
             return JsonResponse({"status": "ok"})
         except User.DoesNotExist:
             return JsonResponse({"status": "error"})
@@ -149,24 +128,17 @@ def user_list(request):
     return render(request, "user_list.html", {"section": "people", "users": users})
 
 
+@login_required
 def my_account(request):
     if request.method == "POST":
         user_form = UserEditForm(instance=request.user, data=request.POST)
-        profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user_form.save()
-            profile_form.save()
 
     else:
         user_form = UserEditForm(instance=request.user)
-        profile_form = ProfileEditForm(instance=request.user.profile)
     return render(
         request,
         "my_account.html",
-        {"user_form": user_form, "profile_form": profile_form},
+        {"user_form": user_form},
     )
-
-
-@login_required
-def newspace(request):
-    return render(request, "spaces_initial.html")

@@ -9,13 +9,13 @@
         <br/>
         <h2> Post Results </h2>
         {% for post in posts_s %}
-            <a href="/post/{{ post.id }}">{{ post}} - {{ post.title}}  </a><br/>
+            <a href="{% url 'post_detail' post.id %}">{{ post}} - {{ post.title}}  </a><br/>
         {% endfor %}
 
           <br>
   <h2>Space Results</h2>
   {% for space in spaces_s %}
-    <a href="/spaces/{{ space.id }}">{{ space }} - {{ space.name }}</a><br>
+    <a href="{% url 'space_detail' space.id %}">{{ space }} - {{ space.name }}</a><br>
   {% endfor %}
 
     {% else %}
@@ -23,14 +23,4 @@
 
     {% endif  %}
 
-
-
-
-
-
-
-
-
-
 {% endblock %}
-

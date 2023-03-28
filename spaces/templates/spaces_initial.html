@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Choose you Interest
+{% endblock %}
+
+{% block content %}
+
+
+    {% comment %} Broken dependeny on the base.html file. {% endcomment %}
+
+    {% comment %}
+    <nav class="py-2 bg-light border-bottom">
+        <div class="container d-flex flex-wrap justify-content-center">
+            <ul class="nav">
+                <li class="nav-item"><a href="{% url 'newspacers' %}" class="nav-link link-dark px-2 active" aria-current="page">For New Spacers</a></li>
+                <li class="nav-item"><a href="{% url 'topposts' %}" class="nav-link link-dark px-2">Top Posts</a></li>
+                <li class="nav-item"><a href="{% url 'discover' %}" class="nav-link link-dark px-2">Discover</a></li>
+                <li class="nav-item"><a hhref="{% url 'newest' %}" class="nav-link link-dark px-2">Newest</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    </br>
+
+    <table border="2">
+        <tr>
+          <td>Hey there! I'm excited to tell you about the Space Feature of our application. It's a great way to create and join communities (spaces) where you can share posts with other members. You can search for spaces by keywords or even view recommended spaces based on your interests and activity.
+        </td>
+        </tr>
+    </table>
+
+    <div class="container">
+        <div style="border: 3px solid red; padding: 10px; float:left;">Choose your interest:
+            <label class="clickable" style="color: blue; border:2px solid blue;">Business</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Food and Drink</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Home and Garden</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Movies and Television</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Books and Literature</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Family and Parenting</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Life stages</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Hobbies and Interests</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Education</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Beauty</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Events</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Health</label>
+            <button style="color: blue; border:2px solid blue; background-color: aquamarine;">+</button>
+
+        </div>
+    </div>
+    {% endcomment %}
+    <div class="container" >
+        <div style="border: 3px solid red; padding: 10px; float:right">This is the first container.
+            <tr>
+                <td>General Space Policies
+
+                    Space posts must not contain any content that is illegal, harmful, or offensive.
+                    Moderators must be active and responsive to reports of inappropriate content or behavior within their space.
+                    Members can to report inappropriate content or behavior within a space.
+                    Spaces that violate the policy requirements may be removed or disabled.
+              </td>
+              </tr>
+        </div>
+    </div>
+
+{% endblock %}
