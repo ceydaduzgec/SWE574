@@ -5,6 +5,37 @@
 {% block title %}{{ userToSee.get_full_name }}{% endblock %}
 {% block content %}
 
+<head>
+<style>
+    .badge {
+        display: flex;
+        align-items: center;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    .badge-image {
+        margin-right: 10px;
+    }
+    .badge-image img {
+        width: 64px;
+        height: 64px;
+    }
+    .badge-name {
+        font-weight: bold;
+        font-size: 1.2em;
+    }
+    .badge-description {
+        font-size: 0.9em;
+    }
+    .badge-earned-at {
+        font-size: 0.8em;
+        color: #888;
+    }
+</style>
+
+</head>
     <h1>{{ userToSee.get_full_name }}</h1>
     <div class="profile-info">
         <img src="{% thumbnail userToSee.profile.photo 180x180 %}" class="user-detail">
@@ -49,6 +80,7 @@
         </div>
     </div>
 
+
     <div class="row">
         <div class="col">
             <div class="col-md">
@@ -56,11 +88,19 @@
                     <div class="card-header">
                         <h5 class="card-title"> Post Badges</h5>
                     </div>
-                    {% for badge in badges %}
-                    <li>
-                        <img src="{{ badge.image.url }}" alt="{{ badge.title }}" title="{{ badge.description }}"/>
-                        {{ badge.title }}
-                    </li>
+                    {% for user_badge in user.userbadge_set.all %}
+                    <div class="badge">
+                        <div class="badge-image">
+                            <img src="{{ user_badge.badge.image.url }}" alt="{{ user_badge.badge.name }}"/>
+                        </div>
+                        <div class="badge-details">
+                            <div class="badge-name">{{ user_badge.badge.name }}</div>
+                            <div class="badge-description"> Description: {{ user_badge.badge.description }}</div>
+                            <div class="badge-earned-at">Earned on {{ user_badge.earned_at|date:"F j, Y" }}</div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p>No badges earned yet.</p>
                     {% endfor %}
                     <div class="card-body">
 

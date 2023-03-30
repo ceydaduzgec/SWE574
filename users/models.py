@@ -53,19 +53,6 @@ class Contact(models.Model):
     def __str__(self):
         return f"{self.user_from} follows {self.user_to}"
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    date_of_birth = models.DateField(blank=True, null=True)
-    photo = models.ImageField(
-        default="blank-profile-photo.jpeg",
-        null=True,
-        upload_to="users/%Y/%m/%d/",
-        blank=True,
-    )
-
-    def __str__(self):
-        return f"Profile for user {self.user.username}"
-
 
 class Badge(models.Model):
     name = models.CharField(max_length=100)
@@ -83,3 +70,17 @@ class UserBadge(models.Model):
 
     def __str__(self):
         return f"{self.user} has {self.badge}"
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    date_of_birth = models.DateField(blank=True, null=True)
+    photo = models.ImageField(
+        default="blank-profile-photo.jpeg",
+        null=True,
+        upload_to="users/%Y/%m/%d/",
+        blank=True,
+    )
+
+    def __str__(self):
+        return f"Profile for user {self.user.username}"
