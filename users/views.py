@@ -110,16 +110,17 @@ def user_follow(request):
     action = request.POST.get("action")
     if user_id and action:
         try:
-            user = User.objects.get(id=user_id)
+            user = get_object_or_404(User, id=user_id)
             if action == "follow":
-                User.objects.get_or_create(followers=request.user, following=user)
-
+                user.followers.add(request.user)
+                message = f"You are now following {user.username}."
             else:
-                User.objects.filter(followers=request.user, following=user).delete()
-            return JsonResponse({"status": "ok"})
+                user.followers.remove(request.user)
+                message = f"You have unfollowed {user.username}."
+            return JsonResponse({"status": "ok", "message": message})
         except User.DoesNotExist:
-            return JsonResponse({"status": "error"})
-    return JsonResponse({"status": "error"})
+            return JsonResponse({"status": "error", "message": "User not found."})
+    return JsonResponse({"status": "error", "message": "Invalid request."})
 
 
 @login_required

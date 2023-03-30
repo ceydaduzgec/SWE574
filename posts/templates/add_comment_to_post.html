@@ -8,8 +8,6 @@
         <div class="mb-3">
             <label for="Author" class="form-label">Author:</label>
             <h4>{{ user.username }}</h4>
-
-
         </div>
 
         <br>
@@ -19,8 +17,8 @@
                       wt-ignore-input="true"></textarea>
         </p>
 
-
         <button type="submit" class="btn btn-primary">Save</button>
+    </form>
 
         {% if form.errors %}
             <ul>

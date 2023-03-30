@@ -2,7 +2,6 @@
 
 {% block content %}
 
-
     <div class="row">
         <div class="blog-post border border-dark rounded my-3 col-9 p-0">
             <div class="d-flex justify-content-between">
@@ -40,22 +39,29 @@
             </div>
         </div>
 
-
         <hr>
         <div class="d-flex">
+                    <form method="POST" action="{% url 'add_comment_to_post' pk=post.id%}">
+                        {% csrf_token %}
+                        <a class="btn btn-outline-success me-2" type="submit">Add comment</a>
+                    </form>
 
-            <a class="btn btn-outline-success me-2" href="comment/">Add comment</a>
-            <a class="btn btn-outline-dark me-2" href="{% url 'post_share' pk=post.id %}">Share this post </a>
+                    <form method="POST" action="{% url 'bookmark' pk=post.id %}">
+                        {% csrf_token %}
+                        <a class="btn btn-outline-dark me-2" type="submit">Bookmark</a>
+                    </form>
 
-            <button data-id="{{ post.id }}" class="btn btn-secondary like-button me-2">
-                Like <span class="badge bg-primary" id="total_likes_badge">{{ total_likes }}</span>
+                    <form method="POST" action="{% url 'post_share' pk=post.id %}">
+                        {% csrf_token %}
+                        <a class="btn btn-outline-dark me-2" type="submit">Share this post</a>
+                    </form>
 
-            </button>
-
-
-            <a href="{{ post.link }}" target="_blank" class="btn btn-outline-primary"> Goto> </a>
+                    <button data-id="{{ post.id }}" class="btn btn-secondary like-button me-2">
+                        Like <span class="badge bg-primary" id="total_likes_badge">{{ total_likes }}</span>
+                    </button>
+                    <a href="{{ post.link }}" target="_blank" class="btn btn-outline-primary"> Goto> </a>
+            </form>
         </div>
-
 
         <div>
             <br>

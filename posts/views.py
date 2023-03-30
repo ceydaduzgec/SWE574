@@ -5,12 +5,12 @@ from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 from taggit.models import Tag
 
+from posts.forms import CommentForm, EmailPostForm, PostForm
 from posts.models import Post
 from spaces.models import Space
-
-from .forms import CommentForm, EmailPostForm, PostForm
 
 User = get_user_model()
 
@@ -227,6 +227,7 @@ def post_share(request, pk):
     return render(request, "share.html", {"post": post, "form": form, "sent": sent})
 
 
+@require_POST
 def like_post(request, pk):
     user_id = request.user.id
     post = get_object_or_404(Post, id=pk)
@@ -237,3 +238,24 @@ def like_post(request, pk):
             post.likes.add(request.user)
         return JsonResponse({"status": "ok", "likes_count": post.total_likes()})
     return JsonResponse({"status": "error"})
+
+
+@require_POST
+@login_required
+def toggle_bookmark(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+
+    if post in user.bookmarks.all():
+        user.bookmarks.remove(post)
+        bookmarked = False
+    else:
+        user.bookmarks.add(post)
+        bookmarked = True
+
+    response = {
+        "bookmarked": bookmarked,
+        "post_id": post_id,
+    }
+
+    return JsonResponse(response, status=200 if bookmarked else 204)
