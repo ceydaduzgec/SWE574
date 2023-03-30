@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Complete Task: {{ task.title }}</h2>
+    <p>{{ task.description }}</p>
+
+    {% if not task.completed %}
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit">Complete Task</button>
+        </form>
+    {% else %}
+        <p>This task is already completed.</p>
+    {% endif %}
+{% endblock %}

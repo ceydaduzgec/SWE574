@@ -9,10 +9,6 @@
     <div class="profile-info">
         <img src="{% thumbnail userToSee.profile.photo 180x180 %}" class="user-detail">
 
-        {% if count > -1 %}
-                      <img src="{% static 'images/10.png' %}" alt="badge" class="badge-image">
-             <img src="{% static 'images/10.png' %}" alt="badge" class="badge-image">
-          {% endif %}
     </div>
     {% with total_followers=userToSee.followers.count %}
         <span class="count">
@@ -31,6 +27,76 @@
             {% include "list_ajax.html" with images=user.images_created.all %}
         </div>
     {% endwith %}
+
+       <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center mb-3" id="Badges">
+                    <div class="card-header">
+                        <h5 class="card-title"> Space Badges</h5>
+                    </div>
+                    {% for badge in badges %}
+                    <li>
+                        <img src="{{ badge.image.url }}" alt="{{ badge.title }}" title="{{ badge.description }}"/>
+                        {{ badge.title }}
+                    </li>
+                    {% endfor %}
+                    <div class="card-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center mb-3" id="Badges">
+                    <div class="card-header">
+                        <h5 class="card-title"> Post Badges</h5>
+                    </div>
+                    {% for badge in badges %}
+                    <li>
+                        <img src="{{ badge.image.url }}" alt="{{ badge.title }}" title="{{ badge.description }}"/>
+                        {{ badge.title }}
+                    </li>
+                    {% endfor %}
+                    <div class="card-body">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div class="row">
+            <div class="col">
+                <div class="col-md">
+                    <div class="card text-center mb-3" id="Tasks">
+                        <div class="card-header">
+                            <h5 class="card-title"> Tasks </h5>
+                        </div>
+                        {% for badge in badges %}
+                            {% for task in tasks %}
+                            <li>
+                                {{ task.title }}
+                                {% if task.completed %}
+                                (Completed)
+                                {% else %}
+                                <a href="{% url 'complete_task' task.id %}">Complete task</a>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+                        {% endfor %}
+                        <div class="card-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <div class="row">
         <div class="col">
