@@ -6,10 +6,6 @@
 - Mock-ups shall be revised. Not required features exists.
 - Annotation feature is important.
 - Web Annotation Data Model shall be followed.
-
-### TODO: Do these steps and delete them.
-
-- Assign progress status from the project.
 - Create interface for recommendations.
 - Create annotation framework.
 
