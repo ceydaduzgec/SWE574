@@ -53,32 +53,9 @@ class Contact(models.Model):
     def __str__(self):
         return f"{self.user_from} follows {self.user_to}"
 
-
-class Badge(models.Model):
-    name = models.CharField(max_length=150)
-    description = models.TextField()
-    image = models.ImageField(upload_to='badges/')
-
-    def __str__(self):
-        return self.name
-
-
-class BadgeTasks(models.Model):
-    title = models.CharField(max_length=150)
-    description = models.TextField()
-    completed = models.BooleanField(default=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    badge = models.ForeignKey(Badge, on_delete=models.CASCADE, null=True, blank=True)
-    date_awarded = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.badge.name}"
-
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     date_of_birth = models.DateField(blank=True, null=True)
-    badges = models.ManyToManyField(Badge)
     photo = models.ImageField(
         default="blank-profile-photo.jpeg",
         null=True,
@@ -88,3 +65,21 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"Profile for user {self.user.username}"
+
+
+class Badge(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    image = models.ImageField(upload_to="badges/", default="badges/default.png")
+
+    def __str__(self):
+        return self.name
+
+class UserBadge(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+
+
+    def __str__(self):
+        return f"{self.user} has {self.badge}"

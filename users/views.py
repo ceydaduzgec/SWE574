@@ -11,8 +11,8 @@ from posts.models import Post
 from users.forms import NewUserForm, ProfileEditForm, UserEditForm
 from users.models import Contact, Profile
 
-from .forms import BadgeTasksForm, BadgeForm
-from .models import Badge, BadgeTasks, Contact, Profile
+
+from .models import Contact, Profile
 
 User = get_user_model()
 
@@ -169,58 +169,7 @@ def my_account(request):
     )
 
 
-@login_required
-def list_tasks(request):
-    tasks = BadgeTasks.objects.filter(user=request.user)
-    badges = Profile.objects.get(user=request.user).badges.all()
-    return render(request, 'list_tasks.html', {'tasks': tasks, 'badges': badges})
 
-
-@login_required
-def complete_task(request, task_id):
-    task = get_object_or_404(BadgeTasks, id=task_id, user=request.user)
-
-    if request.method == 'POST':
-        if not task.completed:
-            task.completed = True
-            task.save()
-
-            # Reward a badge if the task has an associated badge
-            if task.badge:
-                request.user.userprofile.badges.add(task.badge)
-
-        return redirect('list_tasks')
-
-    return render(request, 'complete_task.html', {'task': task})
-
-
-@login_required
-def create_task(request):
-    if request.method == 'POST':
-        form = BadgeTasksForm(request.POST)
-        if form.is_valid():
-            task = form.save(commit=False)
-            task.user = request.user
-            task.save()
-            return redirect('list_tasks')
-    else:
-        form = BadgeTasksForm()
-
-    return render(request, 'create_task.html', {'form': form})
-
-
-@login_required
-def create_badge(request):
-    if request.method == 'POST':
-        form = BadgeForm(request.POST)
-        if form.is_valid():
-            badge = form.save(commit=False)
-            badge.save()
-            return redirect('list_tasks')
-    else:
-        form = BadgeForm()
-
-    return render(request, 'create_badge.html', {'form': form})
 
 
 
