@@ -1,4 +1,4 @@
-# Class Notes on 6 Mar 23:
+# Class Notes on 6 March 23:
 
 - Importance on requirements specifications are emphasised.
 - Requirements shall be updated.
