@@ -61,9 +61,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-if DEBUG:
-    INSTALLED_APPS.append("django_extensions")
-
 ROOT_URLCONF = "SWE574_project.urls"
 
 TEMPLATES = [
