@@ -62,3 +62,32 @@ def award_space_badge(sender, instance, created, **kwargs):
                 " send notification to user "
                 user_badge.save()
                 pass
+
+@receiver(post_save, sender=Post)
+def award_post_badge(sender, instance, created, **kwargs):
+    if created:
+        user = instance.author
+        post_count = Post.objects.filter(author=user).count()
+
+        if post_count >= 1:
+            badge = Badge.objects.get(name='Post Duck')
+            user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
+            if created:
+                " send notification to user "
+                user_badge.save()
+                pass
+        if post_count >= 2:
+            badge = Badge.objects.get(name='Post Knight')
+            user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
+            if created:
+                " send notification to user "
+                user_badge.save()
+                pass
+
+            if post_count >= 3:
+                badge = Badge.objects.get(name='Post King')
+                user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
+                if created:
+                    " send notification to user "
+                    user_badge.save()
+                    pass
