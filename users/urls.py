@@ -8,6 +8,7 @@ from users.views import (
     my_account,
     newspace,
     register_request,
+    spacefeed,
     user_detail,
     user_follow,
     user_list,
@@ -48,4 +49,5 @@ urlpatterns = [
     path("users/follow", user_follow, name="user_follow"),
     path("myaccount/", my_account, name="my_account"),
     path("newspace/", newspace, name="newspace"),
+    path("spacefeed/", spacefeed, name="spacefeed"),
 ]

@@ -171,3 +171,8 @@ def my_account(request):
 @login_required
 def newspace(request):
     return render(request, "spaces_initial.html")
+
+
+@login_required
+def spacefeed(request):
+    return render(request, "space_feed.html")
