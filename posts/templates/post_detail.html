@@ -12,9 +12,11 @@
                             {% include './icons/pencil-fill.svg' %}
                         </a>
 
-                        <a class="btn btn-outline-danger" href="{% url 'post_remove' pk=post.pk %}">
-                            {% include './icons/clipboard-x.svg' %}
-                        </a>
+                        <form method="POST" action="{% url 'post_remove' pk=post.id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger" type="submit">{% include './icons/clipboard-x.svg' %}</button>
+                        </form>
+
                     </div>
                 {% endif %}
             </div>
@@ -26,6 +28,8 @@
                 </p>
 
                 <p class="border rounded p-2 border-danger">{{ post.text|linebreaksbr }} </p>
+
+                {% if post.tag %}
                 <hr>
                 <p class="tags small">
                     Tags:
@@ -36,31 +40,44 @@
                         {% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
+                {% endif %}
             </div>
         </div>
 
-        <hr>
         <div class="d-flex">
-                    <form method="POST" action="{% url 'add_comment_to_post' pk=post.id%}">
-                        {% csrf_token %}
-                        <a class="btn btn-outline-success me-2" type="submit">Add comment</a>
-                    </form>
-
-                    <form method="POST" action="{% url 'bookmark' pk=post.id %}">
-                        {% csrf_token %}
-                        <a class="btn btn-outline-dark me-2" type="submit">Bookmark</a>
-                    </form>
-
-                    <form method="POST" action="{% url 'post_share' pk=post.id %}">
-                        {% csrf_token %}
-                        <a class="btn btn-outline-dark me-2" type="submit">Share this post</a>
-                    </form>
-
-                    <button data-id="{{ post.id }}" class="btn btn-secondary like-button me-2">
-                        Like <span class="badge bg-primary" id="total_likes_badge">{{ total_likes }}</span>
-                    </button>
-                    <a href="{{ post.link }}" target="_blank" class="btn btn-outline-primary"> Goto> </a>
+            <form method="POST" action="{% url 'add_comment_to_post' pk=post.id%}">
+                {% csrf_token %}
+                <button class="btn btn-outline-success me-2" type="submit">Comment{% if post.total_comments %}({{ post.total_comments }}){% endif %}</button>
             </form>
+
+            <form method="POST" action="{% url 'bookmark' pk=post.id %}">
+                {% csrf_token %}
+                {% if post in user.bookmarks.all %}
+                  <button id="bookmarkButton" class="btn btn-primary" type="submit">Unbookmark</button>
+                {% else %}
+                  <button id="bookmarkButton" class="btn btn-outline-primary" type="submit">Bookmark</button>
+                {% endif %}
+            </form>
+
+            <form method="POST" action="{% url 'post_share' pk=post.id %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-dark me-2" type="submit">Share</button>
+            </form>
+
+            <form method="POST" action="{% url "like_post" post.id %}">
+                {% csrf_token %}
+                {% if user in post.likes.all %}
+                  <button id="likeButton" class="btn btn-primary" type="submit">Unlike
+                {% else %}
+                  <button id="likeButton" class="btn btn-outline-primary" type="submit">Like
+                {% endif %}
+                {%if post.likes.count %}({{post.likes.count}}){% endif %}</button>
+              </form>
+
+            {% if post.link %}
+            <a href="{{ post.link }}" target="_blank" class="btn btn-outline-primary">
+                Goto> </a>
+            {% endif %}
         </div>
 
         <div>

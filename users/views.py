@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import auth
 from django.db.models import Count
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -16,7 +16,7 @@ User = get_user_model()
 
 def login_request(request):
     if request.user.is_authenticated:
-        return redirect("/home")
+        return redirect("post_list")
     """ REDIRECT IF USER ALREADY LOGGED IN """
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
@@ -27,7 +27,7 @@ def login_request(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, f"You are logged in as {username}. Welcome!")
-                return redirect("/home")
+                return redirect("post_list")
             else:
                 messages.error(request, "Invalid username or password.")
         else:
@@ -54,10 +54,9 @@ def register_request(request):
 
             login(request, user)
             messages.success(request, "Registration successful.")
-            return redirect("/")
+            return redirect("post_list")
         else:
-            messages.error(request, form.errors)
-        messages.error(request, "Unsuccessful registration. Invalid information.")
+            messages.error(request, "Unsuccessful registration. Invalid information.")
     form = NewUserForm()
     return render(
         request=request,
@@ -113,14 +112,14 @@ def user_follow(request):
             user = get_object_or_404(User, id=user_id)
             if action == "follow":
                 user.followers.add(request.user)
-                message = f"You are now following {user.username}."
+                # message = f"You are now following {user.username}."
             else:
                 user.followers.remove(request.user)
-                message = f"You have unfollowed {user.username}."
-            return JsonResponse({"status": "ok", "message": message})
+                # message = f"You have unfollowed {user.username}."
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
         except User.DoesNotExist:
-            return JsonResponse({"status": "error", "message": "User not found."})
-    return JsonResponse({"status": "error", "message": "Invalid request."})
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
 @login_required

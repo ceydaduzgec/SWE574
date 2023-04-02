@@ -3,7 +3,6 @@ from django.urls import path
 from posts.views import (
     add_comment_to_post,
     check_link,
-    like_post,
     my_research,
     post_detail,
     post_edit,
@@ -13,6 +12,7 @@ from posts.views import (
     post_share,
     search,
     toggle_bookmark,
+    toggle_like,
 )
 
 urlpatterns = [
@@ -28,6 +28,6 @@ urlpatterns = [
     path("post/search/", search, name="search"),
     path("myresearch/", my_research, name="my_research"),  # TODO: what is the difference between search
     path("tag/<slug:tag_slug>/", post_list, name="post_list_by_tag"),
-    path("like/<int:pk>", like_post, name="like_post"),
+    path("like/<int:pk>", toggle_like, name="like_post"),
     path("check_link/", check_link, name="check_link"),
 ]
