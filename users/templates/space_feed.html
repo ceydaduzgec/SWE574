@@ -1,3 +1,4 @@
+
 {% extends 'base.html' %}
 
 {% block title %}
@@ -5,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    
+
     <nav class="py-2 bg-light border-bottom">
         <div class="container d-flex flex-wrap justify-content-center">
             <ul class="nav">
@@ -20,7 +21,7 @@
 
     </br> 
 
-    
+<div class="container" style="display: flex;"> 
     <h3 color="blue"><u>My Spaces</u></h3>
     <div class="container">
         <div style="border: 3px solid red; padding: 10px; ">
@@ -33,6 +34,57 @@
 
         </div>
     </div>
+
+    <h3 color="blue"><u>Recommended Spaces</u></h3>
+    <div class="container">
+        <div style="border: 3px solid red; padding: 10px; ">
+            <label class="clickable" style="color: blue; border:2px solid blue;">Business</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Food and Drink</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Home and Garden</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Movies and Television</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Books and Literature</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Family and Parenting</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Life stages</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Hobbies and Interests</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Education</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Beauty</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Events</label>
+            <label class="clickable"style="color: blue; border:2px solid blue;">Health</label>
+            <button style="color: blue; border:2px solid blue; background-color: aquamarine;">More</button>
+
+        </div>
+    </div>
+    <div class="container" >
+
+        <div style="border: 3px solid red; padding: 10px;">
+            <h3 color="blue"><u> Space feed </u></h3>    
+            <tr>
+                <td>.......................
+              </td>
+              </tr>
+        </div>
+    
+    </div>
+    </div>
+    
+
+    <h3 color="blue"><u>Quick Post</u></h3>
+    <input type="text" id="textbox" name="titlename" placeholder="Title">
+    <input type="text" id="textbox" name="linkname" placeholder="Link">
+    <input type="text" id="textbox" name="createquickpost" placeholder="Create a quick post in space...">
+    <button style="color: blue; border:2px solid blue; background-color: aquamarine;">Post</button>
+
+
+    <div class="container" >
+        <div style="border: 3px solid red; padding: 10px;">
+            <h3 color="blue"><u>Space Policy</u></h3>
+            <button style="color: blue; border:2px solid blue; background-color: aquamarine;">Click here to see details</button>
+
+        </div>
+    </div>
+
+
+{% endblock %}
 
     <h3 color="blue"><u>Recommended Spaces</u></h3>
     <div class="container">
