@@ -1,48 +1,37 @@
 from django import forms
+from django.contrib.auth import get_user_model
+from django.db.models import Q
 
-from users.forms import *
+from posts.models import Comment, Post
+from spaces.models import Space
 from users.models import Profile
 
-from .models import *
-from .models import Space
-
-
-class SpaceCreationForm(forms.ModelForm):
-    class Meta:
-        model = Space
-        fields = [
-            "name",
-            "description",
-            "members",
-            "moderators",
-            "is_all_members_post_allowed",
-            "is_only_moderators_post_allowed",
-        ]
+User = get_user_model()
 
 
 class PostForm(forms.ModelForm):
+    spaces = forms.ModelMultipleChoiceField(queryset=Space.objects.all(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields["spaces"].queryset = Space.objects.filter(
+                Q(owner=user)
+                | Q(moderators=user)
+                | (Q(members=user) & Q(posting_permission="all"))
+                | Q(granted_members=user)
+            )
+
     class Meta:
         model = Post
-        fields = ("title", "link", "tags", "labels", "upload", "text", "image")
-
-
-class SpaceForm(forms.ModelForm):
-    class Meta:
-        model = Post
-        fields = ("title", "link", "text")
+        fields = ("title", "link", "tags", "labels", "text", "upload", "image", "spaces")
 
 
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ("text",)
-
-
-# class ProfileForm(forms.ModelForm):
-#
-#     class Meta:
-#         model = Author
-#         fields = '__all__'
 
 
 class EmailPostForm(forms.Form):

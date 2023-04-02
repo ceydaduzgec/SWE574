@@ -24,7 +24,7 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, blank=True, related_name="blog_post")
     title_tag = models.CharField(max_length=200, null=True, blank=True, unique=False)
     image = models.ImageField(upload_to="images/", null=True, blank=True)
-    spaces = models.ManyToManyField("posts.Space", related_name="posts", blank=True)
+    spaces = models.ManyToManyField("spaces.Space", related_name="posts", blank=True)
     # status = models.CharField(max_length=10,
     #                           choices=STATUS_CHOICES,
     #                           default='draft')
@@ -65,20 +65,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
-
-
-class Space(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owned_spaces")
-    name = models.CharField(max_length=200)
-    description = models.TextField()
-    members = models.ManyToManyField(User, related_name="spaces")
-    moderators = models.ManyToManyField(User, related_name="moderated_spaces")
-    is_all_members_post_allowed = models.BooleanField(default=True)
-    is_only_moderators_post_allowed = models.BooleanField(default=False)
-    created_date = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        ordering = ("-created_date",)
-
-    def __str__(self):
-        return self.name

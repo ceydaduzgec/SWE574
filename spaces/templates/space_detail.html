@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>{{ space.name }}</h1>
+  <p>{{ space.description }}</p>
+  {% if not request.user == space.owner and not request.user in space.members.all and not request.user in space.granted_members.all and not request.user in space.moderators.all %}
+    <form method="POST" action="{% url 'join_space' pk=space.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Join Space</button>
+    </form>
+  {% elif request.user in space.members.all or request.user in space.granted_members.all %}
+    <form method="POST" action="{% url 'leave_space' pk=space.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Leave Space</button>
+    </form>
+  {% endif %}
+  <hr>
+  <div class="row row-cols-1 row-cols-sm-1 row-cols-mr-6 g-3">
+    {% if space.posts.all %}
+      {% for post in space.posts.all %}
+        <div class="col">
+          <div class="post">
+            <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+            <p>{{ post.text }}</p>
+            <p>Published by {{ post.author }} on {{ post.published_date }}</p>
+            {% if post.image %}
+              <img src="{{ post.image.url }}" alt="Post image">
+            {% endif %}
+            <p><a href="{% url 'like_post' pk=post.pk %}">Like</a> <span class="like-count">{{ post.likes.count }}</span></p>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No posts found.</p>
+    {% endif %}
+  </div>
+{% endblock %}

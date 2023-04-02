@@ -33,12 +33,12 @@ class User(AbstractUser):
     following = models.ManyToManyField("User", related_name="following_users", verbose_name=_("Following"), blank=True)
     objects = UserManager()
 
-    def get_absolute_url(self):
-        return reverse("users:list", args=[self.username])
-
     def save(self, *args, **kwargs):
         self.full_clean()
         return super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("user_detail", kwargs={"username": self.username})
 
 
 class Contact(models.Model):
