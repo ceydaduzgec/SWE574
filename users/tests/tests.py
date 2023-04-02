@@ -151,3 +151,27 @@ class NewUserTestCase(TestCase):
                 },
             )
             form.save()
+
+
+# class FollowViewTest(TestCase):
+#     def setUp(self):
+#         self.client = Client()
+#         self.user = UserFactory()
+#         self.user2 = UserFactory()
+
+#     def test_follow_view(self):
+#         self.client.force_login(self.user)
+#         url = reverse("user_follow")
+#         data = {"id": self.user2.id, "action": "follow"}
+#         response = self.client.post(url, data=data)
+#         self.assertEqual(response.status_code, 200)
+#         self.assertTrue(self.user.following.filter(pk=self.user2.id).exists())
+
+#     def test_unfollow_view(self):
+#         self.client.force_login(self.user)
+#         self.user.following.add(self.user2)
+#         url = reverse("user_follow")
+#         data = {"id": self.user2.id, "action": "unfollow"}
+#         response = self.client.post(url, data=data)
+#         self.assertEqual(response.status_code, 200)
+#         self.assertFalse(self.user.following.filter(pk=self.user2.id).exists())

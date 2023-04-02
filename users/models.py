@@ -31,6 +31,9 @@ class User(AbstractUser):
     )
     followers = models.ManyToManyField("User", related_name="follower_users", verbose_name=_("Followers"), blank=True)
     following = models.ManyToManyField("User", related_name="following_users", verbose_name=_("Following"), blank=True)
+    bookmarks = models.ManyToManyField(
+        "posts.Post", related_name="bookmarked_posts", verbose_name=_("Bookmarked Posts"), blank=True
+    )
 
     objects = UserManager()
 

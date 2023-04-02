@@ -2,15 +2,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.db.models import Count, Q
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 from taggit.models import Tag
 
+from posts.forms import CommentForm, EmailPostForm, PostForm
 from posts.models import Post
 from spaces.models import Space
-
-from .forms import CommentForm, EmailPostForm, PostForm
 
 User = get_user_model()
 
@@ -35,15 +35,15 @@ def post_list(request, tag_slug=None):
     )
 
     # Getting posts of the user and their friends, and posts from the spaces
-    posts = (
-        Post.objects.filter(
-            Q(author__in=friendsofUser) | Q(author=request.user) | Q(spaces__in=spaces),
-            published_date__lte=timezone.now(),
-        )
-        .annotate(total_comments=Count("comments"))
-        .order_by("-published_date")
-    )
-
+    # posts = (
+    #     Post.objects.filter(
+    #         Q(author__in=friendsofUser) | Q(author=request.user) | Q(spaces__in=spaces),
+    #         published_date__lte=timezone.now(),
+    #     )
+    #     .annotate(total_comments=Count("comments"))
+    #     .order_by("-published_date")
+    # )
+    posts = Post.objects.filter(spaces__in=spaces)
     tag = None
 
     if tag_slug:
@@ -133,6 +133,7 @@ def post_edit(request, pk):
     return render(request, "post_editor.html", {"form": form, "post": post})
 
 
+@require_POST
 @login_required
 def post_remove(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -140,6 +141,7 @@ def post_remove(request, pk):
     return redirect("post_list")
 
 
+@login_required
 def add_comment_to_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
@@ -205,6 +207,8 @@ def my_research(request):
     )
 
 
+@require_POST
+@login_required
 def post_share(request, pk):
     # Retrieve post by id
     post = get_object_or_404(Post, id=pk)
@@ -227,7 +231,9 @@ def post_share(request, pk):
     return render(request, "share.html", {"post": post, "form": form, "sent": sent})
 
 
-def like_post(request, pk):
+@require_POST
+@login_required
+def toggle_like(request, pk):
     user_id = request.user.id
     post = get_object_or_404(Post, id=pk)
     if user_id:
@@ -235,5 +241,19 @@ def like_post(request, pk):
             post.likes.remove(request.user)
         else:
             post.likes.add(request.user)
-        return JsonResponse({"status": "ok", "likes_count": post.total_likes()})
-    return JsonResponse({"status": "error"})
+
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+@require_POST
+@login_required
+def toggle_bookmark(request, pk):
+    post = get_object_or_404(Post, id=pk)
+    user = request.user
+
+    if post in user.bookmarks.all():
+        user.bookmarks.remove(post)
+    else:
+        user.bookmarks.add(post)
+
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

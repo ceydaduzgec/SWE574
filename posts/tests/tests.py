@@ -168,3 +168,25 @@ class PostEditTestCase(TestCase):
 #     def test_comment_has_text(self):
 #         comment = Comment.objects.get(text="Django is Nice")
 #         self.assertEqual(comment.text, "Django is Nice")
+
+
+# class BookmarkViewTest(TestCase):
+#     def setUp(self):
+#         self.client = Client()
+#         self.user = UserFactory()
+#         self.post = Post.objects.create(title="Test Post", content="Test content", author=self.user)
+
+#     def test_add_bookmark_view(self):
+#         self.client.force_login(self.user)
+#         url = reverse("add_bookmark", args=[self.post.id])
+#         response = self.client.post(url)
+#         self.assertEqual(response.status_code, 302)
+#         self.assertTrue(self.user.bookmarks.filter(pk=self.post.id).exists())
+
+#     def test_remove_bookmark_view(self):
+#         self.client.force_login(self.user)
+#         self.user.bookmarks.add(self.post)
+#         url = reverse("remove_bookmark", args=[self.post.id])
+#         response = self.client.post(url)
+#         self.assertEqual(response.status_code, 302)
+#         self.assertFalse(self.user.bookmarks.filter(pk=self.post.id).exists())
