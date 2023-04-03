@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "taggit",
     "easy_thumbnails",
     "annotations",
+    "tags",
+    "rest_framework",
 
 
 ]
