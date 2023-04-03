@@ -1,14 +1,11 @@
-from django.shortcuts import render
-
-# Create your views here.
-
-from django.shortcuts import render
 from django.http import JsonResponse
+from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
+
 from .models import Tag
 from .serializers import TagSerializer
-from .wikidata import get_wikidata_info
+from .utils import get_wikidata_info
 
 
 @api_view(["POST"])

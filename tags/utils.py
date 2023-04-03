@@ -1,5 +1,6 @@
 import pywikibot
 
+
 def get_wikidata_info(qid):
     site = pywikibot.Site("wikidata", "wikidata")
     repo = site.data_repository()
