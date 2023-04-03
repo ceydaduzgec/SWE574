@@ -1,0 +1,39 @@
+<!-- tags/templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Tag System</title>
+</head>
+<body>
+    <h1>Fetch and Store Tags from Wikidata</h1>
+    <form id="fetch-form">
+        <label for="wikidata-id">Wikidata ID:</label>
+        <input type="text" id="wikidata-id" required>
+        <button type="submit">Fetch and Store</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        document.getElementById("fetch-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const wikidataId = document.getElementById("wikidata-id").value;
+            const response = await fetch("/api/tags/fetch_and_store/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ wikidata_id: wikidataId })
+            });
+
+            const resultDiv = document.getElementById("result");
+            if (response.ok) {
+                const data = await response.json();
+                resultDiv.innerHTML = `<p><strong>Label:</strong> ${data.label}</p><p><strong>Description:</strong> ${data.description}</p>`;
+            } else {
+                resultDiv.innerHTML = `<p>Error: ${response.statusText}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
