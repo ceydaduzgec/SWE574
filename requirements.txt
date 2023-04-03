@@ -11,8 +11,8 @@ django-taggit==1.2.0
 psycopg2==2.9.5
 factory-boy==3.2.1
 easy-thumbnails==2.8.1
-
-
+pywikibot == 7.1.0
+mwparserfromhell == 0.5.0
 
 # TODO: Add development packages here
 flake8
