@@ -23,11 +23,8 @@ urlpatterns = [
     path("", include("posts.urls")),
     path("", include("users.urls")),
     path("", include("spaces.urls")),
-    path("annotations/", include("annotations.urls")),
     path("", include("django.contrib.auth.urls")),
     path("api/", include("tags.urls")),
-
-
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

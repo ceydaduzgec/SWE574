@@ -277,3 +277,4 @@ uploads/*
 .env
 .envs/*
 !.envs/.local/
+throttle.ctrl
