@@ -1,8 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
-from . import views
+
 from users.views import (
-    edit,
     login_request,
     logout_request,
     my_account,
@@ -41,10 +40,8 @@ urlpatterns = [
         "reset/done/",
         auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_complete.html"),
     ),
-    path("edit/", edit, name="edit"),  # TODO: change name to more meaningful one
     path("users/", user_list, name="user_list"),
     path("users/<username>/", user_detail, name="user_detail"),
     path("users/follow", user_follow, name="user_follow"),
     path("myaccount/", my_account, name="my_account"),
-
 ]

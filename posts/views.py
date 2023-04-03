@@ -2,16 +2,15 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
 from django.db.models import Count, Q
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 from taggit.models import Tag
 
+from posts.forms import CommentForm, EmailPostForm, PostForm
 from posts.models import Post
 from spaces.models import Space
-from users.models import Contact
-
-from .forms import CommentForm, EmailPostForm, PostForm
 
 User = get_user_model()
 
@@ -25,10 +24,10 @@ def check_link(request):
 @login_required
 def post_list(request, tag_slug=None):
     # Getting friends of users
-    friendsofUser = Contact.objects.filter(user_from=request.user).all()
+    friendsofUser = User.objects.filter(followers=request.user).all()
 
     # Mapping friends of users
-    friendsofUser = map(lambda x: x.user_to, friendsofUser)
+    friendsofUser = map(lambda x: x.following, friendsofUser)
 
     # Getting spaces where user is an owner, member, granted member or moderator
     spaces = Space.objects.filter(
@@ -36,15 +35,15 @@ def post_list(request, tag_slug=None):
     )
 
     # Getting posts of the user and their friends, and posts from the spaces
-    posts = (
-        Post.objects.filter(
-            Q(author__in=friendsofUser) | Q(author=request.user) | Q(spaces__in=spaces),
-            published_date__lte=timezone.now(),
-        )
-        .annotate(total_comments=Count("comments"))
-        .order_by("-published_date")
-    )
-
+    # posts = (
+    #     Post.objects.filter(
+    #         Q(author__in=friendsofUser) | Q(author=request.user) | Q(spaces__in=spaces),
+    #         published_date__lte=timezone.now(),
+    #     )
+    #     .annotate(total_comments=Count("comments"))
+    #     .order_by("-published_date")
+    # )
+    posts = Post.objects.filter(spaces__in=spaces)
     tag = None
 
     if tag_slug:
@@ -79,6 +78,14 @@ def post_detail(request, pk):
 
 @login_required
 def post_new(request):
+    duplicatespaces = (
+        request.user.owned_spaces.all()
+        | request.user.moderated_spaces.all()
+        | Space.objects.filter(posting_permission="all", members=request.user)
+        | Space.objects.filter(posting_permission="granted", granted_members=request.user)
+    )
+    spaces = duplicatespaces.values("id", "name").distinct()
+
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
 
@@ -87,12 +94,17 @@ def post_new(request):
             post.author = request.user
             post.published_date = timezone.now()
             post.save()
+            # Get the selected spaces from the form and add them to the post
+            selected_spaces = form.cleaned_data.get("spaces")
+            if selected_spaces:
+                post.spaces.set(selected_spaces)
+
             post.tags.add(*form.cleaned_data["tags"])
 
             return redirect("post_detail", pk=post.pk)
     else:
         form = PostForm()
-    return render(request, "post_edit.html", {"form": form})
+    return render(request, "post_edit.html", {"form": form, "spaces": spaces})
 
 
 @login_required
@@ -121,6 +133,7 @@ def post_edit(request, pk):
     return render(request, "post_editor.html", {"form": form, "post": post})
 
 
+@require_POST
 @login_required
 def post_remove(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -128,6 +141,7 @@ def post_remove(request, pk):
     return redirect("post_list")
 
 
+@login_required
 def add_comment_to_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
@@ -150,12 +164,12 @@ def search(request):
         searched = request.POST["searched"]
         searched = searched.lower()
 
-        # Search posts
+        # Search posts with the given keyword
         posts_s = Post.objects.filter(
             Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
         ).distinct()
 
-        # Search spaces
+        # Search spaces with the given keyword
         spaces_s = Space.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
 
         return render(
@@ -193,26 +207,8 @@ def my_research(request):
     )
 
 
-def macro_economy(request):
-    posts = Post.objects.filter(labels__contains="Macro")
-    return render(request, "my_research.html", {"posts": posts})
-
-
-def equity(request):
-    posts = Post.objects.filter(labels__contains="Equity")
-    return render(request, "my_research.html", {"posts": posts})
-
-
-def fixed_income(request):
-    posts = Post.objects.filter(labels__contains="Fixed")
-    return render(request, "my_research.html", {"posts": posts})
-
-
-def company_news(request):
-    posts = Post.objects.filter(labels__contains="company")
-    return render(request, "my_research.html", {"posts": posts})
-
-
+@require_POST
+@login_required
 def post_share(request, pk):
     # Retrieve post by id
     post = get_object_or_404(Post, id=pk)
@@ -235,7 +231,9 @@ def post_share(request, pk):
     return render(request, "share.html", {"post": post, "form": form, "sent": sent})
 
 
-def like_post(request, pk):
+@require_POST
+@login_required
+def toggle_like(request, pk):
     user_id = request.user.id
     post = get_object_or_404(Post, id=pk)
     if user_id:
@@ -243,5 +241,19 @@ def like_post(request, pk):
             post.likes.remove(request.user)
         else:
             post.likes.add(request.user)
-        return JsonResponse({"status": "ok", "likes_count": post.total_likes()})
-    return JsonResponse({"status": "error"})
+
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+@require_POST
+@login_required
+def toggle_bookmark(request, pk):
+    post = get_object_or_404(Post, id=pk)
+    user = request.user
+
+    if post in user.bookmarks.all():
+        user.bookmarks.remove(post)
+    else:
+        user.bookmarks.add(post)
+
+    return HttpResponseRedirect(request.META.get("HTTP_REFERER"))

@@ -5,6 +5,7 @@ from spaces.views import (
     join_space,
     leave_space,
     my_spaces_list,
+    newspace,
     space_detail,
     space_list,
     space_members,
@@ -20,4 +21,5 @@ urlpatterns = [
     path("spaces/<int:pk>/members/", space_members, name="space_members"),
     path("spaces/<int:pk>/join/", join_space, name="join_space"),
     path("spaces/<int:pk>/leave/", leave_space, name="leave_space"),
+    path("newspace/", newspace, name="newspace"),
 ]

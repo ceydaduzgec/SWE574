@@ -247,6 +247,7 @@ Package Control.merged-ca-bundle
 Package Control.user-ca-bundle
 oscrypto-ca-bundle.crt
 bh_unicode_properties.cache
+.idea
 
 # Sublime-github package stores a github token in this file
 # https://packagecontrol.io/packages/sublime-github
@@ -271,6 +272,10 @@ Session.vim
 
 ### Project template
 uploads/*
+*jpeg
+*jpg
+*png
+*gif
 
 .pytest_cache/
 .ipython/
@@ -278,3 +283,4 @@ uploads/*
 .envs/*
 !.envs/.local/
 throttle.ctrl
+*sqlite3

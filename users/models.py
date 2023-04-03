@@ -23,57 +23,6 @@ class User(AbstractUser):
     )
     email = models.EmailField(_("Email"), unique=True, blank=False)
     bio = models.TextField(_("Bio"), blank=True, null=False)
-    followers = models.ManyToManyField(
-        "User",
-        through="Contact",
-        related_name="follower_users",
-        symmetrical=False,
-        verbose_name=_("Followers"),
-        blank=True,
-    )
-    following = models.ManyToManyField("User", related_name="following_users", verbose_name=_("Following"), blank=True)
-    objects = UserManager()
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        return super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return reverse("user_detail", kwargs={"username": self.username})
-
-
-class Contact(models.Model):
-    user_from = models.ForeignKey(User, related_name="rel_from_set", on_delete=models.CASCADE)
-    user_to = models.ForeignKey(User, related_name="rel_to_set", on_delete=models.CASCADE)
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
-
-    class Meta:
-        ordering = ("-created",)
-
-    def __str__(self):
-        return f"{self.user_from} follows {self.user_to}"
-
-
-class Badge(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    image = models.ImageField(upload_to="badges/", default="badges/default.png")
-
-    def __str__(self):
-        return self.name
-
-class UserBadge(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
-
-
-    def __str__(self):
-        return f"{self.user} has {self.badge}"
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
     date_of_birth = models.DateField(blank=True, null=True)
     photo = models.ImageField(
         default="blank-profile-photo.jpeg",
@@ -81,6 +30,20 @@ class Profile(models.Model):
         upload_to="users/%Y/%m/%d/",
         blank=True,
     )
+    followers = models.ManyToManyField("User", related_name="follower_users", verbose_name=_("Followers"), blank=True)
+    following = models.ManyToManyField("User", related_name="following_users", verbose_name=_("Following"), blank=True)
+    bookmarks = models.ManyToManyField(
+        "posts.Post", related_name="bookmarked_posts", verbose_name=_("Bookmarked Posts"), blank=True
+    )
+
+    objects = UserManager()
 
     def __str__(self):
-        return f"Profile for user {self.user.username}"
+        return f"{self.username}"
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("user_detail", kwargs={"username": self.username})
