@@ -284,3 +284,4 @@ uploads/*
 !.envs/.local/
 throttle.ctrl
 *sqlite3
+pywikibot.lwp
