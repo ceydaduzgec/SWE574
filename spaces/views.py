@@ -114,3 +114,8 @@ def my_spaces_list(request):
     }
 
     return render(request, "my_spaces_list.html", context)
+
+
+@login_required
+def newspace(request):
+    return render(request, "spaces/templates/spaces_initial.html")

@@ -2,7 +2,6 @@
 
 {% block content %}
 
-
     <div class="row">
         <div class="blog-post border border-dark rounded my-3 col-9 p-0">
             <div class="d-flex justify-content-between">
@@ -13,20 +12,24 @@
                             {% include './icons/pencil-fill.svg' %}
                         </a>
 
-                        <a class="btn btn-outline-danger" href="{% url 'post_remove' pk=post.pk %}">
-                            {% include './icons/clipboard-x.svg' %}
-                        </a>
+                        <form method="POST" action="{% url 'post_remove' pk=post.id %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger" type="submit">{% include './icons/clipboard-x.svg' %}</button>
+                        </form>
+
                     </div>
                 {% endif %}
             </div>
             <div class="px-3">
-                <p class="blog-post-meta"> {{ post.published_date }} by <a
-                        href="/users/{{ post.author }}"> {{ post.author }}</a></p>
+                <p class="blog-post-meta"> {{ post.published_date }} by
+                    <a href="/users/{{ post.author }}"> {{ post.author }}</a></p>
                 <p class="border rounded p-2 border-danger">
                     Related Link : <a href="{{ post.link }}">{{ post.link }}</a>
                 </p>
 
                 <p class="border rounded p-2 border-danger">{{ post.text|linebreaksbr }} </p>
+
+                {% if post.tag %}
                 <hr>
                 <p class="tags small">
                     Tags:
@@ -37,25 +40,45 @@
                         {% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
+                {% endif %}
             </div>
         </div>
 
-
-        <hr>
         <div class="d-flex">
+            <form method="POST" action="{% url 'add_comment_to_post' pk=post.id%}">
+                {% csrf_token %}
+                <button class="btn btn-outline-success me-2" type="submit">Comment{% if post.total_comments %}({{ post.total_comments }}){% endif %}</button>
+            </form>
 
-            <a class="btn btn-outline-success me-2" href="comment/">Add comment</a>
-            <a class="btn btn-outline-dark me-2" href="{% url 'post_share' pk=post.id %}">Share this post </a>
+            <form method="POST" action="{% url 'bookmark' pk=post.id %}">
+                {% csrf_token %}
+                {% if post in user.bookmarks.all %}
+                  <button id="bookmarkButton" class="btn btn-primary" type="submit">Unbookmark</button>
+                {% else %}
+                  <button id="bookmarkButton" class="btn btn-outline-primary" type="submit">Bookmark</button>
+                {% endif %}
+            </form>
 
-            <button data-id="{{ post.id }}" class="btn btn-secondary like-button me-2">
-                Like <span class="badge bg-primary" id="total_likes_badge">{{ total_likes }}</span>
+            <form method="POST" action="{% url 'post_share' pk=post.id %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-dark me-2" type="submit">Share</button>
+            </form>
 
-            </button>
+            <form method="POST" action="{% url "like_post" post.id %}">
+                {% csrf_token %}
+                {% if user in post.likes.all %}
+                  <button id="likeButton" class="btn btn-primary" type="submit">Unlike
+                {% else %}
+                  <button id="likeButton" class="btn btn-outline-primary" type="submit">Like
+                {% endif %}
+                {%if post.likes.count %}({{post.likes.count}}){% endif %}</button>
+              </form>
 
-
-            <a href="{{ post.link }}" target="_blank" class="btn btn-outline-primary"> Goto> </a>
+            {% if post.link %}
+            <a href="{{ post.link }}" target="_blank" class="btn btn-outline-primary">
+                Goto> </a>
+            {% endif %}
         </div>
-
 
         <div>
             <br>
