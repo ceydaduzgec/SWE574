@@ -13,15 +13,19 @@ class PostForm(forms.ModelForm):
     spaces = forms.ModelMultipleChoiceField(queryset=Space.objects.all(), required=False)
 
     def __init__(self, *args, **kwargs):
+        selected_space = kwargs.pop("selected_space", None)
         user = kwargs.pop("user", None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields["spaces"].queryset = Space.objects.filter(
+            spaces = Space.objects.filter(
                 Q(owner=user)
                 | Q(moderators=user)
                 | (Q(members=user) & Q(posting_permission="all"))
                 | Q(granted_members=user)
             )
+            if selected_space:
+                spaces = spaces.filter(pk=selected_space.pk)
+            self.fields["spaces"].queryset = spaces
 
     class Meta:
         model = Post

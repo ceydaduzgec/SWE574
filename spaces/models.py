@@ -32,9 +32,11 @@ class Space(models.Model):
 
     def can_member_post(self, user):
         if self.posting_permission == "all":
-            return True
+            return (
+                user in self.get_granted_members() or self.members.all() or self.get_moderators() or user == self.owner
+            )
         elif self.posting_permission == "granted":
-            return user in self.get_granted_members() or user == self.owner
+            return user in self.get_granted_members() or self.get_moderators() or user == self.owner
         elif self.posting_permission == "moderators":
             return user in self.get_moderators() or user == self.owner
         else:

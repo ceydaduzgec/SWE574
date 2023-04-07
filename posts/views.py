@@ -79,6 +79,13 @@ def post_detail(request, pk):
 
 @login_required
 def post_new(request):
+    # Get the space_pk parameter from the URL
+    space_pk = request.GET.get("space_pk")
+    if space_pk:
+        space = get_object_or_404(Space, pk=space_pk)
+    else:
+        space = None
+
     duplicatespaces = (
         request.user.owned_spaces.all()
         | request.user.moderated_spaces.all()
@@ -88,7 +95,7 @@ def post_new(request):
     spaces = duplicatespaces.values("id", "name").distinct()
 
     if request.method == "POST":
-        form = PostForm(request.POST, request.FILES)
+        form = PostForm(request.POST, request.FILES, selected_space=space, user=request.user)
 
         if form.is_valid():
             post = form.save(commit=False)
@@ -104,7 +111,11 @@ def post_new(request):
 
             return redirect("post_detail", pk=post.pk)
     else:
-        form = PostForm()
+        initial_data = {}
+        if space:
+            initial_data["spaces"] = [space.pk]
+        form = PostForm(initial=initial_data, selected_space=space, user=request.user)
+
     return render(request, "post_edit.html", {"form": form, "spaces": spaces})
 
 

@@ -61,10 +61,15 @@
     <label for="id_spaces">Select spaces:</label>
     <select name="spaces" id="id_spaces" multiple>
         {% for space in spaces %}
-         <option value="{{ space.id }}">{{ space.name }}</option>
+            {% if space.id in form.initial.spaces %}
+                <option value="{{ space.id }}" selected>{{ space.name }}</option>
+            {% else %}
+                <option value="{{ space.id }}">{{ space.name }}</option>
+            {% endif %}
         {% endfor %}
     </select>
 </p>
+
 
 
                 <button style="background-color: rgba(245, 194, 68, 1); color:black" type="submit" class="btn btn-primary">Save</button>
