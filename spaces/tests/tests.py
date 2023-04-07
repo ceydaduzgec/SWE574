@@ -33,6 +33,13 @@ class SpaceViewsTestCase(TestCase):
         # check that the user is now a member of the space
         self.assertIn(self.user, self.space.members.all())
 
+    def test_my_spaces_list_authenticated(self):
+        self.client.login(username="testuser", password="password")
+        response = self.client.get(reverse("my_spaces_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "my_spaces_list.html")
+        self.assertIn(self.space, response.context["spaces"])
+
     def test_space_detail_view(self):
         user = User.objects.create_user(username="testuser2", email="testuser2@gmail.com", password="password")
         # create a space
