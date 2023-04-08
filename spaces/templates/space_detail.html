@@ -14,7 +14,12 @@
       <button type="submit" class="btn btn-danger">Leave Space</button>
     </form>
   {% endif %}
-  <hr>
+{% if can_post %}
+    <hr>
+    <a href="{% url 'post_new' %}?space_pk={{ space.pk }}" class="btn btn-primary">Share Post</a>
+    <hr>
+{% endif %}
+
   <div class="row row-cols-1 row-cols-sm-1 row-cols-mr-6 g-3">
     {% if space.posts.all %}
       {% for post in space.posts.all %}

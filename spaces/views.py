@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
 
@@ -52,7 +52,8 @@ def space_detail(request, pk):
     space = get_object_or_404(Space, pk=pk)
     posts = space.posts.all()
     is_owner = request.user == space.owner
-    context = {"space": space, "posts": posts, "is_owner": is_owner}
+    can_post = space.can_member_post(request.user)  # check if the user can post on the space
+    context = {"space": space, "posts": posts, "is_owner": is_owner, "can_post": can_post}
     return render(request, "space_detail.html", context)
 
 
@@ -91,8 +92,27 @@ def space_members(request, pk):
 
 @login_required
 def my_spaces_list(request):
-    spaces = Space.objects.filter(Q(owner=request.user) | Q(moderators=request.user)).distinct()
-    context = {"spaces": spaces}
+    spaces = Space.objects.filter(
+        Q(owner=request.user) | Q(moderators=request.user) | Q(members=request.user) | Q(granted_members=request.user)
+    ).distinct()
+
+    recommended_spaces = (
+        Space.objects.exclude(
+            Q(owner=request.user)
+            | Q(moderators=request.user)
+            | Q(members=request.user)
+            | Q(granted_members=request.user)
+        )
+        .annotate(posts_count=Count("posts"))
+        .order_by("-posts_count")
+        .exclude(pk__in=[space.pk for space in spaces])[:5]
+    )
+
+    context = {
+        "spaces": spaces,
+        "recommended_spaces": recommended_spaces,
+    }
+
     return render(request, "my_spaces_list.html", context)
 
 
