@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os.path
+import sys
 from pathlib import Path
 
 from django.urls import reverse_lazy
@@ -47,6 +48,8 @@ INSTALLED_APPS = [
     "easy_thumbnails",
 ]
 
+if DEBUG:
+    INSTALLED_APPS.append("django_extensions")
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -82,22 +85,34 @@ WSGI_APPLICATION = "SWE574_project.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "postgres",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
-        "HOST": "db",  # For containers
-        "PORT": "5432",
-    },
-}
+
+TESTING = sys.argv[1:2] == ["test"]
+if TESTING is False:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql_psycopg2",
+            "NAME": "postgres",
+            "USER": "postgres",
+            "PASSWORD": "postgres",
+            "HOST": "db",  # For containers
+            "PORT": "5432",
+        },
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "TEST": {
+                "NAME": os.path.join(BASE_DIR, "test_db.sqlite3"),
+            },
+        }
+    }
 
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
-LOGIN_REDIRECT_URL = "/home"
+LOGIN_REDIRECT_URL = "/"
 LOGIN_URL = "/login"
 LOGOUT_URL = "/logout"
 
@@ -138,7 +153,7 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "users/static"),)
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 MEDIA_URL = "/images/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "posts/static/images")

@@ -1,16 +1,29 @@
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect, render
-from django.utils import timezone
-from spaces.forms import SpaceCreationForm, SpaceForm
+from spaces.forms import SpaceCreationForm
 from spaces.models import Space
 
 from .forms import SpacePolicyForm
 
 User = get_user_model()
+
+
+def join_space(request, pk):
+    space = get_object_or_404(Space, pk=pk)
+    space.members.add(request.user)
+    return redirect("space_detail", pk=pk)
+
+
+def leave_space(request, pk):
+    space = get_object_or_404(Space, pk=pk)
+    if request.user in space.members.all() or request.user in space.granted_members.all():
+        space.members.remove(request.user)
+        space.granted_members.remove(request.user)
+    return redirect("space_detail", pk=pk)
 
 
 @login_required
@@ -38,26 +51,9 @@ def space_detail(request, pk):
     space = get_object_or_404(Space, pk=pk)
     posts = space.posts.all()
     is_owner = request.user == space.owner
-    context = {"space": space, "posts": posts, "is_owner": is_owner}
+    can_post = space.can_member_post(request.user)  # check if the user can post on the space
+    context = {"space": space, "posts": posts, "is_owner": is_owner, "can_post": can_post}
     return render(request, "space_detail.html", context)
-
-
-@login_required
-def space_new(request):
-    if request.method == "POST":
-        form = SpaceForm(request.POST, request.FILES)
-
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            post.published_date = timezone.now()
-            post.save()
-            post.tags.add(*form.cleaned_data["tags"])
-
-            return redirect("post_detail", pk=post.pk)
-    else:
-        form = SpaceForm()
-    return render(request, "post_edit.html", {"form": form})
 
 
 @login_required
@@ -77,8 +73,48 @@ def space_policies(request, pk):
     return render(request, "spaces/templates/space_policies.html", {"space": space, "form": form})
 
 
+def space_members(request, pk):
+    space = get_object_or_404(Space, pk=pk)
+    moderators = space.moderators.all()
+    members = space.members.all()
+    granted_members = space.granted_members.all()
+    combined_members = members | granted_members
+    context = {
+        "space": space,
+        "moderators": moderators,
+        "members": members,
+        "granted_members": granted_members,
+        "combined_members": combined_members,
+    }
+    return render(request, "spaces/templates/space_members.html", context)
+
+
 @login_required
 def my_spaces_list(request):
-    spaces = Space.objects.filter(Q(owner=request.user) | Q(moderators=request.user)).distinct()
-    context = {"spaces": spaces}
+    spaces = Space.objects.filter(
+        Q(owner=request.user) | Q(moderators=request.user) | Q(members=request.user) | Q(granted_members=request.user)
+    ).distinct()
+
+    recommended_spaces = (
+        Space.objects.exclude(
+            Q(owner=request.user)
+            | Q(moderators=request.user)
+            | Q(members=request.user)
+            | Q(granted_members=request.user)
+        )
+        .annotate(posts_count=Count("posts"))
+        .order_by("-posts_count")
+        .exclude(pk__in=[space.pk for space in spaces])[:5]
+    )
+
+    context = {
+        "spaces": spaces,
+        "recommended_spaces": recommended_spaces,
+    }
+
     return render(request, "my_spaces_list.html", context)
+
+
+@login_required
+def newspace(request):
+    return render(request, "spaces/templates/spaces_initial.html")

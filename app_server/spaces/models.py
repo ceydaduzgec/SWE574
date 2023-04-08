@@ -15,8 +15,8 @@ class Space(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="owned_spaces")
     name = models.CharField(max_length=200)
     description = models.TextField()
-    members = models.ManyToManyField(User, related_name="spaces")
-    moderators = models.ManyToManyField(User, related_name="moderated_spaces")
+    members = models.ManyToManyField(User, related_name="spaces", blank=True)
+    moderators = models.ManyToManyField(User, related_name="moderated_spaces", blank=True)
     posting_permission = models.CharField(choices=POSTING_PERMISSION_CHOICES, max_length=47, default="all")
     granted_members = models.ManyToManyField(User, related_name="granted_spaces", blank=True)
     created_date = models.DateTimeField(default=timezone.now)
@@ -32,9 +32,11 @@ class Space(models.Model):
 
     def can_member_post(self, user):
         if self.posting_permission == "all":
-            return True
+            return (
+                user in self.get_granted_members() or self.members.all() or self.get_moderators() or user == self.owner
+            )
         elif self.posting_permission == "granted":
-            return user in self.get_granted_members() or user == self.owner
+            return user in self.get_granted_members() or self.get_moderators() or user == self.owner
         elif self.posting_permission == "moderators":
             return user in self.get_moderators() or user == self.owner
         else:

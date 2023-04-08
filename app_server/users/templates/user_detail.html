@@ -7,7 +7,7 @@
 
     <h1>{{ userToSee.get_full_name }}</h1>
     <div class="profile-info">
-        <img src="{% thumbnail userToSee.profile.photo 180x180 %}" class="user-detail">
+        <img src="{% thumbnail userToSee.photo 180x180 %}" class="user-detail">
 
         {% if count > -1 %}
                       <img src="{% static 'images/10.png' %}" alt="badge" class="badge-image">

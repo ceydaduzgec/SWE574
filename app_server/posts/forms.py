@@ -1,15 +1,33 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from posts.models import Comment, Post
-from users.models import Profile
+from spaces.models import Space
 
 User = get_user_model()
 
 
 class PostForm(forms.ModelForm):
+    spaces = forms.ModelMultipleChoiceField(queryset=Space.objects.all(), required=False)
+
+    def __init__(self, *args, **kwargs):
+        selected_space = kwargs.pop("selected_space", None)
+        user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+        if user:
+            spaces = Space.objects.filter(
+                Q(owner=user)
+                | Q(moderators=user)
+                | (Q(members=user) & Q(posting_permission="all"))
+                | Q(granted_members=user)
+            )
+            if selected_space:
+                spaces = spaces.filter(pk=selected_space.pk)
+            self.fields["spaces"].queryset = spaces
+
     class Meta:
         model = Post
-        fields = ("title", "link", "tags", "labels", "upload", "text", "image")
+        fields = ("title", "link", "tags", "labels", "text", "upload", "image", "spaces")
 
 
 class CommentForm(forms.ModelForm):
@@ -26,10 +44,4 @@ class EmailPostForm(forms.Form):
 class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ("first_name", "last_name", "email")
-
-
-class ProfileEditForm(forms.ModelForm):
-    class Meta:
-        model = Profile
-        fields = ("date_of_birth", "photo")
+        fields = ("username", "email", "photo")

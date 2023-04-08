@@ -4,19 +4,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import auth
 from django.db.models import Count
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from posts.models import Post
-from users.forms import NewUserForm, ProfileEditForm, UserEditForm
-from users.models import Contact, Profile
+from users.forms import NewUserForm, UserEditForm
 
 User = get_user_model()
 
 
 def login_request(request):
     if request.user.is_authenticated:
-        return redirect("/home")
+        return redirect("post_list")
     """ REDIRECT IF USER ALREADY LOGGED IN """
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
@@ -27,7 +26,7 @@ def login_request(request):
             if user is not None:
                 login(request, user)
                 messages.info(request, f"You are logged in as {username}. Welcome!")
-                return redirect("/home")
+                return redirect("post_list")
             else:
                 messages.error(request, "Invalid username or password.")
         else:
@@ -46,15 +45,17 @@ def register_request(request):
     if request.method == "POST":
         form = NewUserForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            Profile.objects.create(user=user)
+            user = User.objects.create(
+                username=form.cleaned_data["username"],
+                email=form.cleaned_data["email"],
+                password=form.cleaned_data["password1"],
+            )
 
             login(request, user)
             messages.success(request, "Registration successful.")
-            return redirect("/")
+            return redirect("post_list")
         else:
-            messages.error(request, form.errors)
-        messages.error(request, "Unsuccessful registration. Invalid information.")
+            messages.error(request, "Unsuccessful registration. Invalid information.")
     form = NewUserForm()
     return render(
         request=request,
@@ -73,29 +74,6 @@ def logout_request(request):
     return redirect("login")
 
 
-def edit(request):
-    if request.method == "POST":
-        user_form = UserEditForm(instance=request.user, data=request.POST)
-        profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            messages.success(request, "Profile updated successfully")
-        else:
-            messages.error(request, "Error updating your profile")
-    else:
-        user_form = UserEditForm(instance=request.user)
-        profile_form = ProfileEditForm(instance=request.user.profile)
-    return render(
-        request,
-        "edit.html",
-        {"user_form": user_form, "profile_form": profile_form},
-        # "posts:my_account.html",
-        # {"user_form": user_form, "profile_form": profile_form},  # TODO: which html should be used
-        # "posts:my_account.html",
-    )
-
-
 @login_required
 def user_detail(request, username):
     user = get_object_or_404(User, username=username, is_active=True)
@@ -108,7 +86,6 @@ def user_detail(request, username):
         .annotate(total_comments=Count("comments"))
         .order_by("-total_comments")[:4]
     )
-    print(len(most_commented_posts))
 
     return render(
         request,
@@ -131,16 +108,17 @@ def user_follow(request):
     action = request.POST.get("action")
     if user_id and action:
         try:
-            user = User.objects.get(id=user_id)
+            user = get_object_or_404(User, id=user_id)
             if action == "follow":
-                Contact.objects.get_or_create(user_from=request.user, user_to=user)
-
+                user.followers.add(request.user)
+                # message = f"You are now following {user.username}."
             else:
-                Contact.objects.filter(user_from=request.user, user_to=user).delete()
-            return JsonResponse({"status": "ok"})
+                user.followers.remove(request.user)
+                # message = f"You have unfollowed {user.username}."
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
         except User.DoesNotExist:
-            return JsonResponse({"status": "error"})
-    return JsonResponse({"status": "error"})
+            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
 
 @login_required
@@ -149,19 +127,17 @@ def user_list(request):
     return render(request, "user_list.html", {"section": "people", "users": users})
 
 
+@login_required
 def my_account(request):
     if request.method == "POST":
         user_form = UserEditForm(instance=request.user, data=request.POST)
-        profile_form = ProfileEditForm(instance=request.user.profile, data=request.POST, files=request.FILES)
-        if user_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid():
             user_form.save()
-            profile_form.save()
 
     else:
         user_form = UserEditForm(instance=request.user)
-        profile_form = ProfileEditForm(instance=request.user.profile)
     return render(
         request,
         "my_account.html",
-        {"user_form": user_form, "profile_form": profile_form},
+        {"user_form": user_form},
     )

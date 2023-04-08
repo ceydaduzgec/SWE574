@@ -7,6 +7,14 @@
         <li><a href="{% url 'space_detail' pk=space.pk %}">{{ space.name }}</a></li>
       {% endfor %}
     </ul>
+    {% if recommended_spaces %}
+      <h2>Recommended Spaces:</h2>
+      <ul>
+        {% for space in recommended_spaces %}
+          <li><a href="{% url 'space_detail' pk=space.pk %}">{{ space.name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
   {% else %}
     <p>You don't have any spaces yet.</p>
   {% endif %}
