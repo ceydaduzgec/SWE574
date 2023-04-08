@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: example_password
       POSTGRES_DB: annotations_db
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ".data/db:/var/lib/postgresql/data"
 
 
   annotation_app:
