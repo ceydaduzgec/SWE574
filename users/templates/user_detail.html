@@ -9,10 +9,7 @@
     <div class="profile-info">
         <img src="{% thumbnail userToSee.photo 180x180 %}" class="user-detail">
 
-        {% if count > -1 %}
-                      <img src="{% static 'images/10.png' %}" alt="badge" class="badge-image">
-             <img src="{% static 'images/10.png' %}" alt="badge" class="badge-image">
-          {% endif %}
+
     </div>
     {% with total_followers=userToSee.followers.count %}
         <span class="count">
@@ -31,6 +28,40 @@
             {% include "list_ajax.html" with images=user.images_created.all %}
         </div>
     {% endwith %}
+
+    <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center mb-3" id="Total Posts">
+                    <div class="card-header">
+                        <h5 class="card-title"> Badges</h5>
+                    </div>
+
+                    <div class="card-body">
+                        {% for badge in user_badges %}
+                            <div class="row">
+
+                            <div class="col-1">
+                                <button type="button" class="btn btn-sm position-relative">
+                                    <img width="60" class="img-fluid rounded-circle" src="{{ badge.image.url }}"
+                                     alt="{{ badge.name }}"
+                                     title="{{ badge.description }}"/>
+                                    <span class="badge rounded-pill bg-danger">
+    {{ badge.name }}
+    <span class="visually-hidden">unread messages</span>
+  </span>
+                                </button>
+                            </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col">
@@ -83,7 +114,7 @@
                         {% for post in most_commented_posts %}
                             <li>
 
-                                <a href="{% url 'post_detail' pk=post.pk%}">{{ post.title }}({{ post.total_comments}})</a>
+                                <a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}({{ post.total_comments }})</a>
 
                             </li>
                         {% endfor %}
