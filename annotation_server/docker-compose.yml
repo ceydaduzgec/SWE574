@@ -1,29 +1,28 @@
-version: '3.8'
-
+version: "3.8"
 services:
   annotation_db:
     image: postgres:13-alpine
-    ports:
-      - "5431:5432"
-    container_name: annotation_db
     environment:
-      POSTGRES_PASSWORD: example_password
-      POSTGRES_DB: annotations_db
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    container_name: annotation_db
     volumes:
       - ".data/db:/var/lib/postgresql/data"
-
+    restart: unless-stopped
+    tty: True
 
   annotation_app:
     build: .
+    volumes:
+      - ./:/annotation_app  #
+    restart: unless-stopped
     ports:
-      - "81:8000"
+      - "80:8000"
+    image: annotation_app:latest
+    container_name: annotation_app
     depends_on:
       - annotation_db
-    image: annotation_app:latest
-    volumes:
-    - .:/annotation_app
-    image: annotation_db:latest
-    container_name: annotation_app
-
-volumes:
-  pgdata:
+    tty: True

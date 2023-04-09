@@ -9,7 +9,7 @@ wheel==0.37.1
 django-taggit==1.2.0
 psycopg2==2.9.5
 rfc3987
-
+requests
 
 # TODO: Add development packages here
 flake8

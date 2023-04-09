@@ -2,9 +2,9 @@ FROM python:3.8
 
 ENV PYTHONBUFFERED 1
 
-WORKDIR /app
+WORKDIR /annotation_app
 
-COPY requirements.txt /app/
+COPY requirements.txt /annotation_app/
 
 RUN pip install --upgrade pip
 

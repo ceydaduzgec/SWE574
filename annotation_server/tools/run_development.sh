@@ -12,4 +12,4 @@ CONTAINER_UID=$(id -u) CONTAINER_GID=$(id -g) docker-compose -f ${DOCKER_COMPOSE
 
 CONTAINER_UID=$(id -u) CONTAINER_GID=$(id -g) docker-compose -f ${DOCKER_COMPOSE_FILE} up -d --remove-orphans
 
-CONTAINER_UID=$(id -u) CONTAINER_GID=$(id -g) docker-compose -f ${DOCKER_COMPOSE_FILE} exec annotation_db bash
+CONTAINER_UID=$(id -u) CONTAINER_GID=$(id -g) docker-compose -f ${DOCKER_COMPOSE_FILE} exec annotation_app bash

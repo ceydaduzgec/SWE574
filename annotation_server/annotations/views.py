@@ -1,43 +1,39 @@
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets
+from django.http import Http404
+from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Annotation
 from .serializers import AnnotationSerializer
 
 
-class AnnotationViewSet(viewsets.ModelViewSet):
-    queryset = Annotation.objects.all()
-    serializer_class = AnnotationSerializer
+class AnnotationView(APIView):
+    """
+    API endpoint that allows Annotations to be created, updated, and deleted.
+    """
 
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    def post(self, request):
+        serializer = AnnotationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=201, headers=headers)
+    def get_object(self, pk):
+        try:
+            return Annotation.objects.get(pk=pk)
+        except Annotation.DoesNotExist:
+            raise Http404
 
-    def retrieve(self, request, pk=None, *args, **kwargs):
-        queryset = Annotation.objects.all()
-        annotation = get_object_or_404(queryset, pk=pk)
-        serializer = AnnotationSerializer(annotation)
-        return Response(serializer.data)
-
-    def update(self, request, pk=None, *args, **kwargs):
-        queryset = Annotation.objects.all()
-        annotation = get_object_or_404(queryset, pk=pk)
+    def put(self, request, pk):
+        annotation = self.get_object(pk)
         serializer = AnnotationSerializer(annotation, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, pk=None, *args, **kwargs):
-        queryset = Annotation.objects.all()
-        annotation = get_object_or_404(queryset, pk=pk)
+    def delete(self, request, pk):
+        annotation = self.get_object(pk)
         annotation.delete()
-        return Response(status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
