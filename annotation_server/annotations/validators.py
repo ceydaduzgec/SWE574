@@ -14,6 +14,6 @@ def validate_annotation_type(type):
     response = requests.get("https://www.w3.org/ns/anno.jsonld")
     if response.status_code != 200:
         raise ValidationError("Failed to retrieve annotation JSON-LD schema.")
-    annotation_jsonld = response.json()
-    if type not in annotation_jsonld:
+    w3_jsonld = response.json()
+    if type not in w3_jsonld["@context"]:
         raise ValidationError("The type is not a valid annotation JSON-LD property.")

@@ -2,9 +2,8 @@
 
 from django.urls import path
 
-from .views import AnnotationCreateView, AnnotationListView
+from .views import AnnotationView
 
 urlpatterns = [
-    path("annotations/create/", AnnotationCreateView.as_view(), name="annotation_create"),
-    path("annotations/", AnnotationListView.as_view(), name="annotation_list"),
+    path("", AnnotationView.as_view(), name="annotations"),
 ]

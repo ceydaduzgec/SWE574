@@ -37,3 +37,13 @@ class AnnotationView(APIView):
         annotation = self.get_object(pk)
         annotation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get(self, request, pk=None):
+        if pk:
+            annotation = self.get_object(pk)
+            serializer = AnnotationSerializer(annotation)
+            return Response(serializer.data)
+        else:
+            annotations = Annotation.objects.all()
+            serializer = AnnotationSerializer(annotations, many=True)
+            return Response(serializer.data)
