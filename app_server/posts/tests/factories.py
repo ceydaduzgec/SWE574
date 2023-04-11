@@ -1,5 +1,4 @@
 import factory
-
 from spaces.models import Space
 from users.tests.factories import UserFactory
 
