@@ -6,11 +6,13 @@
         <div class="blog-post border border-dark rounded my-3 col-9 p-0">
             <div class="d-flex justify-content-between">
                 <h2 class="blog-post-title bg-warning px-3">{{ post.title }}</h2>
-                {% if request.user.id == post.author_id %}
+               {% if request.user.id == post.author_id or request.user in moderators %}
                     <div>
+                    {% if request.user.id == post.author_id  %}
                         <a class="btn btn-outline-warning" href="{% url 'post_edit' pk=post.id %}">
                             {% include './icons/pencil-fill.svg' %}
                         </a>
+                    {% endif %}
 
                         <form method="POST" action="{% url 'post_remove' pk=post.id %}">
                             {% csrf_token %}
