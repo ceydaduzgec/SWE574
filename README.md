@@ -122,22 +122,18 @@ This projects is for the SWE 574 Software Development Practice course of Boğazi
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-<!-- ROADMAP -->
-## Roadmap
+<!-- DOCUMENTATION -->
+### Create Mock Data
 
-- [ ] Milestone 1
-- [ ] Milestone 2
-- [ ] Milestone 3
-
-See the [open issues](https://github.com/swe574-spring23/SWE574/issues) for a full list of proposed features (and known issues).
+To generate mock data for your local, you can use the following command, after the installation steps:
+  `python manage.py generate_data.py`
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
+See the [open issues](https://github.com/swe574-spring23/SWE574/issues) for a full list of proposed features (and known issues).
 If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "Type: Enhancement".
 Don't forget to give the project a star! Thanks again!
 
