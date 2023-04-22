@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Members of {{ space.name }}</h1>
+
+  <h2>Moderators</h2>
+  <ul>
+    {% if request.user == space.owner %}
+      {% for moderator in moderators %}
+        <li>
+          <form method="POST" action="{% url 'remove_moderator' space.pk moderator.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">
+              Remove {{ moderator.username }} as Moderator
+            </button>
+          </form>
+        </li>
+      {% empty %}
+        <li>No moderators found</li>
+      {% endfor %}
+    {% else %}
+      {% for moderator in moderators %}
+        <li>{{ moderator.username }}</li>
+      {% empty %}
+        <li>No moderators found</li>
+      {% endfor %}
+    {% endif %}
+  </ul>
+
+  <h2>Members</h2>
+  <ul>
+    {% for combined_member in combined_members %}
+      <li>
+        {% if request.user == space.owner or request.user in moderators %}
+          <form method="POST" action="{% url 'remove_member' space.pk combined_member.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">
+              Remove {{ combined_member.username }}
+            </button>
+          </form>
+          {% if request.user == space.owner %}
+            <form method="POST" action="{% url 'make_moderator' space.pk combined_member.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary btn-sm">
+                Make {{ combined_member.username }} a Moderator
+              </button>
+            </form>
+          {% endif %}
+          {% if space.posting_permission == 'granted' and request.user in moderators or space.owner == request.user %}
+            {% if combined_member in granted_members %}
+              <form method="POST" action="{% url 'ungrant_permission' space.pk combined_member.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning btn-sm">
+                  Ungrant Permission from {{ combined_member.username }}
+                </button>
+              </form>
+            {% else %}
+              <form method="POST" action="{% url 'grant_permission' space.pk combined_member.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success btn-sm">
+                  Grant Permission to {{ combined_member.username }}
+                </button>
+              </form>
+            {% endif %}
+          {% endif %}
+        {% else %}
+          {{ combined_member.username }}
+        {% endif %}
+      </li>
+    {% empty %}
+      <li>No members found</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
