@@ -58,6 +58,12 @@ def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     comments = post.comments
 
+    # Get the moderators of the spaces of the post
+    moderators = []
+    for space in post.spaces.all():
+        for moderator in space.moderators.all():
+            moderators.append(moderator)
+
     stuff = get_object_or_404(Post, id=pk)
     total_likes = stuff.total_likes()
     post_tags_ids = post.tags.values_list("id", flat=True)
@@ -72,6 +78,7 @@ def post_detail(request, pk):
             "comments": comments,
             "similar_posts": similar_posts,
             "total_likes": total_likes,
+            "moderators": moderators,
         },
     )
 
@@ -148,7 +155,13 @@ def post_edit(request, pk):
 @login_required
 def post_remove(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    post.delete()
+    if request.user == post.author:
+        post.delete()
+    else:
+        for space in post.spaces.all():
+            if request.user in space.moderators.all():
+                space.posts.remove(post)
+        post.save()
     return redirect("post_list")
 
 

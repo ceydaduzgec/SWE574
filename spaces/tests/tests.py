@@ -20,17 +20,46 @@ class SpaceViewsTestCase(TestCase):
             owner=self.user,
         )
 
-    def test_join_space_view(self):
-        # log in as the test user
+    def test_grant_permission_view(self):
+        member = User.objects.create_user(username="testmember", email="testmember@gmail.com", password="password")
         self.client.login(username="testuser", password="password")
-
-        # make a GET request to the join space view
-        response = self.client.get(reverse("join_space", args=[self.space.pk]))
-
-        # check that the response is a redirect
+        response = self.client.post(reverse("grant_permission", args=[self.space.pk, member.pk]))
         self.assertEqual(response.status_code, 302)
+        self.assertIn(member, self.space.granted_members.all())
+        self.assertNotIn(member, self.space.members.all())
 
-        # check that the user is now a member of the space
+    def test_ungrant_permission_view(self):
+        member = User.objects.create_user(username="testmember", email="testmember@gmail.com", password="password")
+        self.space.granted_members.add(member)
+        self.client.login(username="testuser", password="password")
+        response = self.client.post(reverse("ungrant_permission", args=[self.space.pk, member.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertNotIn(member, self.space.granted_members.all())
+        self.assertIn(member, self.space.members.all())
+
+    def test_remove_member_view(self):
+        member = User.objects.create_user(username="testmember", email="testmember@gmail.com", password="password")
+        self.space.members.add(member)
+        self.client.login(username="testuser", password="password")
+        response = self.client.post(reverse("remove_member", args=[self.space.pk, member.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertNotIn(member, self.space.granted_members.all())
+        self.assertNotIn(member, self.space.members.all())
+
+    def test_make_moderator_view(self):
+        member = User.objects.create_user(username="testmember", email="testmember@gmail.com", password="password")
+        self.space.members.add(member)
+        self.client.login(username="testuser", password="password")
+        response = self.client.post(reverse("make_moderator", args=[self.space.pk, member.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(member, self.space.moderators.all())
+        self.assertNotIn(member, self.space.members.all())
+        self.assertNotIn(member, self.space.granted_members.all())
+
+    def test_join_space_view(self):
+        self.client.login(username="testuser", password="password")
+        response = self.client.get(reverse("join_space", args=[self.space.pk]))
+        self.assertEqual(response.status_code, 302)
         self.assertIn(self.user, self.space.members.all())
 
     def test_my_spaces_list_authenticated(self):
