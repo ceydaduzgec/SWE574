@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from taggit.managers import TaggableManager
+
 
 User = get_user_model()
 
@@ -25,6 +27,7 @@ class Post(models.Model):
     title_tag = models.CharField(max_length=200, null=True, blank=True, unique=False)
     image = models.ImageField(upload_to="images/", null=True, blank=True)
     spaces = models.ManyToManyField("spaces.Space", related_name="posts", blank=True)
+    report_content = models.CharField(max_length=200, blank=True)
     # status = models.CharField(max_length=10,
     #                           choices=STATUS_CHOICES,
     #                           default='draft')
@@ -65,3 +68,18 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class Report(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reason = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+    approved_report = models.BooleanField(default=False)
+
+    def approve(self):
+        self.approved_report = True
+        self.save()
+
+    def __str__(self):
+        return self.reason

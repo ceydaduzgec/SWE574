@@ -1,8 +1,9 @@
 from django import forms
 from django.contrib.auth import get_user_model
 
-from posts.models import Comment, Post
+from posts.models import Comment, Post, Report
 from users.models import Profile
+
 
 User = get_user_model()
 
@@ -34,3 +35,10 @@ class ProfileEditForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ("date_of_birth", "photo")
+
+
+class ReportForm(forms.ModelForm):
+    reason = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}))
+    class Meta:
+        model = Report
+        fields = ['reason']

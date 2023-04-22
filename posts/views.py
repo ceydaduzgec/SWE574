@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -11,7 +12,8 @@ from posts.models import Post
 from spaces.models import Space
 from users.models import Contact
 
-from .forms import CommentForm, EmailPostForm, PostForm
+from .forms import CommentForm, EmailPostForm, PostForm, ReportForm
+from .models import Report
 
 User = get_user_model()
 
@@ -58,6 +60,7 @@ def post_detail(request, pk):
     post_tags_ids = post.tags.values_list("id", flat=True)
     similar_posts = Post.objects.filter(tags__in=post_tags_ids).exclude(id=post.id)
     similar_posts = similar_posts.annotate(same_tags=Count("tags")).order_by("-same_tags", "-published_date")[:10]
+#   report = 
 
     return render(
         request,
@@ -229,3 +232,25 @@ def like_post(request, pk):
             post.likes.add(request.user)
         return JsonResponse({"status": "ok", "likes_count": post.total_likes()})
     return JsonResponse({"status": "error"})
+
+
+def report_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if post.spaces == None:
+        return redirect(post.get_absolute_url)
+    else:
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            report = form.save(commit=False)
+            report.post = post
+            report.save()
+
+            report_count = Report.objects.filter(post=post).count()
+
+            if report_count > 0:
+                admins = User.objects.filter(is_superuser=True)
+                #space admin, space admin grant?
+                for admin in admins:
+                    messages.info(request, f"Post ID {post.id} has {report_count} reports.")
+            return redirect('post_detail', pk=post.pk)
+    return render(request, 'report_post.html', {'post': post, 'form': form})
