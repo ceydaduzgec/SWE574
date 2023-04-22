@@ -2,10 +2,10 @@
 {% load blog_tags %}
 {% load static %}
 {% load thumbnail %}
-{% block title %}{{ userToSee.get_full_name }}{% endblock %}
+{% block title %}{{ userToSee.username }}{% endblock %}
 {% block content %}
 
-    <h1>{{ userToSee.get_full_name }}</h1>
+    <h1>{{ userToSee.username }}</h1>
     <div class="profile-info">
         <img src="{% thumbnail userToSee.photo 180x180 %}" class="user-detail">
 
