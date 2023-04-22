@@ -13,6 +13,19 @@
                             <h3 class="text-overflow" title="{{ post.title }}">{{ post.title }}</h3>
                         </a>
 
+                        <!-- Add annotation feature here -->
+                        <div class="annotation-form">
+                            <form method="POST" action="{% url 'add_annotation_to_post' pk=post.id %}">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="annotation-text">Add Annotation:</label>
+                                    <input type="text" name="annotation_text" class="form-control" id="annotation-text" required>
+                                </div>
+                                <button class="btn btn-outline-secondary" type="submit">Submit</button>
+                            </form>
+                        </div>
+                        <!--  End of annotation feature -->
+
                         {% if post.image %}
                             <img src="{{ post.image.url }}" alt="{{ post.title }}" width="160" height="160">
                         {% endif %}

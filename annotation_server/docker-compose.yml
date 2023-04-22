@@ -7,7 +7,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     ports:
-      - "5432:5432"
+      - "5430:5432"
     container_name: annotation_db
     volumes:
       - ".data/db:/var/lib/postgresql/data"
@@ -20,7 +20,7 @@ services:
       - ./:/annotation_app  #
     restart: unless-stopped
     ports:
-      - "80:8000"
+      - "81:8000"
     image: annotation_app:latest
     container_name: annotation_app
     depends_on:
