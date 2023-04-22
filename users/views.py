@@ -92,7 +92,6 @@ def user_detail(request, username):
         request,
         "user_detail.html",
         {
-            "section": "people",
             "userToSee": user,
             "id": user.id,
             "latest_posts_db": all_posts[:4],
@@ -104,18 +103,15 @@ def user_detail(request, username):
 
 @require_POST
 @login_required
-def user_follow(request):
-    user_id = request.POST.get("id")
-    action = request.POST.get("action")
-    if user_id and action:
+def user_follow(request, username):
+    current_user = request.user
+    if username != current_user.username:
         try:
-            user = get_object_or_404(User, id=user_id)
-            if action == "follow":
-                user.followers.add(request.user)
-                # message = f"You are now following {user.username}."
+            user_to_follow = get_object_or_404(User, username=username)
+            if current_user.following.filter(id=user_to_follow.id).exists():
+                current_user.following.remove(user_to_follow)
             else:
-                user.followers.remove(request.user)
-                # message = f"You have unfollowed {user.username}."
+                current_user.following.add(user_to_follow)
             return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
         except User.DoesNotExist:
