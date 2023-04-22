@@ -12,7 +12,6 @@ from taggit.models import Tag
 from posts.forms import CommentForm, EmailPostForm, PostForm
 from posts.models import Post
 from spaces.models import Space
-from users.models import Contact
 
 from .forms import CommentForm, EmailPostForm, PostForm, ReportForm
 from .models import Report
