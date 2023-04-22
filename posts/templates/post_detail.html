@@ -31,7 +31,6 @@
 
                 <p class="border rounded p-2 border-danger">{{ post.text|linebreaksbr }} </p>
 
-                {% if post.tag %}
                 <hr>
                 <p class="tags small">
                     Tags:
@@ -42,7 +41,6 @@
                         {% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
-                {% endif %}
             </div>
         </div>
 
