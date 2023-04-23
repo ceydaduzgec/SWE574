@@ -1,22 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <div class="d-flex justify-content-end">
-        <h2 style="color: white;" >Box Your Post</h2>
-        
-        <div class="container" >
+        <h2 style="color: white;">Box Your Post</h2>
+
+        <div class="container">
             <div class="d-flex justify-content-start">
-                <h2 >Box Your Post</h2>
+                <h2>Box Your Post</h2>
             </div>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
 
                 <div class="mb-3">
-                    <label  for="Title" class="form-label">Title:</label>
-                    <input name="title" type="Title" class="form-control" id="exampleTitle" aria-describedby="TitleHelp">
+                    <label for="Title" class="form-label">Title:</label>
+                    <input name="title" type="Title" class="form-control" id="exampleTitle"
+                           aria-describedby="TitleHelp">
                     <div id="TitleHelp" class="form-text">Provide a Title</div>
                 </div>
 
@@ -36,84 +36,139 @@
                 </div>
 
                 <div class="mb-3">
-                    <label  for="tags" class="form-label">Tags:</label>
-                    <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp">
+                    <label for="tags" class="form-label">Tags:</label>
+                    <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp"
+                           onchange="getWikidataInfo(event)">
                     <div id="TagsHelp" class="form-text">Provide a Tag</div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="toggleSemanticTags">
+                        <label class="form-check-label" for="toggleSemanticTags">
+                            Semantic Tags On/Off
+                        </label>
+                    </div>
                 </div>
+                <div id="tagInfo"></div>
 
                 <br>
 
                 <p>
-                    <label  for="id_upload">Upload Image:</label>
+                    <label for="id_upload">Upload Image:</label>
                     <br/>
                     <br/>
                     <input type="file" name="image" id="id_upload">
                 </p>
                 <br>
                 <p>
-                    <label  for="id_text">Text:</label>
+                    <label for="id_text">Text:</label>
                     <br/>
                     <textarea name="text" cols="40" rows="10" required="" id="id_text" data-gramm="false"
-                            wt-ignore-input="true"></textarea>
+                              wt-ignore-input="true"></textarea>
                 </p>
 
-<p>
-    <label for="id_spaces">Select spaces:</label>
-    <select name="spaces" id="id_spaces" multiple>
-        {% for space in spaces %}
-            {% if space.id in form.initial.spaces %}
-                <option value="{{ space.id }}" selected>{{ space.name }}</option>
-            {% else %}
-                <option value="{{ space.id }}">{{ space.name }}</option>
-            {% endif %}
-        {% endfor %}
-    </select>
-</p>
+                <p>
+                    <label for="id_spaces">Select spaces:</label>
+                    <select name="spaces" id="id_spaces" multiple>
+                        {% for space in spaces %}
+                            {% if space.id in form.initial.spaces %}
+                                <option value="{{ space.id }}" selected>{{ space.name }}</option>
+                            {% else %}
+                                <option value="{{ space.id }}">{{ space.name }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </p>
 
-
-
-                <button style="background-color: rgba(245, 194, 68, 1); color:black" type="submit" class="btn btn-primary">Save</button>
+                <button style="background-color: rgba(245, 194, 68, 1); color:black" type="submit"
+                        class="btn btn-primary">Save
+                </button>
                 {% if form.errors %}
-                        <ul>
-                            {% for error in form.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
+                    <ul>
+                        {% for error in form.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
                 {% endif %}
 
             </form>
-    </div>
+        </div>
     </div>
 
-<script>
-$(document).ready(function() {
-    $('#link-input').on('change', function() {
-        var linkValue = $(this).val();
-        $.ajax({
-            url: '/check_link/',
-            data: {
-                'link': linkValue
-            },
-            dataType: 'json',
-            success: function(response) {
-                if (response.exists) {
-                    // If the error message is displayed and the user updates the link
-                    if ($('#link-error').length) {
-                        $('#link-error').remove(); // Remove the error message
+    <script>
+        $(document).ready(function () {
+            $('#link-input').on('change', function () {
+                var linkValue = $(this).val();
+                $.ajax({
+                    url: '/check_link/',
+                    data: {
+                        'link': linkValue
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.exists) {
+                            // If the error message is displayed and the user updates the link
+                            if ($('#link-error').length) {
+                                $('#link-error').remove(); // Remove the error message
+                            }
+                            $('#link-input').after('<div id="link-error" class="alert alert-warning" role="alert">This link already exists in the database. You may update the link.</div>');
+                        } else {
+                            // Removal of error message when link does not exist in database
+                            if ($('#link-error').length) {
+                                $('#link-error').remove();
+                            }
+                        }
                     }
-                    $('#link-input').after('<div id="link-error" class="alert alert-warning" role="alert">This link already exists in the database. You may update the link.</div>');
+                });
+            });
+
+            $('#toggleSemanticTags').on('change', function () {
+                if ($(this).is(':checked')) {
+                    getWikidataInfo({target: {value: $('#exampleTags').val()}});
                 } else {
-                    // Removal of error message when link does not exist in database
-                    if ($('#link-error').length) {
-                        $('#link-error').remove();
-                    }
+                    $('#tagInfo').html('');
                 }
+            });
+        });
+
+function getWikidataInfo(event) {
+    if ($('#toggleSemanticTags').is(':checked')) {
+        var tags = event.target.value.split(',').map(tag => tag.trim());
+        $('#tagInfo').html('');
+
+        tags.forEach(tag => {
+            if (tag) {
+                var url = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' + encodeURIComponent(tag) + '&language=en&format=json&origin=*';
+                $.getJSON(url, function (data) {
+                    var html = '';
+                    if (data.search && data.search.length > 0) {
+                        html += '<div class="mb-3"><label for="semanticTags_' + tag + '" class="form-label">Semantic Tags for "' + tag + '":</label><select name="semanticTags" class="form-control" id="semanticTags_' + tag + '" multiple>';
+                        $.each(data.search, function (index, item) {
+                            var description = item.description ? ' - ' + item.description : '';
+                            html += '<option value="' + item.id + '" data-description="' + item.description + '">' + item.label + description + '</option>';
+                        });
+                        html += '</select><div id="SemanticTagsHelp" class="form-text">Select one or more semantic tags based on the input tag.</div></div>';
+                    } else {
+                        html = '<p>No semantic tags found for the tag "' + tag + '".</p>';
+                    }
+                    $('#tagInfo').append(html);
+
+                    // Add event listener for 'change' event on the 'semanticTags' dropdown
+                    $('#semanticTags_' + tag).on('change', function () {
+                        var selectedOption = $(this).find('option:selected');
+                        var description = selectedOption.data('description');
+                        if (description) {
+                            // Append the description to the text area
+                            $('#id_text').val(function (i, text) {
+                                return text + 'WikiData Description for "' + tag + '": \n' + description + "\n";
+                            });
+                        }
+                    });
+                });
             }
         });
-    });
-});
-</script>
+    } else {
+        $('#tagInfo').html('');
+    }
+}
 
-
-
+    </script>
 {% endblock %}
