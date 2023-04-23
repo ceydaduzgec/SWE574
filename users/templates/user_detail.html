@@ -2,10 +2,10 @@
 {% load blog_tags %}
 {% load static %}
 {% load thumbnail %}
-{% block title %}{{ userToSee.get_full_name }}{% endblock %}
+{% block title %}{{ userToSee.username }}{% endblock %}
 {% block content %}
 
-    <h1>{{ userToSee.get_full_name }}</h1>
+    <h1>{{ userToSee.username }}</h1>
     <div class="profile-info">
         <img src="{% thumbnail userToSee.photo 180x180 %}" class="user-detail">
 
@@ -19,14 +19,19 @@
       <span class="total">{{ total_followers }}</span>
       follower{{ total_followers|pluralize }}
     </span>
-        <a href="{% url 'user_follow' %}" data-id="{{ userToSee.id }}"
-           data-action="{% if request.user in userToSee.followers.all %}un{% endif %}follow" class="follow button">
+        <form method="POST" action="{% url 'user_follow' username=userToSee.username %}" class="follow button">
+            {% csrf_token %}
+
+            <button class="btn btn-outline-success me-2" type="submit">
             {% if request.user not in userToSee.followers.all %}
                 Follow
             {% else %}
                 Unfollow
             {% endif %}
-        </a>
+
+            </button>
+        </form>
+
         <div id="image-list" class="image-container">
             {% include "list_ajax.html" with images=user.images_created.all %}
         </div>
@@ -83,7 +88,7 @@
                         {% for post in most_commented_posts %}
                             <li>
 
-                                <a href="{% url 'post_detail' pk=post.pk%}">{{ post.title }}({{ post.total_comments}})</a>
+                                <a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}({{ post.total_comments}})</a>
 
                             </li>
                         {% endfor %}
@@ -94,37 +99,4 @@
     </div>
 
 
-{% endblock %}
-
-
-{% block javascript %}
-    <script>
-        $(document).ready(function () {
-            $('a.follow').click(function (e) {
-                e.preventDefault();
-                $.post('{% url "user_follow" %}',
-                    {
-                        id: $(this).data('id'),
-                        action: $(this).data('action')
-                    },
-                    function (data) {
-                        if (data['status'] == 'ok') {
-                            var previous_action = $('a.follow').data('action');
-                            // toggle data-action
-                            $('a.follow').data('action',
-                                previous_action == 'follow' ? 'unfollow' : 'follow');
-                            // toggle link text
-                            $('a.follow').text(
-                                previous_action == 'follow' ? 'Unfollow' : 'Follow');
-                            // update total followers
-                            var previous_followers = parseInt(
-                                $('span.count .total').text());
-                            $('span.count .total').text(previous_action == 'follow' ?
-                                previous_followers + 1 : previous_followers - 1);
-                        }
-                    }
-                );
-            });
-        });
-    </script>
 {% endblock %}
