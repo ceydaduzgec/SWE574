@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from posts.models import Post
 from spaces.models import Space
+from users.models import Badge
 
 User = get_user_model()
 
@@ -12,7 +13,10 @@ class SpaceViewsTestCase(TestCase):
     def setUp(self):
         # create a test user
         self.user = User.objects.create_user(username="testuser", email="testuser@gmail.com", password="password")
-
+        # create a test badge
+        self.explorer_badge = Badge.objects.create(name="Explorer", description="You explored a new space!")
+        # create a test post
+        self.post_duck_badge = Badge.objects.create(name="Post Duck", description="Some description")
         # create a test space
         self.space = Space.objects.create(
             name="Test Space",
