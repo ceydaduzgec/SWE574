@@ -175,3 +175,5 @@ class NewUserTestCase(TestCase):
 #         response = self.client.post(url, data=data)
 #         self.assertEqual(response.status_code, 200)
 #         self.assertFalse(self.user.following.filter(pk=self.user2.id).exists())
+
+

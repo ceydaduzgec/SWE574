@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 
 from posts.models import Post
 from users.forms import NewUserForm, UserEditForm
+from .models import Badge, UserBadge
 
 User = get_user_model()
 
@@ -87,6 +88,12 @@ def user_detail(request, username):
         .order_by("-total_comments")[:4]
     )
 
+    badges = UserBadge.objects.filter(user=user.id)
+    user_badges = []
+    for badge in badges:
+        _badge = Badge.objects.get(id=badge.badge_id)
+        user_badges.append(_badge)
+
     return render(
         request,
         "user_detail.html",
@@ -96,6 +103,7 @@ def user_detail(request, username):
             "latest_posts_db": all_posts[:4],
             "count": all_posts.count(),
             "most_commented_posts": most_commented_posts,
+            "user_badges": user_badges,
         },
     )
 
@@ -137,3 +145,8 @@ def my_account(request):
         "my_account.html",
         {"user_form": user_form},
     )
+
+
+def user_badges(request):
+    user_badges = UserBadge.objects.filter(user=request.user)
+    return render(request, "badges/user_badges.html", {'user_badges': user_badges})
