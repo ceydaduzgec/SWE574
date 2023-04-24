@@ -2,8 +2,9 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 
-from posts.models import Comment, Post
+from posts.models import Comment, Post, TagDescription
 from spaces.models import Space
+
 
 User = get_user_model()
 
@@ -29,6 +30,12 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ("title", "link", "tags", "labels", "text", "upload", "image", "spaces")
+
+
+class TagDescriptionForm(forms.ModelForm):
+    class Meta:
+        model = TagDescription
+        fields = ("tag", "description",)
 
 
 class CommentForm(forms.ModelForm):

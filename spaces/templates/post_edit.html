@@ -51,6 +51,7 @@
 
                 <br>
 
+
                 <p>
                     <label for="id_upload">Upload Image:</label>
                     <br/>
@@ -129,46 +130,45 @@
             });
         });
 
-function getWikidataInfo(event) {
-    if ($('#toggleSemanticTags').is(':checked')) {
-        var tags = event.target.value.split(',').map(tag => tag.trim());
-        $('#tagInfo').html('');
+        function getWikidataInfo(event) {
+            if ($('#toggleSemanticTags').is(':checked')) {
+                var tags = event.target.value.split(',').map(tag => tag.trim());
+                $('#tagInfo').html('');
 
-        tags.forEach(tag => {
-            if (tag) {
-                var url = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' + encodeURIComponent(tag) + '&language=en&format=json&origin=*';
-                $.getJSON(url, function (data) {
-                    var html = '';
-                    if (data.search && data.search.length > 0) {
-                        html += '<div class="mb-3"><label for="semanticTags_' + tag + '" class="form-label">Semantic Tags for "' + tag + '":</label><select name="semanticTags" class="form-control" id="semanticTags_' + tag + '" multiple>';
-                        $.each(data.search, function (index, item) {
-                            var description = item.description ? ' - ' + item.description : '';
-                            html += '<option value="' + item.id + '" data-description="' + item.description + '">' + item.label + description + '</option>';
-                        });
-                        html += '</select><div id="SemanticTagsHelp" class="form-text">Select one or more semantic tags based on the input tag.</div></div>';
-                    } else {
-                        html = '<p>No semantic tags found for the tag "' + tag + '".</p>';
-                    }
-                    $('#tagInfo').append(html);
+                tags.forEach(tag => {
+                    if (tag) {
+                        var url = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search=' + encodeURIComponent(tag) + '&language=en&format=json&origin=*';
+                        $.getJSON(url, function (data) {
+                            var html = '<div class="mb-3"><label for="tagDescription_' + tag + '" class="form-label">Description for "' + tag + '":</label><input type="text" name="tag_descriptions[]" class="form-control" id="tagDescription_' + tag + '" aria-describedby="tagDescriptionHelp_' + tag + '" value="' + tag + ':"/><div id="tagDescriptionHelp_' + tag + '" class="form-text">Provide a description for the selected tag.</div></div>';
+                            if (data.search && data.search.length > 0) {
+                                html += '<div class="mb-3"><label for="semanticTags_' + tag + '" class="form-label">Semantic Tags for "' + tag + '":</label><select name="semanticTags" class="form-control" id="semanticTags_' + tag + '" multiple>';
+                                $.each(data.search, function (index, item) {
+                                    var description = item.description ? ' - ' + item.description : '';
+                                    html += '<option value="' + item.id + '" data-description="' + item.description + '">' + item.label + description + '</option>';
+                                });
+                                html += '</select><div id="SemanticTagsHelp" class="form-text">Select one or more semantic tags based on the input tag.</div></div>';
+                            } else {
+                                html = '<p>No semantic tags found for the tag "' + tag + '".</p>';
+                            }
+                            $('#tagInfo').append(html);
 
-                    // Add event listener for 'change' event on the 'semanticTags' dropdown
-                    $('#semanticTags_' + tag).on('change', function () {
-                        var selectedOption = $(this).find('option:selected');
-                        var description = selectedOption.data('description');
-                        if (description) {
-                            // Append the description to the text area
-                            $('#id_text').val(function (i, text) {
-                                return text + 'WikiData Description for "' + tag + '": \n' + description + "\n";
+                            // Add event listener for 'change' event on the 'semanticTags' dropdown
+                            $('#semanticTags_' + tag).on('change', function () {
+                                var selectedOption = $(this).find('option:selected');
+                                var description = selectedOption.data('description');
+                                if (description) {
+                                    $('#tagDescription_' + tag).val(tag + ': ' + description);
+
+
+                                }
                             });
-                        }
-                    });
+                        });
+                    }
                 });
+            } else {
+                $('#tagInfo').html('');
             }
-        });
-    } else {
-        $('#tagInfo').html('');
-    }
-}
+        }
 
     </script>
 {% endblock %}
