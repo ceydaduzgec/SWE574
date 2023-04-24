@@ -1,8 +1,8 @@
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from posts.models import Post
-from users.models import User
+from posts.models import Comment, Post
+from users.models import Badge, User, UserBadge
 
 
 class PostEditTestCase(TestCase):
@@ -208,37 +208,27 @@ class BadgeTestCase(TestCase):
         for _ in range(9):
             Comment.objects.create(user=self.user, content="Test comment")
 
-        self.assertFalse(
-            UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists()
-        )
+        self.assertFalse(UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists())
 
         # Create the 10th comment, user should now earn the badge
         Comment.objects.create(user=self.user, content="Test comment")
 
-        self.assertTrue(
-            UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists()
-        )
+        self.assertTrue(UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists())
 
-# Test when a user deletes comments. The badge should be revoked if the user no longer meets the requirement.
+    # Test when a user deletes comments. The badge should be revoked if the user no longer meets the requirement.
     def test_comment_badge_revoke(self):
         # Create 10 comments, user should earn the badge
         for _ in range(10):
             Comment.objects.create(user=self.user, content="Test comment")
 
-        self.assertTrue(
-            UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists()
-        )
+        self.assertTrue(UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists())
 
         # Delete 10 comments, user should no longer have the badge
         for _ in range(10):
             Comment.objects.filter(user=self.user).first().delete()
 
-        self.assertFalse(
-            UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists()
-        )
+        self.assertFalse(UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists())
 
     def tearDown(self):
         self.user.delete()
         self.comment_badge.delete()
-
-

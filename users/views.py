@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 
 from posts.models import Post
 from users.forms import NewUserForm, UserEditForm
+
 from .models import Badge, UserBadge
 
 User = get_user_model()
@@ -149,4 +150,4 @@ def my_account(request):
 
 def user_badges(request):
     user_badges = UserBadge.objects.filter(user=request.user)
-    return render(request, "badges/user_badges.html", {'user_badges': user_badges})
+    return render(request, "badges/user_badges.html", {"user_badges": user_badges})
