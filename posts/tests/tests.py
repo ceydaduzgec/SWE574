@@ -190,3 +190,55 @@ class PostEditTestCase(TestCase):
 #         response = self.client.post(url)
 #         self.assertEqual(response.status_code, 302)
 #         self.assertFalse(self.user.bookmarks.filter(pk=self.post.id).exists())
+
+
+class BadgeTestCase(TestCase):
+    def setUp(self):
+        self.user = User.objects.create(username="testuser", password="testpassword")
+
+        self.comment_badge = Badge.objects.create(
+            name="Commenter",
+            description="Earned by users who have posted 10 or more comments.",
+            badge_type="comments",
+            requirement=3,
+        )
+
+    def test_comment_badge_award(self):
+        # Create 9 comments, user should not earn the badge yet
+        for _ in range(9):
+            Comment.objects.create(user=self.user, content="Test comment")
+
+        self.assertFalse(
+            UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists()
+        )
+
+        # Create the 10th comment, user should now earn the badge
+        Comment.objects.create(user=self.user, content="Test comment")
+
+        self.assertTrue(
+            UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists()
+        )
+
+# Test when a user deletes comments. The badge should be revoked if the user no longer meets the requirement.
+    def test_comment_badge_revoke(self):
+        # Create 10 comments, user should earn the badge
+        for _ in range(10):
+            Comment.objects.create(user=self.user, content="Test comment")
+
+        self.assertTrue(
+            UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists()
+        )
+
+        # Delete 10 comments, user should no longer have the badge
+        for _ in range(10):
+            Comment.objects.filter(user=self.user).first().delete()
+
+        self.assertFalse(
+            UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists()
+        )
+
+    def tearDown(self):
+        self.user.delete()
+        self.comment_badge.delete()
+
+
