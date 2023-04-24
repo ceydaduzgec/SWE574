@@ -2,13 +2,17 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from posts.models import Post
-from users.models import User
+from users.models import Badge, User
 
 
 class PostEditTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username="testuser", email="test@gmail.com", password="password")
+
+        # Create the badge
+        self.badge = Badge.objects.create(name="Post Duck", description="Awarded for creating a post")
+
         self.post = Post.objects.create(title="Test Post", text="This is a test post", author=self.user)
 
     def test_post_edit_with_valid_data(self):
@@ -190,3 +194,48 @@ class PostEditTestCase(TestCase):
 #         response = self.client.post(url)
 #         self.assertEqual(response.status_code, 302)
 #         self.assertFalse(self.user.bookmarks.filter(pk=self.post.id).exists())
+
+
+# class BadgeTestCase(TestCase):
+#     def setUp(self):
+#
+#
+#         self.user = User.objects.create_user(username="testuser", email="test@example.com", password="testpassword")
+#         post = Post.objects.create(title="Test Post", text="This is a test post", author=self.user)
+#         Comment.objects.create(author=self.user, text="Test comment", post=post)
+#         self.comment_badge = Badge.objects.create(
+#             name="Commenter",
+#             description="Earned by users who have posted 10 or more comments.",
+#
+#         )
+#
+#     def test_comment_badge_award(self):
+#         # Create 9 comments, user should not earn the badge yet
+#         for _ in range(9):
+#             Comment.objects.create(author=self.user, text="Test comment")
+#
+#         self.assertFalse(UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists())
+#
+#         # Create the 10th comment, user should now earn the badge
+#         Comment.objects.create(author=self.user, text="Test comment")
+#
+#         self.assertTrue(UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists())
+#
+#     # Test when a user deletes comments. The badge should be revoked if the user no longer meets the requirement.
+#     def test_comment_badge_revoke(self):
+#         # Create 10 comments, user should earn the badge
+#         for _ in range(10):
+#             Comment.objects.create(author=self.user, text="Test comment")
+#
+#
+#         self.assertTrue(UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists())
+#
+#         # Delete 10 comments, user should no longer have the badge
+#         for _ in range(10):
+#             Comment.objects.filter(author=self.user).first().delete()
+#
+#         self.assertFalse(UserBadge.objects.filter(user=self.user, badge=self.comment_badge).exists())
+#
+#     def tearDown(self):
+#         self.user.delete()
+#         self.comment_badge.delete()
