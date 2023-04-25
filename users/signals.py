@@ -14,27 +14,40 @@ def award_comment_badge(sender, instance, created, **kwargs):
         comments_count = Comment.objects.filter(author=user).count()
 
         if comments_count >= 1:
-            badge = Badge.objects.get(name="Commentator")
+            badge, created = Badge.objects.get_or_create(
+                name="Commentator",
+                defaults={"description": "Awarded for creating your first comment.", "image": "badges/commentator.png"},
+            )
             user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
             if created:
                 "send notification to user"
                 user_badge.save()
-                pass
+
         if comments_count >= 2:
-            badge = Badge.objects.get(name="Chatty Cathy")
+            badge, created = Badge.objects.get_or_create(
+                name="Chatty Cathy",
+                defaults={
+                    "description": "Awarded for creating 2 or more comments.",
+                    "image": "badges/chatty-cathy.png",
+                },
+            )
             user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
             if created:
                 "send notification to user"
                 user_badge.save()
-                pass
 
         if comments_count >= 3:
-            badge = Badge.objects.get(name="Comment King")
+            badge, created = Badge.objects.get_or_create(
+                name="Comment King",
+                defaults={
+                    "description": "Awarded for creating 3 or more comments.",
+                    "image": "badges/comment-king.png",
+                },
+            )
             user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
             if created:
                 "send notification to user"
                 user_badge.save()
-                pass
 
 
 @receiver(post_save, sender=Space)
@@ -44,27 +57,34 @@ def award_space_badge(sender, instance, created, **kwargs):
         space_count = Space.objects.filter(owner=user).count()
 
         if space_count >= 1:
-            badge = Badge.objects.get(name="Explorer")
+            badge, created = Badge.objects.get_or_create(
+                name="Explorer",
+                defaults={"description": "Awarded for creating your first space.", "image": "badges/explorer.png"},
+            )
             user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
             if created:
                 "send notification to user"
                 user_badge.save()
-                pass
+
         if space_count >= 2:
-            badge = Badge.objects.get(name="Organizer")
+            badge, created = Badge.objects.get_or_create(
+                name="Organizer",
+                defaults={"description": "Awarded for creating 2 or more spaces.", "image": "badges/organizer.png"},
+            )
             user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
             if created:
                 "send notification to user"
                 user_badge.save()
-                pass
 
         if space_count >= 3:
-            badge = Badge.objects.get(name="Space Star")
+            badge, created = Badge.objects.get_or_create(
+                name="Space Star",
+                defaults={"description": "Awarded for creating 3 or more spaces.", "image": "badges/space-star.png"},
+            )
             user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
             if created:
                 "send notification to user"
                 user_badge.save()
-                pass
 
 
 @receiver(post_save, sender=Post)
@@ -74,24 +94,34 @@ def award_post_badge(sender, instance, created, **kwargs):
         post_count = Post.objects.filter(author=user).count()
 
         if post_count >= 1:
-            badge = Badge.objects.get(name="Post Duck")
+            badge, created = Badge.objects.get_or_create(
+                name="Post Duck",
+                defaults={"description": "Awarded for creating your first post.", "image": "badges/post-duck.png"},
+            )
             user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
             if created:
                 "send notification to user"
                 user_badge.save()
-                pass
+
         if post_count >= 2:
-            badge = Badge.objects.get(name="Prolific Poster")
+            badge, created = Badge.objects.get_or_create(
+                name="Prolific Poster",
+                defaults={
+                    "description": "Awarded for creating 2 or more posts.",
+                    "image": "badges/prolific-poster.png",
+                },
+            )
             user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
             if created:
                 "send notification to user"
                 user_badge.save()
-                pass
 
         if post_count >= 3:
-            badge = Badge.objects.get(name="Post King")
+            badge, created = Badge.objects.get_or_create(
+                name="Post King",
+                defaults={"description": "Awarded for creating 3 or more posts.", "image": "badges/post-king.png"},
+            )
             user_badge, created = UserBadge.objects.get_or_create(user=user, badge=badge)
             if created:
                 "send notification to user"
                 user_badge.save()
-                pass
