@@ -73,6 +73,12 @@ class SpaceViewsTestCase(TestCase):
         self.assertTemplateUsed(response, "my_spaces_list.html")
         self.assertIn(self.space, response.context["spaces"])
 
+    def test_delete_space_view(self):
+        self.client.login(username="testuser", password="password")
+        response = self.client.post(reverse("delete_space", args=[self.space.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Space.objects.filter(pk=self.space.pk).exists())
+
     def test_space_detail_view(self):
         user = User.objects.create_user(username="testuser2", email="testuser2@gmail.com", password="password")
         # create a space
