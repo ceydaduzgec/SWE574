@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 
 from spaces.forms import SpaceCreationForm
@@ -10,6 +10,18 @@ from spaces.models import Space
 from .forms import SpacePolicyForm
 
 User = get_user_model()
+
+
+@login_required
+def delete_space(request, pk):
+    space = get_object_or_404(Space, pk=pk)
+
+    if not request.user == space.owner:
+        return HttpResponseForbidden()
+
+    if request.method == "POST":
+        space.delete()
+        return redirect("my_spaces_list")
 
 
 def grant_permission(request, space_pk, member_pk):
