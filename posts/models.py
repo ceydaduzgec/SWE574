@@ -4,8 +4,6 @@ from django.urls import reverse
 from django.utils import timezone
 from taggit.managers import TaggableManager
 
-
-
 User = get_user_model()
 
 
@@ -43,8 +41,8 @@ class Post(models.Model):
 
 
 class TagDescription(models.Model):
-    tag = models.ForeignKey("taggit.Tag", on_delete=models.CASCADE, related_name="description")
-    description = models.CharField(max_length=200, blank=True)
+    tag = models.ForeignKey("taggit.Tag", on_delete=models.CASCADE, related_name="tag_description")
+    description = models.CharField(max_length=200, blank=True, unique=False)
 
     def __str__(self):
         return f"{self.tag.name}: {self.description}"
