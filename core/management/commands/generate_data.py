@@ -16,16 +16,22 @@ class Command(BaseCommand):
         for _ in range(10):
             UserFactory()
 
-        spaces = [
-            Space(name="Cat Memes"),
-            Space(name="Tech Geeks"),
-            Space(name="Pizza Lovers"),
-            Space(name="Coffee Addicts"),
+        space_names = [
+            "Cat Memes",
+            "Tech Geeks",
+            "Pizza Lovers",
+            "Coffee Addicts",
         ]
-        Space.objects.bulk_create(spaces)
 
-        for space in spaces:
+        users = User.objects.all()
+
+        for name in space_names:
+            space, _ = Space.objects.get_or_create(name=name, owner=random.choice(users))
+            space.members.add(*users)
+            space.moderators.add(random.choice(users))
             space.save()
+
+        spaces = Space.objects.all()
 
         fake = Faker()
 
@@ -44,7 +50,8 @@ class Command(BaseCommand):
 
         for space in spaces:
             if random.random() < 0.5:  # Adjust this probability to control how many spaces each user is assigned
-                space.admins.add(user)
+                space.members.add(user)
+                space.moderators.add(user)
                 space.save()
 
     # Create posts with your specified data
@@ -52,37 +59,38 @@ class Command(BaseCommand):
         {
             "title": "Funny cat memes compilation",
             "content": "Check out this hilarious compilation of cat memes that will make your day.",
-            "space": Space.objects.get(name="Cat Memes"),
+            "space_name": "Cat Memes",
             "link": "https://www.youtube.com/watch?v=LuYsO5DgLrc",
         },
         {
             "title": "The latest smartphone for tech geeks",
             "content": "A review of the newest smartphone model that every tech geek should know about.",
-            "space": Space.objects.get(name="Tech Geeks"),
+            "space_name": "Tech Geeks",
             "link": "https://www.howtogeek.com/734936/best-android-phones/",
         },
         {
             "title": "The ultimate pizza recipe",
             "content": "Discover the ultimate pizza recipe that will impress all pizza lovers.",
-            "space": Space.objects.get(name="Pizza Lovers"),
+            "space_name": "Pizza Lovers",
             "link": "https://tasty.co/recipe/ultimate-homemade-pizza",
         },
         {
             "title": "How to make the perfect cold brew",
             "content": "Learn how to make the perfect cold brew coffee at home with this step-by-step guide.",
-            "space": Space.objects.get(name="Coffee Addicts"),
+            "space_name": "Coffee Addicts",
             "link": "https://cooking.nytimes.com/recipes/1017355-cold-brewed-iced-coffee",
         },
     ]
 
     for post_data in posts_data:
+        space = Space.objects.get(name=post_data["space_name"])
         post = Post(
             author=random.choice(User.objects.all()),
-            space=post_data["space"],
             title=post_data["title"],
-            content=post_data["content"],
+            text=post_data["content"],
             link=post_data["link"],
         )
         post.save()
+        post.spaces.add(space)
 
     print("Mock data created.")
