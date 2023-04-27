@@ -6,17 +6,18 @@
         <div class="blog-post border border-dark rounded my-3 col-9 p-0">
             <div class="d-flex justify-content-between">
                 <h2 class="blog-post-title bg-warning px-3">{{ post.title }}</h2>
-               {% if request.user.id == post.author_id or request.user in moderators %}
+                {% if request.user.id == post.author_id or request.user in moderators %}
                     <div>
-                    {% if request.user.id == post.author_id  %}
-                        <a class="btn btn-outline-warning" href="{% url 'post_edit' pk=post.id %}">
-                            {% include './icons/pencil-fill.svg' %}
-                        </a>
-                    {% endif %}
+                        {% if request.user.id == post.author_id %}
+                            <a class="btn btn-outline-warning" href="{% url 'post_edit' pk=post.id %}">
+                                {% include './icons/pencil-fill.svg' %}
+                            </a>
+                        {% endif %}
 
                         <form method="POST" action="{% url 'post_remove' pk=post.id %}">
                             {% csrf_token %}
-                            <button class="btn btn-outline-danger" type="submit">{% include './icons/clipboard-x.svg' %}</button>
+                            <button class="btn btn-outline-danger"
+                                    type="submit">{% include './icons/clipboard-x.svg' %}</button>
                         </form>
 
                     </div>
@@ -35,7 +36,12 @@
                 <p class="tags small">
                     Tags:
                     {% for tag in post.tags.all %}
-                        <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger">
+                        <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
+                           data-bs-toggle="tooltip" data-bs-placement="top"
+                           data-bs-custom-class="custom-tooltip"
+                           data-bs-title="{% for tag_description in tag.tag_description.all %}
+                                   {{ tag_description.description }}
+                               {% endfor %}">
                             {{ tag.name }}
                         </a>
                         {% if not forloop.last %}, {% endif %}
@@ -45,17 +51,18 @@
         </div>
 
         <div class="d-flex">
-            <form method="POST" action="{% url 'add_comment_to_post' pk=post.id%}">
+            <form method="POST" action="{% url 'add_comment_to_post' pk=post.id %}">
                 {% csrf_token %}
-                <button class="btn btn-outline-success me-2" type="submit">Comment{% if post.total_comments %}({{ post.total_comments }}){% endif %}</button>
+                <button class="btn btn-outline-success me-2" type="submit">Comment{% if post.total_comments %}(
+                    {{ post.total_comments }}){% endif %}</button>
             </form>
 
             <form method="POST" action="{% url 'bookmark' pk=post.id %}">
                 {% csrf_token %}
                 {% if post in user.bookmarks.all %}
-                  <button id="bookmarkButton" class="btn btn-primary" type="submit">Unbookmark</button>
+                    <button id="bookmarkButton" class="btn btn-primary" type="submit">Unbookmark</button>
                 {% else %}
-                  <button id="bookmarkButton" class="btn btn-outline-primary" type="submit">Bookmark</button>
+                    <button id="bookmarkButton" class="btn btn-outline-primary" type="submit">Bookmark</button>
                 {% endif %}
             </form>
 
@@ -67,16 +74,16 @@
             <form method="POST" action="{% url "like_post" post.id %}">
                 {% csrf_token %}
                 {% if user in post.likes.all %}
-                  <button id="likeButton" class="btn btn-primary" type="submit">Unlike
+                    <button id="likeButton" class="btn btn-primary" type="submit">Unlike
                 {% else %}
-                  <button id="likeButton" class="btn btn-outline-primary" type="submit">Like
+                    <button id="likeButton" class="btn btn-outline-primary" type="submit">Like
                 {% endif %}
-                {%if post.likes.count %}({{post.likes.count}}){% endif %}</button>
-              </form>
+                {% if post.likes.count %}({{ post.likes.count }}){% endif %}</button>
+            </form>
 
             {% if post.link %}
-            <a href="{{ post.link }}" target="_blank" class="btn btn-outline-primary">
-                Goto> </a>
+                <a href="{{ post.link }}" target="_blank" class="btn btn-outline-primary">
+                    Goto> </a>
             {% endif %}
         </div>
 
