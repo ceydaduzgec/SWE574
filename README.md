@@ -126,7 +126,7 @@ This projects is for the SWE 574 Software Development Practice course of Boğazi
 ### Create Mock Data
 
 To generate mock data for your local, you can use the following command, after the installation steps:
-  `python manage.py generate_data.py`
+  `python manage.py generate_data`
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
