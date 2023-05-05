@@ -4,6 +4,7 @@ from django.urls import reverse
 from posts.models import Post
 from users.models import Badge, User
 
+
 class PostDeleteTestCase(TestCase):
     def setUp(self):
         self.client = Client()
@@ -15,10 +16,11 @@ class PostDeleteTestCase(TestCase):
         self.client.login(username="testuser", password="password")
 
         # Make the POST request to delete the post
-        self.client.post(reverse("post_delete", kwargs={"pk": self.post.pk}))
+        self.client.post(reverse("post_remove", kwargs={"pk": self.post.pk}))
 
         # Check that the post was deleted
         self.assertFalse(Post.objects.filter(pk=self.post.pk).exists())
+
 
 class PostEditTestCase(TestCase):
     def setUp(self):
