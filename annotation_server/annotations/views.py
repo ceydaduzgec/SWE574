@@ -1,4 +1,5 @@
-from django.http import Http404
+from django.db.models import Q
+from django.http import Http404, JsonResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -53,3 +54,14 @@ class AnnotationDetail(APIView):
         annotation = self.get_object(pk)
         annotation.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AnnotationSearch(APIView):
+    def get(self, request):
+        query = request.GET.get("query", "").strip()
+        if not query:
+            return JsonResponse({"error": "Missing query parameter"}, status=400)
+
+        annotations = Annotation.objects.filter(Q(body__icontains=query))
+        serializer = AnnotationSerializer(annotations, many=True)
+        return Response(serializer.data)
