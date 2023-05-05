@@ -168,3 +168,5 @@ EMAIL_USE_TLS = True
 
 
 ABSOLUTE_URL_OVERRIDES = {"settings.AUTH_USER_MODEL": lambda u: reverse_lazy("user_detail", args=[u.username])}
+
+ANNOTATION_URL = "http://localhost:81"  # TODO: Change this to the actual URL after deployment

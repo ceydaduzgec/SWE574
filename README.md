@@ -89,50 +89,17 @@ This projects is for the SWE 574 Software Development Practice course of Boğazi
 
 ### Installation
 
-1. Clone the repo
+1. Clone the repo:
    ```sh
    git clone https://github.com/swe574-spring23/SWE574.git
    ```
-2. Create a [virtual environment](https://docs.python.org/3/library/venv.html#creating-virtual-environments
-   "Official documentation") in the project folder:
-
-    `python -m venv venv`
-
-3. [Activate](https://docs.python.org/3/library/venv.html#creating-virtual-environments:~:text=Command%20to%20activate%20virtual%20environment
-   "Official documentation") the virtual environment:
-
-    `source venv/bin/activate`
-
-4. Install the requirements:
-
-    `pip install -r requirements/local.txt`
-
-5. Compose Docker or run the stack if it already exists.
-
-    `docker-compose -f local.yml build` or `docker-compose -f local.yml up`
-
-6. Migrate models.
-
-    `python manage.py migrate`
-
-7. Run on your local.
-
-    `python manage.py runserver 0.0.0.0:8000`
+2. Setup the project:
+    ```sh
+    source setup.sh
+    ```
+This would setup the app server and annotation server together. Then app would be in port 80 and annotation would de in 81.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] Milestone 1
-- [ ] Milestone 2
-- [ ] Milestone 3
-
-See the [open issues](https://github.com/swe574-spring23/SWE574/issues) for a full list of proposed features (and known issues).
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
 
 
 <!-- CONTRIBUTING -->
@@ -146,6 +113,8 @@ Don't forget to give the project a star! Thanks again!
 3. Commit your Changes (`git commit -m 'Add some NewFeature'`)
 4. Push to the Branch (`git push origin feature/SWE574`)
 5. Open a Pull Request
+
+See the [open issues](https://github.com/swe574-spring23/SWE574/issues) for a full list of proposed features (and known issues).
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
