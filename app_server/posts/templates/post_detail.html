@@ -140,24 +140,3 @@
     </div>
 
 {% endblock %}>
-
-{% block javascript %}
-    <script>
-        $(document).ready(function () {
-            $('.like-button').click(function (e) {
-                e.preventDefault();
-
-                var post_id = $(this).data('id');
-                var $this = $(this);
-
-                $.ajax({
-                    url: '/like/' + post_id,
-                    method: 'GET',
-                    success: function (data) {
-                        $('#total_likes_badge').text(data.likes_count);
-                    }
-                });
-            });
-        });
-    </script>
-{% endblock %}
