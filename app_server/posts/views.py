@@ -22,40 +22,34 @@ def check_link(request):
 
 @login_required
 def post_list(request, tag_slug=None):
-    # Getting friends of users
-    friendsofUser = User.objects.filter(followers=request.user).all()
-
-    # Mapping friends of users
-    friendsofUser = map(lambda x: x.following, friendsofUser)
-
-    # Getting spaces where user is an owner, member, granted member or moderator
-    spaces = Space.objects.filter(
-        Q(owner=request.user) | Q(members=request.user) | Q(granted_members=request.user) | Q(moderators=request.user)
+    user = request.user
+    spaces = Space.objects.filter(Q(owner=user) | Q(members=user) | Q(granted_members=user) | Q(moderators=user))
+    posts = (
+        Post.objects.filter(Q(spaces__in=spaces) | Q(author__in=user.following.all()) | Q(author=user))
+        .annotate(total_comments=Count("comments"))
+        .order_by("-published_date")
     )
 
-    # Getting posts of the user and their friends, and posts from the spaces
-    # posts = (
-    #     Post.objects.filter(
-    #         Q(author__in=friendsofUser) | Q(author=request.user) | Q(spaces__in=spaces),
-    #         published_date__lte=timezone.now(),
-    #     )
-    #     .annotate(total_comments=Count("comments"))
-    #     .order_by("-published_date")
-    # )
-    posts = Post.objects.filter(spaces__in=spaces)
-    tag = None
+    context = {"posts": posts}
 
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
         posts = posts.filter(tags__in=[tag])
+        context["tag"] = tag
 
-    return render(request, "post_list.html", {"posts": posts, "tag": tag})
+    return render(request, "post_list.html", context)
 
 
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     comments = post.comments
+
+    # Get the moderators of the spaces of the post
+    moderators = []
+    for space in post.spaces.all():
+        for moderator in space.moderators.all():
+            moderators.append(moderator)
 
     stuff = get_object_or_404(Post, id=pk)
     total_likes = stuff.total_likes()
@@ -71,6 +65,7 @@ def post_detail(request, pk):
             "comments": comments,
             "similar_posts": similar_posts,
             "total_likes": total_likes,
+            "moderators": moderators,
         },
     )
 
@@ -147,7 +142,13 @@ def post_edit(request, pk):
 @login_required
 def post_remove(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    post.delete()
+    if request.user == post.author:
+        post.delete()
+    else:
+        for space in post.spaces.all():
+            if request.user in space.moderators.all():
+                space.posts.remove(post)
+        post.save()
     return redirect("post_list")
 
 

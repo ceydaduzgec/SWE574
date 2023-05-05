@@ -29,8 +29,7 @@ class User(AbstractUser):
         upload_to="users/%Y/%m/%d/",
         blank=True,
     )
-    followers = models.ManyToManyField("User", related_name="follower_users", verbose_name=_("Followers"), blank=True)
-    following = models.ManyToManyField("User", related_name="following_users", verbose_name=_("Following"), blank=True)
+    following = models.ManyToManyField("User", related_name="followers", verbose_name=_("Following"), blank=True)
     bookmarks = models.ManyToManyField(
         "posts.Post", related_name="bookmarked_posts", verbose_name=_("Bookmarked Posts"), blank=True
     )
@@ -46,3 +45,25 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse("user_detail", kwargs={"username": self.username})
+
+    # @property
+    # def followers(self):
+    #     self.followers.all()
+
+
+class Badge(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField()
+    image = models.ImageField(upload_to="badges/", default="badges/default.png")
+
+    def __str__(self):
+        return self.name
+
+
+class UserBadge(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    badge = models.ForeignKey(Badge, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} has {self.badge}"

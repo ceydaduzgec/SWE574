@@ -14,24 +14,34 @@
       <button type="submit" class="btn btn-danger">Leave Space</button>
     </form>
   {% endif %}
+      {% if request.user == space.owner %}
+    <form method="POST" action="{% url 'delete_space' pk=space.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Delete Space</button>
+    </form>
+  {% endif %}
 {% if can_post %}
     <hr>
     <a href="{% url 'post_new' %}?space_pk={{ space.pk }}" class="btn btn-primary">Share Post</a>
     <hr>
 {% endif %}
 
-  <div class="row row-cols-1 row-cols-sm-1 row-cols-mr-6 g-3">
+  <div class="row row-cols-1 row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-3">
     {% if space.posts.all %}
       {% for post in space.posts.all %}
         <div class="col">
-          <div class="post">
-            <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
-            <p>{{ post.text }}</p>
-            <p>Published by {{ post.author }} on {{ post.published_date }}</p>
+          <div class="card">
             {% if post.image %}
-              <img src="{{ post.image.url }}" alt="Post image">
+              <img src="{{ post.image.url }}" class="card-img-top" alt="Post image">
             {% endif %}
-            <p><a href="{% url 'like_post' pk=post.pk %}">Like</a> <span class="like-count">{{ post.likes.count }}</span></p>
+            <div class="card-body">
+              <h2 class="card-title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+              <p class="card-text">{{ post.text }}</p>
+            </div>
+            <div class="card-footer">
+              <p class="card-text">Published by {{ post.author }} on {{ post.published_date }}</p>
+
+            </div>
           </div>
         </div>
       {% endfor %}

@@ -13,7 +13,7 @@ from users.views import (
 urlpatterns = [
     path("register/", register_request, name="register"),
     path("login/", login_request, name="login"),
-    path("logout", logout_request, name="logout"),
+    path("logout/", logout_request, name="logout"),
     path(
         "password_change/",
         auth_views.PasswordChangeView.as_view(template_name="password_change_form.html"),
@@ -41,6 +41,6 @@ urlpatterns = [
     ),
     path("users/", user_list, name="user_list"),
     path("users/<username>/", user_detail, name="user_detail"),
-    path("users/follow", user_follow, name="user_follow"),
+    path("users/<username>/follow/", user_follow, name="user_follow"),
     path("myaccount/", my_account, name="my_account"),
 ]

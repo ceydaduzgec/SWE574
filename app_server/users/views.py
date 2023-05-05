@@ -10,6 +10,8 @@ from django.views.decorators.http import require_POST
 from posts.models import Post
 from users.forms import NewUserForm, UserEditForm
 
+from .models import Badge, UserBadge
+
 User = get_user_model()
 
 
@@ -45,12 +47,11 @@ def register_request(request):
     if request.method == "POST":
         form = NewUserForm(request.POST)
         if form.is_valid():
-            user = User.objects.create(
+            user = User.objects.create_user(
                 username=form.cleaned_data["username"],
                 email=form.cleaned_data["email"],
                 password=form.cleaned_data["password1"],
             )
-
             login(request, user)
             messages.success(request, "Registration successful.")
             return redirect("post_list")
@@ -87,34 +88,37 @@ def user_detail(request, username):
         .order_by("-total_comments")[:4]
     )
 
+    badges = UserBadge.objects.filter(user=user.id)
+    user_badges = []
+    for badge in badges:
+        _badge = Badge.objects.get(id=badge.badge_id)
+        user_badges.append(_badge)
+
     return render(
         request,
         "user_detail.html",
         {
-            "section": "people",
             "userToSee": user,
             "id": user.id,
             "latest_posts_db": all_posts[:4],
             "count": all_posts.count(),
             "most_commented_posts": most_commented_posts,
+            "user_badges": user_badges,
         },
     )
 
 
 @require_POST
 @login_required
-def user_follow(request):
-    user_id = request.POST.get("id")
-    action = request.POST.get("action")
-    if user_id and action:
+def user_follow(request, username):
+    current_user = request.user
+    if username != current_user.username:
         try:
-            user = get_object_or_404(User, id=user_id)
-            if action == "follow":
-                user.followers.add(request.user)
-                # message = f"You are now following {user.username}."
+            user_to_follow = get_object_or_404(User, username=username)
+            if current_user.following.filter(id=user_to_follow.id).exists():
+                current_user.following.remove(user_to_follow)
             else:
-                user.followers.remove(request.user)
-                # message = f"You have unfollowed {user.username}."
+                current_user.following.add(user_to_follow)
             return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
 
         except User.DoesNotExist:
@@ -141,3 +145,8 @@ def my_account(request):
         "my_account.html",
         {"user_form": user_form},
     )
+
+
+def user_badges(request):
+    user_badges = UserBadge.objects.filter(user=request.user)
+    return render(request, "badges/user_badges.html", {"user_badges": user_badges})

@@ -1,8 +1,7 @@
-from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from spaces.forms import SpaceCreationForm
 from spaces.models import Space
@@ -10,6 +9,66 @@ from spaces.models import Space
 from .forms import SpacePolicyForm
 
 User = get_user_model()
+
+
+@login_required
+def delete_space(request, pk):
+    space = get_object_or_404(Space, pk=pk)
+
+    if not request.user == space.owner:
+        return HttpResponseForbidden()
+
+    if request.method == "POST":
+        space.delete()
+        return redirect("my_spaces_list")
+
+
+def grant_permission(request, space_pk, member_pk):
+    space = get_object_or_404(Space, pk=space_pk)
+    member = get_object_or_404(User, pk=member_pk)
+    if request.method == "POST":
+        space.granted_members.add(member)
+        space.members.remove(member)
+    return redirect("space_members", pk=space.pk)
+
+
+def ungrant_permission(request, space_pk, member_pk):
+    space = get_object_or_404(Space, pk=space_pk)
+    member = get_object_or_404(User, pk=member_pk)
+    if request.method == "POST":
+        space.granted_members.remove(member)
+        space.members.add(member)
+    return redirect("space_members", pk=space.pk)
+
+
+@login_required
+def remove_member(request, space_pk, member_pk):
+    space = get_object_or_404(Space, pk=space_pk)
+    member = get_object_or_404(User, pk=member_pk)
+    if request.method == "POST":
+        space.members.remove(member)
+        space.granted_members.remove(member)
+    return redirect("space_members", pk=space.pk)
+
+
+@login_required
+def make_moderator(request, space_pk, member_pk):
+    space = get_object_or_404(Space, pk=space_pk)
+    member = get_object_or_404(User, pk=member_pk)
+    if request.method == "POST":
+        space.moderators.add(member)
+        space.members.remove(member)
+        space.granted_members.remove(member)
+    return redirect("space_members", pk=space.pk)
+
+
+@login_required
+def remove_moderator(request, space_pk, moderator_pk):
+    space = get_object_or_404(Space, pk=space_pk)
+    moderator = get_object_or_404(User, pk=moderator_pk)
+    if request.method == "POST":
+        space.moderators.remove(moderator)
+    return redirect("space_members", pk=space.pk)
 
 
 def join_space(request, pk):
@@ -66,7 +125,6 @@ def space_policies(request, pk):
         form = SpacePolicyForm(request.POST, instance=space)
         if form.is_valid():
             form.save()
-            messages.success(request, "Space policies updated successfully.")
             return redirect("space_detail", pk=pk)
     else:
         form = SpacePolicyForm(instance=space)
