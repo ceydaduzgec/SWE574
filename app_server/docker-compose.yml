@@ -10,10 +10,12 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    container_name: app_server_db
+
   app:
     build: .
     volumes:
-      - ./:/app  #
+      - ./:/app
     restart: always
     ports:
       - "80:8000"

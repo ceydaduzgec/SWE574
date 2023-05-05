@@ -1,10 +1,10 @@
 # in urls.py
 
-from django.urls import path
+from django.urls import path, re_path
 
-from .views import AnnotationView
+from .views import AnnotationDetail, AnnotationList
 
 urlpatterns = [
-    path("", AnnotationView.as_view(), name="annotations"),
-    path("<str:pk>/", AnnotationView.as_view(), name="annotation_detail"),
+    path("", AnnotationList.as_view(), name="annotations"),
+    re_path(r"^(?P<pk>[\w:/.#?!\-]+)/$", AnnotationDetail.as_view(), name="annotation_detail"),
 ]
