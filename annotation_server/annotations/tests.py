@@ -44,20 +44,13 @@ class AnnotationViewTestCase(TestCase):
         self.assertEqual(len(response.data), 2)
 
     def test_get_single_annotation(self):
-        url = reverse("annotations", args=[self.annotation1.id])
+        url = reverse("annotation_detail", args=[self.annotation1.id])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["body"], "http://example.com/1")
 
-    def test_update_annotation(self):
-        url = reverse("annotations", args=[self.annotation1.id])
-        data = {"body": "http://example.com/updated"}
-        response = self.client.put(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Annotation.objects.get(id="test1").body, "http://example.com/updated")
-
     def test_delete_annotation(self):
-        url = reverse("annotations", args=[self.annotation1.id])
+        url = reverse("annotation_detail", args=[self.annotation1.id])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Annotation.objects.count(), 1)

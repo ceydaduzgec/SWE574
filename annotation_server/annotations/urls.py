@@ -6,4 +6,5 @@ from .views import AnnotationView
 
 urlpatterns = [
     path("", AnnotationView.as_view(), name="annotations"),
+    path("<str:pk>/", AnnotationView.as_view(), name="annotation_detail"),
 ]
