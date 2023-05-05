@@ -14,6 +14,12 @@
       <button type="submit" class="btn btn-danger">Leave Space</button>
     </form>
   {% endif %}
+      {% if request.user == space.owner %}
+    <form method="POST" action="{% url 'delete_space' pk=space.pk %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Delete Space</button>
+    </form>
+  {% endif %}
 {% if can_post %}
     <hr>
     <a href="{% url 'post_new' %}?space_pk={{ space.pk }}" class="btn btn-primary">Share Post</a>

@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from posts.models import Post
 from spaces.models import Space
+from users.models import Badge
 
 User = get_user_model()
 
@@ -12,7 +13,10 @@ class SpaceViewsTestCase(TestCase):
     def setUp(self):
         # create a test user
         self.user = User.objects.create_user(username="testuser", email="testuser@gmail.com", password="password")
-
+        # create a test badge
+        self.explorer_badge = Badge.objects.create(name="Explorer", description="You explored a new space!")
+        # create a test post
+        self.post_duck_badge = Badge.objects.create(name="Post Duck", description="Some description")
         # create a test space
         self.space = Space.objects.create(
             name="Test Space",
@@ -68,6 +72,12 @@ class SpaceViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "my_spaces_list.html")
         self.assertIn(self.space, response.context["spaces"])
+
+    def test_delete_space_view(self):
+        self.client.login(username="testuser", password="password")
+        response = self.client.post(reverse("delete_space", args=[self.space.pk]))
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Space.objects.filter(pk=self.space.pk).exists())
 
     def test_space_detail_view(self):
         user = User.objects.create_user(username="testuser2", email="testuser2@gmail.com", password="password")
