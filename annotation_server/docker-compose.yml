@@ -17,7 +17,7 @@ services:
   annotation_app:
     build: .
     volumes:
-      - ./:/annotation_app  #
+      - ./:/annotation_app
     restart: unless-stopped
     ports:
       - "81:8000"
@@ -26,3 +26,7 @@ services:
     depends_on:
       - annotation_db
     tty: True
+    command: >
+      sh -c "sleep 5 &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"

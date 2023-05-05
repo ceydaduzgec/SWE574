@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This script starts the development environment using Docker
-# Launch as: source tools/dev.sh from the project's root
+# Launch as: source tools/run_development.sh from the project's root
 
 DOCKER_COMPOSE_FILE="./docker-compose.yml"
 
