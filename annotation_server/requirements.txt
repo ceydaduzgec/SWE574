@@ -10,6 +10,7 @@ django-taggit==1.2.0
 psycopg2==2.9.5
 rfc3987
 requests
+django-cors-headers==3.14.0
 
 # TODO: Add development packages here
 flake8
