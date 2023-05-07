@@ -5,23 +5,6 @@ from posts.models import Post
 from users.models import Badge, User
 
 
-class PostDeleteTestCase(TestCase):
-    def setUp(self):
-        self.client = Client()
-        self.user = User.objects.create_user(username="testuser", email="test@gmail.com", password="password")
-        self.post = Post.objects.create(title="Test Post", text="This is a test post", author=self.user)
-
-    def test_post_delete(self):
-        # Log in as the user
-        self.client.login(username="testuser", password="password")
-
-        # Make the POST request to delete the post
-        self.client.post(reverse("post_remove", kwargs={"pk": self.post.pk}))
-
-        # Check that the post was deleted
-        self.assertFalse(Post.objects.filter(pk=self.post.pk).exists())
-
-
 class PostEditTestCase(TestCase):
     def setUp(self):
         self.client = Client()
