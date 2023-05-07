@@ -10,6 +10,7 @@ django-taggit==1.2.0
 psycopg2==2.9.5
 factory-boy==3.2.1
 easy-thumbnails==2.8.1
+django-cors-headers==3.14.0
 
 # TODO: Add development packages here
 flake8
