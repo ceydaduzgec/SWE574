@@ -7,8 +7,6 @@
 - Bookmark feature will be implemented.
 - Milestone 2 is due on 10 April 2023. A quick demo will be presented.
 
-### TODO: Do these steps and delete them.
-
 - Assign progress status from the project.
 - Create interface for recommendations.
 - Create annotation framework.

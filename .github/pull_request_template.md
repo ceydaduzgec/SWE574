@@ -1,4 +1,4 @@
-### TODO: Do these steps and delete them.
+### TO DO: Do these steps and delete them.
 - Add title as `DEV | Feature name`.
 - Add description of the feature.
 - Assign your teammates to reviewers.
