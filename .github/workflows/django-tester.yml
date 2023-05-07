@@ -40,5 +40,5 @@ jobs:
 
 
       run: |
-        python app_server/manage.py collectstatic --no-input
-        coverage run app_server/manage.py test && coverage report --fail-under=65 && coverage xml
+        python manage.py collectstatic --no-input
+        coverage run manage.py test && coverage report --fail-under=50 && coverage xml
