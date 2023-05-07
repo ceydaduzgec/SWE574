@@ -2,7 +2,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 
 from posts.models import Post
-from users.models import Badge, User
+from users.models import Badge, User, UserBadge
 
 
 class PostEditTestCase(TestCase):
@@ -47,6 +47,85 @@ class PostEditTestCase(TestCase):
             "tags": "tag1,tag2,tag3",
         }
         self.client.post(reverse("post_edit", kwargs={"pk": self.post.pk}), data=post_data)
+
+
+class UserAuthenticationTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+    def user_creation(self):
+        self.user = User.objects.create_user(username="testuser", email="test@gmail.com", password="password")
+        found_user = User.objects.filter(username="testuser", email="test@gmail.com", password="password")
+        self.assertEqual(found_user.count(), 1)
+
+    def test_user_registration(self):
+        # Make a POST request to register a new user
+        response = self.client.post(
+            reverse("register"),
+            {
+                "username": "testuser",
+                "email": "test@gmail.com",
+                "password1": "password",
+                "password2": "password",
+            },
+        )
+
+        # Check that the user was created successfully
+        self.assertEqual(response.status_code, 200)
+        found_user = User.objects.filter(username="testuser", email="test@gmail.com")
+        self.assertEqual(found_user.count(), 1)
+
+    def test_user_login(self):
+        # Create a test user
+        self.user = User.objects.create_user(username="testuser", email="test@gmail.com", password="password")
+
+        # Make a POST request to log in as the test user
+        response = self.client.post(
+            reverse("login"),
+            {
+                "username": "testuser",
+                "password": "password",
+            },
+        )
+
+        # Check that the login was successful
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue("_auth_user_id" in self.client.session)
+        self.assertEqual(int(self.client.session["_auth_user_id"]), self.user.id)
+
+
+class BadgeTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="testuser", email="test@gmail.com", password="password")
+        self.badge = Badge.objects.create(name="Test Badge", description="This is a test badge")
+
+    def test_badge_creation(self):
+        # Create a new badge and assign it to the user
+        found_badges = Badge.objects.filter(name="Test Badge", description="This is a test badge")
+        self.assertEqual(found_badges.count(), 1)
+
+    def test_badge_assignment(self):
+        # Create a new badge and assign it to the user
+        user_badge, created = UserBadge.objects.get_or_create(user=self.user, badge=self.badge)
+        found_userbadges = UserBadge.objects.filter(user=self.user, badge=self.badge)
+        self.assertEqual(found_userbadges.count(), 1)
+
+    def test_badge_recognition(self):
+        # Recognize the user with a badge
+        user_badge, created = UserBadge.objects.get_or_create(user=self.user, badge=self.badge)
+        found_userbadges = UserBadge.objects.filter(user=self.user, badge=self.badge)
+        if found_userbadges:
+            userbadge = found_userbadges[0]
+            user = userbadge.user
+            self.assertEqual(user, self.user)
+        else:
+            self.assertEqual(1, 0)
+
+    def test_badge_deletion(self):
+        Badge.objects.filter(name="Test Badge", description="This is a test badge").delete()
+        found_badges = Badge.objects.filter(name="Test Badge", description="This is a test badge")
+        self.assertEqual(found_badges.count(), 0)
 
 
 # from django.contrib.auth import authenticate, get_user_model
