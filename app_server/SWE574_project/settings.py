@@ -30,6 +30,8 @@ DEBUG = True
 
 
 ALLOWED_HOSTS = ["*"]
+CORS_ORIGIN_ALLOW_ALL = True  # CORS
+CORS_ALLOW_CREDENTIALS = True  # CORS
 
 AUTH_USER_MODEL = "users.User"
 
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
     "posts",
     "taggit",
     "easy_thumbnails",
+    "corsheaders",  # CORS
     "core",
 ]
 
@@ -60,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",  # CORS
 ]
 
 ROOT_URLCONF = "SWE574_project.urls"

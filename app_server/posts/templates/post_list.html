@@ -73,23 +73,21 @@
 
                                     <div class="modal-body">
 
-                                        <form method="POST" action="http://127.0.0.1:81/">
-                                            {% csrf_token %}
 
                                             <div class="mb-3">
                                               <label for="annotation" class="form-label">Annotation</label>
                                               <input id="annotation" class="form-control" type="text" name="body_description" placeholder="Annotation"
                                                 required />
 
-                                              <input type="hidden" name="source" value="{{post.id}}" />
+                                              <input type="hidden" id="annotation_id" name="source" value="{{post.id}}" />
                                               <input type="hidden" id="annotation-start" name="start" />
                                               <input type="hidden" id="annotation-end" name="end" />
-                                              <input type="hidden" name="type" value="text" />
-                                              <input type="hidden" name="selector_type" value="{{0}}" />
+                                              <input type="hidden" id="annotation_type" name="type" value="text" />
+                                              <input type="hidden" id="annotation_selector_type" id="annotation_type" name="selector_type" value="{{0}}" />
                                             </div>
 
-                                            <button class="btn btn-outline-dark">Submit</button>
-                                          </form>
+                                            <button onclick="saveAnnotation({{ post.id }},'{{ post.text }}')" class="btn btn-outline-dark">Submit</button>
+
 
                                     </div>
                                   </div>
@@ -127,6 +125,9 @@
             </div>
         {% endfor %}
     </div>
+    <div id="annotation-container" class="row row-cols-1 row-cols-sm-1 row-cols-mr-6 g-3">
+      <!-- The annotation cards will be inserted here -->
+  </div>
 {% endblock %}
 
 {% block javascript %}
@@ -185,8 +186,10 @@
       selectedAnnotationText = window.getSelection().toString();
 
       // Find starting index of highlighted text in complete description
-      const startIndex = '{{post.description}}'.search(selectedAnnotationText)
+      const startIndex = '{{post.text}}'.search(selectedAnnotationText)
       const endIndex = startIndex + selectedAnnotationText.length - 1
+      const started = '{{post.text}}'
+      const len = started.length
 
       annotationStartInput.value = startIndex
       annotationEndInput.value = endIndex
@@ -203,6 +206,77 @@
       }
     })
 
+    function saveAnnotation(post_id,post_description) {
+
+
+        let url = "http://127.0.0.1:81"
+        let data = {
+                body: {
+                    post_id: post_id,
+                    post_description: post_description,
+                    selected_part: selectedAnnotationText,
+                    annotation_real: document.getElementById('annotation').value,
+                    start: post_description.search(selectedAnnotationText),
+                    end: post_description.search(selectedAnnotationText) + selectedAnnotationText.length,
+                },
+                id: Math.floor(Math.random() * 1000000000),
+                target: "http://127.0.0.1",
+                start: document.getElementById('annotation-start').value,
+                end: document.getElementById('annotation-end').value,
+                type: "Annotation",
+                selector_type: document.getElementById('annotation_selector_type').value,
+            };
+        fetch(url,{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        }).then(response => response.json())
+        .then(result => {
+            console.log(data);
+            console.log(result);
+            annotationModal.hide();
+        })
+    }
+
+    function createAnnotationCard(annotation) {
+      const card = document.createElement("div");
+      card.classList.add("card", "shadow-sm");
+  
+      const cardBody = document.createElement("div");
+      cardBody.classList.add("card-body");
+  
+      const annotationReal = document.createElement("h5");
+      annotationReal.textContent = annotation.body.annotation_real;
+      cardBody.appendChild(annotationReal);
+  
+      const postId = document.createElement("p");
+      postId.textContent = `Post ID: ${annotation.body.post_id}`;
+      cardBody.appendChild(postId);
+  
+      const selectedPart = document.createElement("p");
+      selectedPart.textContent = `Selected Part: ${annotation.body.selected_part}`;
+      cardBody.appendChild(selectedPart);
+  
+      card.appendChild(cardBody);
+      return card;
+  }
+  
+  function fetchAnnotations() {
+      fetch("http://127.0.0.1:81")
+          .then((response) => response.json())
+          .then((annotations) => {
+              const annotationContainer = document.getElementById("annotation-container");
+              annotations.forEach((annotation) => {
+                  const card = createAnnotationCard(annotation);
+                  annotationContainer.appendChild(card);
+              });
+          });
+  }
+  
+  // Call fetchAnnotations() when the page loads
+  fetchAnnotations();
   </script>
 
   {% endblock %}
