@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "posts",
     "taggit",
     "easy_thumbnails",
+    "core",
 ]
 
 if DEBUG:
