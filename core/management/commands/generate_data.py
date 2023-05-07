@@ -2,7 +2,6 @@ import random
 
 from django.core.management import BaseCommand
 from faker import Faker
-
 from posts.models import Post
 from spaces.models import Space
 from users.models import User
