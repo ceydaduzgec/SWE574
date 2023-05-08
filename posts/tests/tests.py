@@ -66,6 +66,48 @@ class PostEditTestCase(TestCase):
         self.client.post(reverse("post_edit", kwargs={"pk": self.post.pk}), data=post_data)
 
 
+class PostSearchTestCase(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_user(username="testuser", email="test@gmail.com", password="password")
+        self.post1 = Post.objects.create(title="Test Post 1", text="This is a test post", author=self.user)
+        self.post2 = Post.objects.create(title="Test Post 2", text="Another test post", author=self.user)
+        self.post3 = Post.objects.create(title="Another Post", text="This is not a test post", author=self.user)
+
+    def test_post_search_by_title(self):
+        # Search for posts by title
+        response = self.client.get(reverse("post_search"), {"q": "Test"})
+
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the correct posts are returned
+        self.assertContains(response, self.post1.title)
+        self.assertContains(response, self.post2.title)
+        self.assertNotContains(response, self.post3.title)
+
+    def test_post_search_by_text(self):
+        # Search for posts by text
+        response = self.client.get(reverse("post_search"), {"q": "test"})
+
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the correct posts are returned
+        self.assertContains(response, self.post1.title)
+        self.assertContains(response, self.post2.title)
+        self.assertContains(response, self.post3.title)
+
+    def test_post_search_no_results(self):
+        # Search for a term that doesn't match any posts
+        response = self.client.get(reverse("post_search"), {"q": "foobar"})
+
+        # Check that the response status code is 200 (OK)
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the response contains a message indicating no results were found
+        self.assertContains(response, "No posts found matching your search criteria.")
+
 # from django.contrib.auth import authenticate, get_user_model
 # from django.db.models import Q
 # from django.test import TestCase
