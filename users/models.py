@@ -33,6 +33,8 @@ class User(AbstractUser):
     bookmarks = models.ManyToManyField(
         "posts.Post", related_name="bookmarked_posts", verbose_name=_("Bookmarked Posts"), blank=True
     )
+    # User Interest model. Added in reccomendation algorithm
+    interests = models.ManyToManyField("spaces.Interest", blank=True)
 
     objects = UserManager()
 

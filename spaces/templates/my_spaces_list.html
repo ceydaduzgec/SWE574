@@ -4,9 +4,28 @@
   {% if spaces %}
     <ul>
       {% for space in spaces %}
-        <li><a href="{% url 'space_detail' pk=space.pk %}">{{ space.name }}</a></li>
+        <li>
+          <a href="{% url 'space_detail' pk=space.pk %}">{{ space.name }}</a>
+          <p>Interests:</p>
+          <ul>
+            {% for interest in space.interests.all %}
+              <li>{{ interest.name }}</li>
+            {% endfor %}
+          </ul>
+        </li>
       {% endfor %}
     </ul>
+    <!-- Add the interest selection form here -->
+    <form method="post" id="interests-form">
+      {% csrf_token %}
+      <label for="interests">Select Interest:</label>
+      <select name="interests" id="interests">
+        {% for interest in all_interests %}
+          <option value="{{ interest.pk }}">{{ interest.name }}</option>
+        {% endfor %}
+      </select>
+      <input type="submit" value="Update Recommendations">
+    </form>
     {% if recommended_spaces %}
       <h2>Recommended Spaces:</h2>
       <ul>

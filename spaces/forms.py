@@ -3,7 +3,13 @@ from django.contrib.auth import get_user_model
 
 from spaces.models import Space
 
+from .models import Interest
+
 User = get_user_model()
+
+
+class InterestForm(forms.Form):
+    interest = forms.ModelChoiceField(queryset=Interest.objects.all(), empty_label="Select an interest", required=False)
 
 
 class SpaceCreationForm(forms.ModelForm):

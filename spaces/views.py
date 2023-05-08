@@ -5,7 +5,7 @@ from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 
 from spaces.forms import SpaceCreationForm
-from spaces.models import Space
+from spaces.models import Interest, Space
 
 from .forms import SpacePolicyForm
 
@@ -150,6 +150,16 @@ def space_members(request, pk):
 
 @login_required
 def my_spaces_list(request):
+    all_interests = Interest.objects.all()
+
+    # Handle form submission
+    if request.method == "POST":
+        selected_interest = request.POST.get("interests")
+        interest_spaces = Space.objects.filter(interests=selected_interest)
+    else:
+        interest_spaces = Space.objects.none()
+
+    # Your existing code
     spaces = Space.objects.filter(
         Q(owner=request.user) | Q(moderators=request.user) | Q(members=request.user) | Q(granted_members=request.user)
     ).distinct()
@@ -163,12 +173,14 @@ def my_spaces_list(request):
         )
         .annotate(posts_count=Count("posts"))
         .order_by("-posts_count")
-        .exclude(pk__in=[space.pk for space in spaces])[:5]
+        .exclude(pk__in=[space.pk for space in spaces])
+        .filter(pk__in=[space.pk for space in interest_spaces])[:5]
     )
 
     context = {
         "spaces": spaces,
         "recommended_spaces": recommended_spaces,
+        "all_interests": all_interests,
     }
 
     return render(request, "my_spaces_list.html", context)
