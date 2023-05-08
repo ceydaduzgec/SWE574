@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    {% if searched %}
+        <h1> You Searched for {{ searched }}</h1>
+
+        <br/>
+        <h2> Post Results </h2>
+        {% for post in posts_s %}
+            <a href="{% url 'post_detail' post.id %}">{{ post}} - {{ post.title}}  </a><br/>
+        {% endfor %}
+
+          <br>
+  <h2>Space Results</h2>
+  {% for space in spaces_s %}
+    <a href="{% url 'space_detail' space.id %}">{{ space }} - {{ space.name }}</a><br>
+  {% endfor %}
+
+    {% else %}
+        <h1> You forgot to search ... </h1>
+
+    {% endif  %}
+
+{% endblock %}

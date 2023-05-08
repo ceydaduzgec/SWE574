@@ -1,10 +1,11 @@
-# Class Notes on 20 Mar 23:
+# Class Notes on 27 Mar 23:
 
-- Requirements specifications shall be updated and completed.
-- Mock-ups shall be revised and completed.
-- Annotation feature is important.
-- Web Annotation Data Model shall be followed for Annotation feature.
-- Milestone 1 is due on 27 Mar 23. A quick demo will be presented.
+- Space recommendation implementaion will be starting.
+- Annotation feature is on progress.
+- UserBadges feature will be done by next week.
+- Semantic tag feature will be investigated.
+- Bookmark feature will be implemented.
+- Milestone 2 is due on 10 April 2023. A quick demo will be presented.
 
 - Assign progress status from the project.
 - Create interface for recommendations.
@@ -16,7 +17,7 @@
 
 | Meeting Details                                                                |                                                                                                                                                                                                   |
 |--------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Date                                                                           | 20 March 2023                                                                                                                                                                                     |
+| Date                                                                           | 27 March 2023                                                                                                                                                                                     |
 | Time                                                                           | 12.00 - 13.00                                                                                                                                                                                     |
 | Attendees                                                                      | Ceyda, Emre, Semih, Cemre,  Maria, Eralp, Şehmuz, Şahin                                                                                                                                           |
 | Absentees                                                                      |
@@ -28,9 +29,10 @@
 | Search posts and spaces according to posts, spaces, tags and annotations       | Eralp, Şehmuz, Şahin                                                                                                                                                                              |
 | User space area                                                                | Semih, Cemre, Ceyda, Maria                                                                                                                                                                        |
 | User space management (Members, Moderators)                                    | Semih, Cemre, Ceyda, Maria                                                                                                                                                                        |
+| Bookmarking                                                                    | Cemre, Ceyda                                                                                                                                                                                      |
 | Moderator Actions ( Management inspect remove content, Warn disruptive people) | Semih, Cemre, Ceyda, Maria                                                                                                                                                                        |
 | Discussion                                                                     |                                                                                                                                                                                                   |
-| - We will be divide into 3 groups:                                             ||
+| - We will be divide into 3 groups:                                             | |
 | Group A                                                                        | Semih, Cemre, Maria                                                                                                                                                                               |
 | Assigned Tasks                                                                 | User space area, User space management (Members, Moderators) and Moderator Actions ( Management inspect remove content, Warn disruptive people),  Recommendations interface ( User, space, post), |
 | Group B                                                                        | Şehmuz, Şahin                                                                                                                                                                                     |
@@ -42,5 +44,6 @@
 
 ### Notes
 
-- Requirements are important.
+- Bookmarking is missing.
+- There are some bugs that should be fixed.
 - Annotation can take time. Read the documentation carefully.
