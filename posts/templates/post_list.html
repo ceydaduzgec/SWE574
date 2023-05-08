@@ -29,6 +29,19 @@
                             {% endfor %}
                         </p>
 
+                        <p class="labels">
+                            Labels:
+
+                                <a href="" class="badge bg-secondary"
+                                   data-bs-toggle="tooltip" data-bs-placement="top"
+                                   data-bs-custom-class="custom-tooltip">
+
+
+                            {{ post.labels }}
+                            </a>
+
+                        </p>
+
                         <div class="d-flex">
                             <form method="POST" action="{% url 'add_comment_to_post' pk=post.id %}">
                                 {% csrf_token %}
