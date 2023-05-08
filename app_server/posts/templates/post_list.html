@@ -243,26 +243,26 @@
     function createAnnotationCard(annotation) {
       const card = document.createElement("div");
       card.classList.add("card", "shadow-sm");
-  
+
       const cardBody = document.createElement("div");
       cardBody.classList.add("card-body");
-  
+
       const annotationReal = document.createElement("h5");
       annotationReal.textContent = annotation.body.annotation_real;
       cardBody.appendChild(annotationReal);
-  
+
       const postId = document.createElement("p");
       postId.textContent = `Post ID: ${annotation.body.post_id}`;
       cardBody.appendChild(postId);
-  
+
       const selectedPart = document.createElement("p");
       selectedPart.textContent = `Selected Part: ${annotation.body.selected_part}`;
       cardBody.appendChild(selectedPart);
-  
+
       card.appendChild(cardBody);
       return card;
   }
-  
+
   function fetchAnnotations() {
       fetch("http://127.0.0.1:81")
           .then((response) => response.json())
@@ -274,7 +274,7 @@
               });
           });
   }
-  
+
   // Call fetchAnnotations() when the page loads
   fetchAnnotations();
   </script>
