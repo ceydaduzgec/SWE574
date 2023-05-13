@@ -283,3 +283,4 @@ uploads/*
 .envs/*
 !.envs/.local/
 *sqlite3
+.data

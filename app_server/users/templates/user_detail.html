@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load blog_tags %}
+{% load static %}
+{% load thumbnail %}
+{% block title %}{{ userToSee.username }}{% endblock %}
+{% block content %}
+
+    <h1>{{ userToSee.username }}</h1>
+    <div class="profile-info">
+        <img src="{% thumbnail userToSee.photo 180x180 %}" class="user-detail">
+
+
+    </div>
+    {% with total_followers=userToSee.followers.count %}
+        <span class="count">
+      <span class="total">{{ total_followers }}</span>
+      follower{{ total_followers|pluralize }}
+    </span>
+        <form method="POST" action="{% url 'user_follow' username=userToSee.username %}" class="follow button">
+            {% csrf_token %}
+
+            <button class="btn btn-outline-success me-2" type="submit">
+                {% if request.user not in userToSee.followers.all %}
+                    Follow
+                {% else %}
+                    Unfollow
+                {% endif %}
+
+            </button>
+        </form>
+
+        <div id="image-list" class="image-container">
+            {% include "list_ajax.html" with images=user.images_created.all %}
+        </div>
+    {% endwith %}
+
+    <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center mb-3" id="Total Posts">
+                    <div class="card-header">
+                        <h5 class="card-title"> Badges</h5>
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="row">
+                            {% for badge in user_badges %}
+
+
+                                <div class="col-1 d-flex me-2">
+                                    <a href="#" class="row align-content-between">
+                                        <img class="img-fluid rounded-circle" src="{{ badge.image.url }}"
+                                             alt="{{ badge.name }}"
+                                             title="{{ badge.description }}"
+                                        style="height:80px; object-fit: cover;"/>
+                                        <span class="badge rounded-pill bg-danger mt-2">
+                                        {{ badge.name }}
+                                        </span>
+                                    </a>
+                                </div>
+
+
+
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center mb-3" id="Total Posts">
+                    <div class="card-header">
+                        <h5 class="card-title"> Total Posts</h5>
+                    </div>
+
+                    <div class="card-body">
+                        <h3 class="card-title"> {{ count }} </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center mb-3" id="Total Posts">
+                    <div class="card-header">
+                        <h5 class="card-title"> Latest Posts</h5>
+                    </div>
+
+                    <div class="card-body">
+                        <h3 class="card-title"></h3>
+                        {% for post in latest_posts_db %}
+                            <li>
+                                <a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col">
+            <div class="col-md">
+                <div class="card text-center mb-3" id="Total Posts">
+                    <div class="card-header">
+                        <h5 class="card-title"> Most Commented Posts</h5>
+                    </div>
+
+                    <div class="card-body">
+                        {% for post in most_commented_posts %}
+                            <li>
+
+                                <a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}({{ post.total_comments }})</a>
+
+                            </li>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
