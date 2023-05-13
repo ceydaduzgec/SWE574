@@ -40,6 +40,7 @@
 
 
 
+
                            {% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
             <div id="TagsHelp" class="form-text">Provide a Tag</div>
             <div class="form-check">
@@ -56,11 +57,17 @@
             <label for="new-tag">New Tag:</label>
             <input type="text" id="new-tag"/>
 
-{#            <label for="tag-description">Description:</label>#}
-{#            <select id="tag-description"></select>#}
+            {#            <label for="tag-description">Description:</label>#}
+            {#            <select id="tag-description"></select>#}
 
 
             <button type="button" id="save-tag-button">Save Tag</button>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.labels.id_for_label }}">Labels:</label>
+            {{ form.labels }}
+            <small class="form-text text-muted">Enter labels separated by commas.</small>
         </div>
 
         <br>
