@@ -35,22 +35,10 @@
             {% endif %}
         </div>
 
-        {#        <div class="mb-3">#}
-        {#            <label for="tags" class="form-label">Tags:</label>#}
-        {#            <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp"#}
-        {#                   value="#}
-        {#                           {% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">#}
-        {#            <div id="TagsHelp" class="form-text">Provide a Tag</div>#}
-        {#        </div>#}
         <div class="mb-3">
             <label for="tags" class="form-label">Tags:</label>
             <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp"
                    value="
-
-
-
-
-
                            {% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"
                    onchange="getWikidataInfo(event)">
             <div id="TagsHelp" class="form-text">Provide a Tag</div>
@@ -94,53 +82,6 @@
         {% endif %}
     </form>
 
-    {#    <script>#}
-    {#        $(document).ready(function () {#}
-    {#            var initialTags = $('#exampleTags').val().split(',').map(tag => tag.trim());#}
-    {#            initialTags.forEach(tag => getWikidataInfo({target: {value: tag}}));#}
-    {##}
-    {#            $('#exampleTags').on('change', getWikidataInfo);#}
-    {#            $('#toggleSemanticTags').on('click', toggleSemanticTags);#}
-    {#        });#}
-    {##}
-    {#        function getWikidataInfo(event) {#}
-    {#            var tag = event.target.value;#}
-    {#            var tagInfoDiv = $('#tagInfo');#}
-    {##}
-    {#            $.ajax({#}
-    {#                url: 'https://www.wikidata.org/w/api.php',#}
-    {#                data: {#}
-    {#                    action: 'wbsearchentities',#}
-    {#                    language: 'en',#}
-    {#                    format: 'json',#}
-    {#                    search: tag#}
-    {#                },#}
-    {#                dataType: 'jsonp',#}
-    {#                success: function (data) {#}
-    {#                    if (data.search.length > 0) {#}
-    {#                        var firstResult = data.search[0];#}
-    {#                        var tagInfo = `<p><strong>${firstResult.label}</strong>: <input type="text" id="desc_${firstResult.label}" value="${firstResult.description}"></p>`;#}
-    {#                        tagInfoDiv.append(tagInfo);#}
-    {#                    } else {#}
-    {#                        tagInfoDiv.append('<p>No semantic tag found</p>');#}
-    {#                    }#}
-    {#                },#}
-    {#                error: function () {#}
-    {#                    tagInfoDiv.append('<p>Error retrieving semantic tag</p>');#}
-    {#                }#}
-    {#            });#}
-    {#        }#}
-    {##}
-    {#        function toggleSemanticTags() {#}
-    {#            var tagInfoDiv = $('#tagInfo');#}
-    {#            if ($('#toggleSemanticTags').is(':checked')) {#}
-    {#                tagInfoDiv.show();#}
-    {#            } else {#}
-    {#                tagInfoDiv.hide();#}
-    {#            }#}
-    {#        }#}
-    {#    </script>#}
-
     <script>
         $(document).ready(function () {
             var initialTags = $('#exampleTags').val().split(',').map(tag => tag.trim());
@@ -149,6 +90,7 @@
             $('#exampleTags').on('change', getWikidataInfo);
             $('#toggleSemanticTags').on('click', toggleSemanticTags);
         });
+
 
         function getWikidataInfo(event) {
             var tag = event.target.value;
