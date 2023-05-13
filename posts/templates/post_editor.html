@@ -50,6 +50,7 @@
 
 
 
+
                            {% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}"
                    onchange="getWikidataInfo(event)">
             <div id="TagsHelp" class="form-text">Provide a Tag</div>
@@ -93,6 +94,53 @@
         {% endif %}
     </form>
 
+    {#    <script>#}
+    {#        $(document).ready(function () {#}
+    {#            var initialTags = $('#exampleTags').val().split(',').map(tag => tag.trim());#}
+    {#            initialTags.forEach(tag => getWikidataInfo({target: {value: tag}}));#}
+    {##}
+    {#            $('#exampleTags').on('change', getWikidataInfo);#}
+    {#            $('#toggleSemanticTags').on('click', toggleSemanticTags);#}
+    {#        });#}
+    {##}
+    {#        function getWikidataInfo(event) {#}
+    {#            var tag = event.target.value;#}
+    {#            var tagInfoDiv = $('#tagInfo');#}
+    {##}
+    {#            $.ajax({#}
+    {#                url: 'https://www.wikidata.org/w/api.php',#}
+    {#                data: {#}
+    {#                    action: 'wbsearchentities',#}
+    {#                    language: 'en',#}
+    {#                    format: 'json',#}
+    {#                    search: tag#}
+    {#                },#}
+    {#                dataType: 'jsonp',#}
+    {#                success: function (data) {#}
+    {#                    if (data.search.length > 0) {#}
+    {#                        var firstResult = data.search[0];#}
+    {#                        var tagInfo = `<p><strong>${firstResult.label}</strong>: <input type="text" id="desc_${firstResult.label}" value="${firstResult.description}"></p>`;#}
+    {#                        tagInfoDiv.append(tagInfo);#}
+    {#                    } else {#}
+    {#                        tagInfoDiv.append('<p>No semantic tag found</p>');#}
+    {#                    }#}
+    {#                },#}
+    {#                error: function () {#}
+    {#                    tagInfoDiv.append('<p>Error retrieving semantic tag</p>');#}
+    {#                }#}
+    {#            });#}
+    {#        }#}
+    {##}
+    {#        function toggleSemanticTags() {#}
+    {#            var tagInfoDiv = $('#tagInfo');#}
+    {#            if ($('#toggleSemanticTags').is(':checked')) {#}
+    {#                tagInfoDiv.show();#}
+    {#            } else {#}
+    {#                tagInfoDiv.hide();#}
+    {#            }#}
+    {#        }#}
+    {#    </script>#}
+
     <script>
         $(document).ready(function () {
             var initialTags = $('#exampleTags').val().split(',').map(tag => tag.trim());
@@ -117,8 +165,11 @@
                 dataType: 'jsonp',
                 success: function (data) {
                     if (data.search.length > 0) {
-                        var firstResult = data.search[0];
-                        var tagInfo = `<p><strong>${firstResult.label}</strong>: <input type="text" id="desc_${firstResult.label}" value="${firstResult.description}"></p>`;
+                        var tagInfo = `<p><strong>${tag}</strong>: <select id="desc_${tag}">`;
+                        for (let result of data.search) {
+                            tagInfo += `<option value="${result.description}">${result.description}</option>`;
+                        }
+                        tagInfo += `</select></p>`;
                         tagInfoDiv.append(tagInfo);
                     } else {
                         tagInfoDiv.append('<p>No semantic tag found</p>');
@@ -139,38 +190,7 @@
             }
         }
     </script>
-
-    {#    <script>#}
-    {##}
-    {##}
-    {#        $(document).ready(function () {#}
-    {#            $('#link-input').on('change', function () {#}
-    {#                var linkValue = $(this).val();#}
-    {#                $.ajax({#}
-    {#                    url: '/check_link/',#}
-    {#                    data: {#}
-    {#                        'link': linkValue#}
-    {#                    },#}
-    {#                    dataType: 'json',#}
-    {#                    success: function (response) {#}
-    {#                        if (response.exists) {#}
-    {#                            // If the error message is displayed and the user updates the link#}
-    {#                            if ($('#link-error').length) {#}
-    {#                                $('#link-error').remove(); // Remove the error message#}
-    {#                            }#}
-    {#                            $('#link-input').after('<div id="link-error" class="alert alert-warning" role="alert">This link already exists in the database. You may update the link.</div>');#}
-    {#                        } else {#}
-    {#                            // Removal of error message when link does not exist in database#}
-    {#                            if ($('#link-error').length) {#}
-    {#                                $('#link-error').remove();#}
-    {#                            }#}
-    {#                        }#}
-    {#                    }#}
-    {#                });#}
-    {#            });#}
-    {#        });#}
-    {#    </script>#}
-
-
-
+    ...
 {% endblock %}
+
+
