@@ -47,6 +47,17 @@
                         {% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
+
+                <p class="labels">
+                    Labels:
+
+                    <a href="" class="badge bg-secondary"
+                       data-bs-toggle="tooltip" data-bs-placement="top"
+                       data-bs-custom-class="custom-tooltip">
+
+
+                        {{ post.labels }}
+                    </a>
             </div>
         </div>
 
@@ -94,7 +105,7 @@
                 <p>
                     <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
                 </p>
-            {% empty %}
+                {% empty %}
                 There are no similar posts yet.
             {% endfor %}
         </div>
