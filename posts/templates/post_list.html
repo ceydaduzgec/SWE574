@@ -20,7 +20,7 @@
                                 <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
                                    data-bs-toggle="tooltip" data-bs-placement="top"
                                    data-bs-custom-class="custom-tooltip"
-                                   data-bs-title="{% for tag_description in tag.tag_description.all %}
+                                   data-bs-title="{% for tag_description in post.tag_descriptions.all %}
                                    {{ tag_description.description }}
                                {% endfor %}">
                                     {{ tag.name }}
