@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from posts.forms import CommentForm, EmailPostForm, PostForm
-from posts.models import Post
+from posts.models import Post, TagDescription
 from spaces.models import Space
 from taggit.models import Tag
 
@@ -101,6 +101,17 @@ def post_new(request):
                 post.spaces.set(selected_spaces)
 
             post.tags.add(*form.cleaned_data["tags"])
+
+            tag_descriptions_data = request.POST.getlist("tag_descriptions[]")
+
+            for tag_description_data in tag_descriptions_data:
+                tag_name, description = tag_description_data.split(":", 1)
+                tag, _ = Tag.objects.get_or_create(name=tag_name)
+                tag_description, _ = TagDescription.objects.get_or_create(tag=tag, description=description)
+                post.tag_descriptions.add(tag_description)
+
+            # Save the post instance with the new tag descriptions
+            post.save()
 
             return redirect("post_detail", pk=post.pk)
     else:
