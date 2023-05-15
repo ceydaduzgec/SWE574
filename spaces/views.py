@@ -150,16 +150,37 @@ def space_members(request, pk):
 
 @login_required
 def my_spaces_list(request):
+    interest_list = [
+        "Automotive",
+        "Beauty",
+        "Book and Literature",
+        "Business",
+        "Education",
+        "Events",
+        "Gaming",
+        "Health",
+        "Food and drink",
+        "Politics",
+        "Movies",
+        "Music",
+    ]
+
+    # Create or get existing interests
+    for interest in interest_list:
+        Interest.objects.get_or_create(name=interest)
+
     all_interests = Interest.objects.all()
 
-    # Handle form submission
     if request.method == "POST":
         selected_interest = request.POST.get("interests")
-        interest_spaces = Space.objects.filter(interests=selected_interest)
+        try:
+            selected_interest_obj = Interest.objects.get(pk=selected_interest)
+            interest_spaces = Space.objects.filter(interests=selected_interest_obj)
+        except Interest.DoesNotExist:
+            interest_spaces = Space.objects.none()
     else:
         interest_spaces = Space.objects.none()
 
-    # Your existing code
     spaces = Space.objects.filter(
         Q(owner=request.user) | Q(moderators=request.user) | Q(members=request.user) | Q(granted_members=request.user)
     ).distinct()
