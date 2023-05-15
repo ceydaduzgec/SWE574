@@ -24,11 +24,11 @@
                        data-bs-custom-class="custom-tooltip"
                        data-bs-title="{% for tag_description in post.tag_descriptions.all %}
                                    {{ tag_description.description }}
-                               {% endfor %}">
+                {% endfor %}">
                         {{ tag.name }}
                     </a>
                     {% if not forloop.last %}, {% endif %}
-                {% endfor %}
+                    {% endfor %}
             </p>
 
             <p class="labels">
@@ -112,7 +112,7 @@
                                            name="selector_type" value="{{ 0 }}"/>
                                 </div>
 
-                                <button onclick="saveAnnotation({{ post.id }},'{{ post.text }}')"
+                                <button onclick="saveAnnotation( {{ post.id }},'{{ post.text }}')
                                         class="btn btn-outline-dark">Submit
                                 </button>
 
