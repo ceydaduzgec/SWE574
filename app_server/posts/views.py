@@ -188,7 +188,10 @@ def search(request):
 
         # Search posts with the given keyword
         posts_s = Post.objects.filter(
-            Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
+            Q(title__icontains=searched)
+            | Q(text__icontains=searched)
+            | Q(tags__name__icontains=searched)
+            | Q(tag_descriptions__description__icontains=searched)
         ).distinct()
 
         # Search spaces with the given keyword
