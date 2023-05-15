@@ -9,7 +9,7 @@
         
         <div class="container" >
             <div class="d-flex justify-content-start">
-                <h2 >Box Your Post99 </h2>
+                <h2 >Box Your Post </h2>
             </div>
             <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -35,11 +35,19 @@
                     {% endif %}
                 </div>
 
-                <div class="mb-3">
-                    <label  for="tags" class="form-label">Tags:</label>
-                    <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp">
+                 <div class="mb-3">
+                    <label for="tags" class="form-label">Tags:</label>
+                    <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp"
+                           onchange="getWikidataInfo(event)">
                     <div id="TagsHelp" class="form-text">Provide a Tag</div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="toggleSemanticTags">
+                        <label class="form-check-label" for="toggleSemanticTags">
+                            Semantic Tags On/Off
+                        </label>
+                    </div>
                 </div>
+                <div id="tagInfo"></div>
 
                 <br>
 
