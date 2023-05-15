@@ -16,6 +16,7 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     link = models.URLField(max_length=200, blank=True, unique=False)
     tags = TaggableManager(blank=True)
+    tag_descriptions = models.ManyToManyField("TagDescription", blank=True)
     labels = models.CharField(max_length=200, blank=True)
     text = models.CharField(max_length=2000, blank=True)
     upload = models.FileField(upload_to="uploads/", null=True, blank=True)
@@ -44,6 +45,14 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse("post_detail", args=[self.id])
+
+
+class TagDescription(models.Model):
+    tag = models.ForeignKey("taggit.Tag", on_delete=models.CASCADE, related_name="tag_description")
+    description = models.CharField(max_length=200, blank=True, unique=False)
+
+    def __str__(self):
+        return f"{self.tag.name}: {self.description}"
 
 
 class Comment(models.Model):

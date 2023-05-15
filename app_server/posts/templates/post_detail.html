@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 
-{% block content %}
 
+
+{% block content %}
+    <style>
+        .annotated {
+            background-color: yellow;
+        }
+    </style>
     <div class="row">
         <div class="blog-post border border-dark rounded my-3 col-9 p-0">
             <div class="d-flex justify-content-between">
@@ -40,15 +46,36 @@
 
 
                 <hr>
-                <p class="tags small">
+
+                <p class="tags">
                     Tags:
                     {% for tag in post.tags.all %}
-                        <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger">
+                        <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
+                           data-bs-toggle="tooltip" data-bs-placement="top"
+                           data-bs-custom-class="custom-tooltip"
+                           data-bs-title="{% for tag_description in post.tag_descriptions.all %}
+                                   {{ tag_description.description }}
+                {% endfor %}">
                             {{ tag.name }}
                         </a>
                         {% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
+
+                <p class="labels">
+                    Labels:
+
+                    <a href="" class="badge bg-secondary"
+                       data-bs-toggle="tooltip" data-bs-placement="top"
+                       data-bs-custom-class="custom-tooltip">
+
+
+                        {{ post.labels }}
+                    </a>
+
+                </p>
+
+
             </div>
         </div>
 
