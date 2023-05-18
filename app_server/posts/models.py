@@ -1,3 +1,5 @@
+from collections import Counter
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.urls import reverse
@@ -51,6 +53,16 @@ class Post(models.Model):
         super().save(*args, **kwargs)
         for space in self.spaces.all():
             space.update_tags_counter()
+
+    # update tags counter for recommendations
+    def update_tags_counter(self):
+        tags = self.tags.all()
+        self.spaces.annotate(tags_counter=Counter(tags))
+
+        # Update the tags_counter field in Space model
+        for space in self.spaces.all():
+            space.tags_counter = Counter(tags)
+            space.save()
 
 
 class TagDescription(models.Model):

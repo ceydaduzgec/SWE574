@@ -2,12 +2,13 @@ from collections import Counter
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count, Q
+from django.db.models import Case, IntegerField, Q, Sum, Value, When
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
-from posts.models import UserTagInteraction
+from posts.models import Post
 from spaces.forms import SpaceCreationForm
 from spaces.models import Space
+from taggit.models import TaggedItem
 
 from .forms import SpacePolicyForm
 
@@ -150,39 +151,37 @@ def space_members(request, pk):
     return render(request, "spaces/templates/space_members.html", context)
 
 
-@login_required
 def my_spaces_list(request):
     spaces = Space.objects.filter(
         Q(owner=request.user) | Q(moderators=request.user) | Q(members=request.user) | Q(granted_members=request.user)
     ).distinct()
 
-    # Get tags used by the user
-    user_tags = UserTagInteraction.objects.filter(user=request.user).values_list("tag__name", flat=True)
+    # Find tags for posts in user's spaces
+    user_posts = Post.objects.filter(spaces__in=spaces)
+    user_tags = TaggedItem.objects.filter(object_id__in=user_posts).values_list("tag__name", flat=True)
 
-    # Calculate user's tags_counter.
-    user_tags_counter = Counter()
-    for space in spaces:
-        user_tags_counter.update(space.tags_counter)
+    # Count the number of times each tag appears
+    user_tags_counter = Counter(user_tags)
 
-    # debug print
-    print(f"User's tags counter: {user_tags_counter}")
+    # Create a Case statement to assign tag scores
+    cases = [
+        When(posts__tags__name=tag, then=Value(score, output_field=IntegerField()))
+        for tag, score in user_tags_counter.items()
+    ]
+    tag_score = Case(*cases, default=Value(0, output_field=IntegerField()))
 
-    # Annotate spaces with the tag interaction count
+    # Recommend spaces that have posts with similar tags, weighted by how common those tags are in user's posts
     recommended_spaces = (
-        Space.objects.exclude(
+        Space.objects.annotate(tag_score=Sum(tag_score))
+        .exclude(
             Q(owner=request.user)
             | Q(moderators=request.user)
             | Q(members=request.user)
             | Q(granted_members=request.user)
         )
-        .filter(posts__tags__name__in=user_tags)
-        .annotate(tag_interaction_count=Count("posts__tags__name"))
-        .order_by("-tag_interaction_count", "-created_date")
+        .order_by("-tag_score")
         .exclude(pk__in=[space.pk for space in spaces])[:5]
     )
-
-    # debug print
-    print(f"Recommended spaces: {recommended_spaces}")
 
     context = {
         "spaces": spaces,

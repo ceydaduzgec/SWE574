@@ -44,11 +44,13 @@ class Space(models.Model):
         else:
             return False
 
-    @property
-    def tags_counter(self):
-        # Count the occurrence of each tag in the posts of this space
-        tags = [tag for post in self.posts.all() for tag in post.tags.names()]
-        return Counter(tags)
+    def update_tags_counter(self):
+        posts = self.posts.all()
+        tags_counter = Counter()
+        for post in posts:
+            tags_counter.update(post.tags.names())
+        self.tags_counter = tags_counter
+        self.save()
 
     def __str__(self):
         return self.name
