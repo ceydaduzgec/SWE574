@@ -3,7 +3,6 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from taggit.managers import TaggableManager
-from taggit.models import Tag
 
 User = get_user_model()
 
@@ -47,6 +46,12 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse("post_detail", args=[self.id])
 
+    # add tags counter for recommendations
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for space in self.spaces.all():
+            space.update_tags_counter()
+
 
 class TagDescription(models.Model):
     tag = models.ForeignKey("taggit.Tag", on_delete=models.CASCADE, related_name="tag_description")
@@ -75,9 +80,3 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
-
-
-class UserTagInteraction(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    count = models.IntegerField(default=0)

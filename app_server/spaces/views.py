@@ -1,8 +1,11 @@
+from collections import Counter
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
+from posts.models import UserTagInteraction
 from spaces.forms import SpaceCreationForm
 from spaces.models import Space
 
@@ -153,6 +156,18 @@ def my_spaces_list(request):
         Q(owner=request.user) | Q(moderators=request.user) | Q(members=request.user) | Q(granted_members=request.user)
     ).distinct()
 
+    # Get tags used by the user
+    user_tags = UserTagInteraction.objects.filter(user=request.user).values_list("tag__name", flat=True)
+
+    # Calculate user's tags_counter.
+    user_tags_counter = Counter()
+    for space in spaces:
+        user_tags_counter.update(space.tags_counter)
+
+    # debug print
+    print(f"User's tags counter: {user_tags_counter}")
+
+    # Annotate spaces with the tag interaction count
     recommended_spaces = (
         Space.objects.exclude(
             Q(owner=request.user)
@@ -160,10 +175,14 @@ def my_spaces_list(request):
             | Q(members=request.user)
             | Q(granted_members=request.user)
         )
-        .annotate(posts_count=Count("posts"))
-        .order_by("-posts_count")
+        .filter(posts__tags__name__in=user_tags)
+        .annotate(tag_interaction_count=Count("posts__tags__name"))
+        .order_by("-tag_interaction_count", "-created_date")
         .exclude(pk__in=[space.pk for space in spaces])[:5]
     )
+
+    # debug print
+    print(f"Recommended spaces: {recommended_spaces}")
 
     context = {
         "spaces": spaces,

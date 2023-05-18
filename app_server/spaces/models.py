@@ -1,3 +1,5 @@
+from collections import Counter
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
@@ -41,6 +43,12 @@ class Space(models.Model):
             return user in self.get_moderators() or user == self.owner
         else:
             return False
+
+    @property
+    def tags_counter(self):
+        # Count the occurrence of each tag in the posts of this space
+        tags = [tag for post in self.posts.all() for tag in post.tags.names()]
+        return Counter(tags)
 
     def __str__(self):
         return self.name
