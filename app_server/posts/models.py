@@ -3,6 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 from taggit.managers import TaggableManager
+from taggit.models import Tag
 
 User = get_user_model()
 
@@ -74,3 +75,9 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class UserTagInteraction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    count = models.IntegerField(default=0)
