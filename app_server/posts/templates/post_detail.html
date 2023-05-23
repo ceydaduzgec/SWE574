@@ -8,7 +8,7 @@
         }
 
         .annotation-overlay {
-            background-color: yellow;
+            background-color: none;
             opacity: 0.5;
             pointer-events: none; /* Prevent the overlay from capturing mouse events */
           }
@@ -486,34 +486,42 @@
                             // Get the xywh values from the data
                             const [x, y, w, h] = data.target.selector.value.split('=')[1].split(',');
                     
-                            const overlay = document.createElement('div');
-                            overlay.classList.add('annotation-overlay');
-                            overlay.style.position = 'absolute';
-                            overlay.style.left = `${x}px`;  // Update the desired position here
-                            overlay.style.top = `${y}px`;   // Update the desired position here
-                            overlay.style.width = `${w}px`; // Update the desired size here
-                            overlay.style.height = `${h}px`; // Update the desired size here
-                
+                            // Convert the values to integers
+                            let [xInt, yInt, wInt, hInt] = [parseInt(x), parseInt(y), parseInt(w), parseInt(h)];
+                    
+                            // 2mm equivalent in pixels
+                            const paddingInPx = Math.round(1 * 3.78); 
+                    
+                            const outerDiv = document.createElement('div');
+                            outerDiv.classList.add('annotation-overlay');
+                            outerDiv.style.position = 'absolute';
+                            outerDiv.style.left = `${xInt}px`;
+                            outerDiv.style.top = `${yInt}px`;
+                            outerDiv.style.width = `${wInt}px`;
+                            outerDiv.style.height = `${hInt}px`;
+                            outerDiv.style.border = `${paddingInPx}px solid black`;
+                    
                             // Create a text box for the annotation body
                             const textBox = document.createElement('div');
                             textBox.style.position = 'absolute';
-                            textBox.style.width = '100%';
-                            textBox.style.height = '100%';
-                            textBox.style.display = 'flex';
-                            textBox.style.justifyContent = 'center';
-                            textBox.style.alignItems = 'center';
-                            textBox.style.color = 'black';
-                            textBox.style.fontSize = '20px';  // Set the desired font size here
+                            textBox.style.left = '0px';
+                            textBox.style.top = '0px';
+                            textBox.style.color = 'white';
+                            textBox.style.backgroundColor = 'grey';  // Set the background color here
+                            textBox.style.fontSize = '10px';
                             textBox.textContent = data.body.value;
-        
-                            // Append the text box to the overlay
-                            overlay.appendChild(textBox);
-        
-                            // Append the overlay to the parent container of the image
+                    
+                            // Append the text box to the outer div
+                            outerDiv.appendChild(textBox);
+                    
+                            // Append the outer div to the parent container of the image
                             const parentContainer = image.parentElement;
-                            parentContainer.appendChild(overlay);
+                            parentContainer.appendChild(outerDiv);
                         }
                     });
+                    
+                    
+                    
                 });
         }
         
