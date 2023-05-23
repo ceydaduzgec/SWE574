@@ -4,6 +4,7 @@ from django.urls import reverse
 from posts.models import Post
 from spaces.models import Space
 from users.models import Badge
+from tags.models import Tag
 
 User = get_user_model()
 
@@ -96,3 +97,69 @@ class SpaceViewsTestCase(TestCase):
 
         self.assertIn(post, response.context["posts"])
         self.assertTemplateUsed(response, "space_detail.html")
+
+
+class TagTestCase(TestCase):
+    def setUp(self):
+        # create a test user
+        self.user = User.objects.create_user(username="testuser", email="testuser@gmail.com", password="password")
+
+    def test_create_descriptive_tag_via_wikidata(self):
+        # Make a POST request to create a descriptive tag via Wikidata
+        response = self.client.post(reverse("create_descriptive_tag"), {
+            "name": "Test Tag",
+            "wikidata_id": "Q123456",
+        })
+
+        # Assert that the response is successful
+        self.assertEqual(response.status_code, 201)
+
+        # Assert that the tag is created and has the correct attributes
+        tag = Tag.objects.get(name="Test Tag")
+        self.assertEqual(tag.name, "Test Tag")
+        self.assertEqual(tag.wikidata_id, "Q123456")
+        self.assertTrue(tag.is_descriptive)
+
+    def test_create_informative_tag(self):
+        # Make a POST request to create an informative tag
+        response = self.client.post(reverse("create_informative_tag"), {
+            "name": "Test Tag",
+            "description": "Test description",
+        })
+
+        # Assert that the response is successful
+        self.assertEqual(response.status_code, 201)
+
+        # Assert that the tag is created and has the correct attributes
+        tag = Tag.objects.get(name="Test Tag")
+        self.assertEqual(tag.name, "Test Tag")
+        self.assertEqual(tag.description, "Test description")
+        self.assertFalse(tag.is_descriptive)
+
+    def test_assign_tag_to_post(self):
+        # Create a test post
+        post = Post.objects.create(title="Test Post", text="Test content", author=self.user)
+
+        # Create a test tag
+        tag = Tag.objects.create(name="Test Tag", description="Test description")
+
+        # Assign the tag to the post
+        post.tags.add(tag)
+
+        # Assert that the tag is assigned to the post
+        self.assertIn(tag, post.tags.all())
+
+    def test_tag_based_post_search(self):
+        # Create a test post with a tag
+        post = Post.objects.create(title="Test Post", text="Test content", author=self.user)
+        tag = Tag.objects.create(name="Test Tag", description="Test description")
+        post.tags.add(tag)
+
+        # Make a GET request to search for posts by tag
+        response = self.client.get(reverse("tag_search"), {"tag": "Test Tag"})
+
+        # Assert that the response is successful
+        self.assertEqual(response.status_code, 200)
+
+        # Assert that the post is included in the search results
+        self.assertIn(post, response.context["posts"])
