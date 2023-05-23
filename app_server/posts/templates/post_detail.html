@@ -359,7 +359,8 @@
                 'body': {
                     'type': 'TextualBody',
                     'value': annotation,
-                    'format': 'text/plain'
+                    'format': 'text/plain',
+                    'creator': '{{post.author}}'
                 },
                 'id': 'http://127.0.0.1:81/anno/' + Math.floor(Math.random() * 1000000000),
                 'target': {
