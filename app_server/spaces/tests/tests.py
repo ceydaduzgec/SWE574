@@ -5,6 +5,7 @@ from posts.models import Post
 from spaces.models import Space
 from users.models import Badge
 from tags.models import Tag
+from recommendations.models import Recommendation
 
 User = get_user_model()
 
@@ -163,3 +164,59 @@ class TagTestCase(TestCase):
 
         # Assert that the post is included in the search results
         self.assertIn(post, response.context["posts"])
+
+class RecommendationTestCase(TestCase):
+    def setUp(self):
+        # create test users
+        self.user1 = User.objects.create_user(username="user1", email="user1@gmail.com", password="password")
+        self.user2 = User.objects.create_user(username="user2", email="user2@gmail.com", password="password")
+        self.user3 = User.objects.create_user(username="user3", email="user3@gmail.com", password="password")
+
+        # create test spaces
+        self.space1 = Space.objects.create(name="Space 1", description="Description 1", owner=self.user1)
+        self.space2 = Space.objects.create(name="Space 2", description="Description 2", owner=self.user2)
+        self.space3 = Space.objects.create(name="Space 3", description="Description 3", owner=self.user3)
+
+        # create test posts
+        self.post1 = Post.objects.create(title="Post 1", text="Content 1", author=self.user1)
+        self.post2 = Post.objects.create(title="Post 2", text="Content 2", author=self.user2)
+        self.post3 = Post.objects.create(title="Post 3", text="Content 3", author=self.user3)
+
+    def test_user_recommendations(self):
+        # Add interests and space memberships for user1
+        self.user1.interests.add("interest1", "interest2")
+        self.space1.members.add(self.user1)
+        self.space2.members.add(self.user1)
+
+        # Add interests and space memberships for user2
+        self.user2.interests.add("interest2", "interest3")
+        self.space2.members.add(self.user2)
+        self.space3.members.add(self.user2)
+
+        # Generate user recommendations
+        recommendations = Recommendation.generate_user_recommendations(self.user1)
+
+        # Assert that user2 and user3 are recommended
+        self.assertIn(self.user2, recommendations)
+        self.assertNotIn(self.user3, recommendations)
+
+    def test_space_recommendations(self):
+        # Generate space recommendations for space1
+        recommendations = Recommendation.generate_space_recommendations(self.space1)
+
+        # Assert that space2 and space3 are recommended
+        self.assertIn(self.space2, recommendations)
+        self.assertNotIn(self.space3, recommendations)
+
+    def test_post_recommendations(self):
+        # Add tags to posts
+        self.post1.tags.add("tag1", "tag2")
+        self.post2.tags.add("tag2", "tag3")
+        self.post3.tags.add("tag3", "tag4")
+
+        # Generate post recommendations for user1
+        recommendations = Recommendation.generate_post_recommendations(self.user1)
+
+        # Assert that post2 and post3 are recommended
+        self.assertIn(self.post2, recommendations)
+        self.assertNotIn(self.post1, recommendations)
