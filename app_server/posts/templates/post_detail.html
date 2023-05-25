@@ -1,13 +1,19 @@
 {% extends 'base.html' %}
 
-
-
 {% block content %}
+
     <style>
         .annotated {
             background-color: yellow;
         }
+
+        .annotation-overlay {
+            background-color: none;
+            opacity: 0.5;
+            pointer-events: none; /* Prevent the overlay from capturing mouse events */
+          }
     </style>
+
     <div class="row">
         <div class="blog-post border border-dark rounded my-3 col-9 p-0">
             <div class="d-flex justify-content-between">
@@ -40,42 +46,39 @@
                 <div class="text-muted"
                      style="width:100%; height: auto; overflow: auto; padding: 5px; background-color: #f8f9fa; resize: both;"
                      id="annotated-description">
+
+
                     <!-- The post description will be inserted here by JavaScript -->
                 </div>
                 </p>
 
+                {% if post.image %}
 
+                <div style="position: relative;">
+                    <img id="image" src="{{ post.image.url }}" alt="{{ post.title }}" style="position: relative; top: 0; left: 0;">
+                </div>
+                    <form id="annotation-form" style="display:none;">
+                        <input type="hidden" id="x" name="x">
+                        <input type="hidden" id="y" name="y">
+                        <input type="hidden" id="width" name="width">
+                        <input type="hidden" id="height" name="height">
+                        <textarea id="annotation" name="annotation"></textarea>
+                        <button onclick="saveAnnotation({{ post.id }},'{{ post.text }}', 'image')">Save Image
+                            Annotation
+                        </button>
+                    </form>
+
+                {% endif %}
                 <hr>
-
-                <p class="tags">
+                <p class="tags small">
                     Tags:
                     {% for tag in post.tags.all %}
-                        <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
-                           data-bs-toggle="tooltip" data-bs-placement="top"
-                           data-bs-custom-class="custom-tooltip"
-                           data-bs-title="{% for tag_description in post.tag_descriptions.all %}
-                                   {{ tag_description.description }}
-                {% endfor %}">
+                        <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger">
                             {{ tag.name }}
                         </a>
                         {% if not forloop.last %}, {% endif %}
                     {% endfor %}
                 </p>
-
-                <p class="labels">
-                    Labels:
-
-                    <a href="" class="badge bg-secondary"
-                       data-bs-toggle="tooltip" data-bs-placement="top"
-                       data-bs-custom-class="custom-tooltip">
-
-
-                        {{ post.labels }}
-                    </a>
-
-                </p>
-
-
             </div>
         </div>
 
@@ -142,7 +145,7 @@
                                        name="selector_type" value="{{ 0 }}"/>
                             </div>
 
-                            <button onclick="saveAnnotation({{ post.id }},'{{ post.text }}')"
+                            <button onclick="saveTextAnnotation({{ post.id }}, '{{ post.text }}', 'text')"
                                     class="btn btn-outline-dark">Submit
                             </button>
 
@@ -250,196 +253,49 @@
 {% endblock %}>
 
 {% block javascript %}
-    {#    <script>#}
-    {#        const annotationModal = new bootstrap.Modal('#annotationModal')#}
-    {#        const annotatedTextModal = new bootstrap.Modal('#annotatedTextModal')#}
-    {##}
-    {#        const annotationButton = document.getElementById('annotation-button');#}
-    {#        const annotatedDescription = document.getElementById('annotated-description');#}
-    {#        const annotationStartInput = document.getElementById('annotation-start');#}
-    {#        const annotationEndInput = document.getElementById('annotation-end');#}
-    {#        const annotatedText = document.getElementById('annotated-text')#}
-    {#        const annotationBodyDescription = document.getElementById('annotation-body-description')#}
-    {##}
-    {#        let selectedAnnotationText = ''#}
-    {##}
-    {##}
-    {#        const showAnnotationButton = () => {#}
-    {#            annotationButton.classList.remove('d-none');#}
-    {#            annotationButton.classList.add('d-block');#}
-    {#        }#}
-    {##}
-    {#        const hideAnnotationButton = () => {#}
-    {#            annotationButton.classList.remove('d-block');#}
-    {#            annotationButton.classList.add('d-none');#}
-    {#        }#}
-    {##}
-    {#        const showAnnotatedText = (start, end, annotation) => {#}
-    {#            const originalDescription = '{{post.description}}'#}
-    {#            annotatedTextModal.show()#}
-    {#            annotatedText.innerHTML = ''#}
-    {#            annotationBodyDescription.innerHTML = annotation#}
-    {#            let modifiedDescription = ''#}
-    {##}
-    {#            for (let i = 0; i < originalDescription.length; i++) {#}
-    {#                if (i >= start && i < end) {#}
-    {#                    modifiedDescription += originalDescription[i]#}
-    {#                } else if (i == end) {#}
-    {#                    modifiedDescription += originalDescription[i]#}
-    {#                    const node = document.createElement('mark')#}
-    {#                    const textNode = document.createTextNode(modifiedDescription)#}
-    {#                    node.appendChild(textNode)#}
-    {#                    annotatedText.appendChild(node)#}
-    {#                } else {#}
-    {#                    const textNode = document.createTextNode(originalDescription[i])#}
-    {#                    annotatedText.appendChild(textNode)#}
-    {#                }#}
-    {#            }#}
-    {##}
-    {#        }#}
-    {##}
-    {#        annotatedDescription.addEventListener('select', showAnnotationButton);#}
-    {##}
-    {#        annotationButton.addEventListener('click', () => {#}
-    {#            // Find highlighted text#}
-    {#            selectedAnnotationText = window.getSelection().toString();#}
-    {##}
-    {#            // Find starting index of highlighted text in complete description#}
-    {#            const startIndex = '{{post.text}}'.search(selectedAnnotationText)#}
-    {#            const endIndex = startIndex + selectedAnnotationText.length - 1#}
-    {#            const started = '{{post.text}}'#}
-    {#            const len = started.length#}
-    {##}
-    {#            annotationStartInput.value = startIndex#}
-    {#            annotationEndInput.value = endIndex#}
-    {##}
-    {#            annotationModal.show();#}
-    {#        })#}
-    {##}
-    {##}
-    {#        document.addEventListener("selectionchange", event => {#}
-    {#            if (window.getSelection) {#}
-    {#                if (window.getSelection().toString() === '') {#}
-    {#                    hideAnnotationButton();#}
-    {#                }#}
-    {#            }#}
-    {#        })#}
-    {##}
-    {#        function saveAnnotation(post_id, post_description) {#}
-    {##}
-    {#            let url = "http://127.0.0.1:81";#}
-    {#            let start = post_description.search(selectedAnnotationText)#}
-    {#            let end = post_description.search(selectedAnnotationText) + selectedAnnotationText.length#}
-    {#            let target = "{{ request.build_absolute_uri }}"#}
-    {#            let data = {#}
-    {#                body: {#}
-    {#                    type: "TextualBody",#}
-    {#                    value: document.getElementById('annotation').value,#}
-    {#                },#}
-    {#                id: url + "/anno/" + Math.floor(Math.random() * 1000000000),#}
-    {#                target: {#}
-    {#                    source: target,#}
-    {#                    selector: {#}
-    {#                        type: "TextPositionSelector",#}
-    {#                        start,#}
-    {#                        end#}
-    {#                    }#}
-    {#                },#}
-    {#                type: "Annotation"#}
-    {#                //selector_type: document.getElementById('annotation_selector_type').value,#}
-    {#            };#}
-    {#            fetch(url, {#}
-    {#                method: 'POST',#}
-    {#                headers: {#}
-    {#                    'Content-Type': 'application/json',#}
-    {#                },#}
-    {#                body: JSON.stringify(data),#}
-    {#            }).then(response => response.json())#}
-    {#                .then(result => {#}
-    {#                    console.log(data);#}
-    {#                    console.log(result);#}
-    {#                    annotationModal.hide();#}
-    {#                })#}
-    {#        }#}
-    {##}
-    {#        function createAnnotationCard(annotation) {#}
-    {#            const card = document.createElement("div");#}
-    {#            card.classList.add("card", "shadow-sm");#}
-    {##}
-    {#            const cardBody = document.createElement("div");#}
-    {#            cardBody.classList.add("card-body");#}
-    {##}
-    {#            const annotationReal = document.createElement("h5");#}
-    {#            annotationReal.textContent = annotation.body.value;#}
-    {#            cardBody.appendChild(annotationReal);#}
-    {##}
-    {#            const targetSource = document.createElement("p");#}
-    {#            targetSource.textContent = `Target Source: ${annotation.target.source}`;#}
-    {#            cardBody.appendChild(targetSource);#}
-    {##}
-    {#            const selectedPart = document.createElement("p");#}
-    {#            selectedPart.textContent = `Selected Part: ${annotation.target.selector.start} to ${annotation.target.selector.end}`;#}
-    {#            cardBody.appendChild(selectedPart);#}
-    {##}
-    {#            card.appendChild(cardBody);#}
-    {#            return card;#}
-    {#        }#}
-    {##}
-    {#        function applyAnnotationsToDescription(description, annotations) {#}
-    {#            const descriptionElement = document.getElementById('annotated-description');#}
-    {#            descriptionElement.textContent = ''; // Clear the existing description#}
-    {##}
-    {#            // Sort the annotations by start index#}
-    {#            annotations.sort((a, b) => a.target.selector.start - b.target.selector.start);#}
-    {##}
-    {#            let lastIndex = 0;#}
-    {##}
-    {#            annotations.forEach((annotation) => {#}
-    {#                // Add the text before the annotation#}
-    {#                const beforeText = document.createTextNode(description.substring(lastIndex, annotation.target.selector.start));#}
-    {#                descriptionElement.appendChild(beforeText);#}
-    {##}
-    {#                // Add the annotated text#}
-    {#                const annotatedText = document.createElement('mark');#}
-    {#                annotatedText.textContent = description.substring(annotation.target.selector.start, annotation.target.selector.end);#}
-    {#                annotatedText.title = annotation.body.value; // This will show the annotation when hovering over the text#}
-    {#                descriptionElement.appendChild(annotatedText);#}
-    {##}
-    {#                lastIndex = annotation.target.selector.end;#}
-    {#            });#}
-    {##}
-    {#            // Add the remaining text after the last annotation#}
-    {#            const afterText = document.createTextNode(description.substring(lastIndex));#}
-    {#            descriptionElement.appendChild(afterText);#}
-    {#        }#}
-    {##}
-    {#        function fetchAnnotations() {#}
-    {#            const currentUrl = window.location.href; // This gets the current page URL#}
-    {##}
-    {#            fetch("http://127.0.0.1:81")#}
-    {#                .then((response) => response.json())#}
-    {#                .then((annotations) => {#}
-    {#                    // Filter annotations based on the current page URL#}
-    {#                    const filteredAnnotations = annotations.filter(annotation => annotation.target.source === currentUrl);#}
-    {##}
-    {#                    const annotationContainer = document.getElementById("annotation-container");#}
-    {#                    filteredAnnotations.forEach((annotation) => {#}
-    {#                        const card = createAnnotationCard(annotation);#}
-    {#                        annotationContainer.appendChild(card);#}
-    {#                    });#}
-    {##}
-    {#                    // Assuming your post description is stored in a variable named 'postDescription'#}
-    {#                    applyAnnotationsToDescription('{{post.text}}', filteredAnnotations);#}
-    {#                });#}
-    {#        }#}
-    {##}
-    {#        // Call fetchAnnotations() when the page loads#}
-    {#        fetchAnnotations();#}
-    {##}
-    {##}
-    {#    </script>#}
+
 
     <script>
+
+        const image = document.getElementById('image');
+        let startX, startY;
+
+        image.addEventListener('mousedown', (event) => {
+            event.preventDefault(); // Disable default behavior
+            const rect = image.getBoundingClientRect();
+            startX = event.clientX - rect.left;
+            startY = event.clientY - rect.top;
+            document.getElementById('annotation-form').style.display = 'block';
+        });
+
+        image.addEventListener('mouseup', (event) => {
+            const rect = image.getBoundingClientRect();
+            let endX = event.clientX - rect.left;
+            let endY = event.clientY - rect.top;
+            
+            // Adjust startX, startY, endX, and endY if necessary
+            if (endX < startX) {
+                let temp = startX;
+                startX = endX;
+                endX = temp;
+            }
+            if (endY < startY) {
+                let temp = startY;
+                startY = endY;
+                endY = temp;
+            }
+        
+            const width = endX - startX;
+            const height = endY - startY;
+        
+            document.getElementById('x').value = startX;
+            document.getElementById('y').value = startY;
+            document.getElementById('width').value = width;
+            document.getElementById('height').value = height;
+        });
+        
+
+
         const annotationModal = new bootstrap.Modal('#annotationModal')
         const annotatedTextModal = new bootstrap.Modal('#annotatedTextModal')
 
@@ -495,28 +351,45 @@
             }
         })
 
-        function saveAnnotation(post_id, post_description) {
-            let url = "http://127.0.0.1:81";
-            let start = post_description.search(selectedAnnotationText)
-            let end = post_description.search(selectedAnnotationText) + selectedAnnotationText.length
-            let target = "{{ request.build_absolute_uri }}"
+        function saveAnnotation(post_id, post_text, type) {
+            const annotation = document.getElementById('annotation').value;
             let data = {
-                body: {
-                    type: "TextualBody",
-                    value: document.getElementById('annotation').value,
+                '@context': 'http://www.w3.org/ns/anno.jsonld',
+                'type': 'Annotation',
+                'body': {
+                    'type': 'TextualBody',
+                    'value': annotation,
+                    'format': 'text/plain',
+                    'creator': '{{post.author}}'
                 },
-                id: url + "/anno/" + Math.floor(Math.random() * 1000000000),
-                target: {
-                    source: target,
-                    selector: {
-                        type: "TextPositionSelector",
-                        start,
-                        end
-                    }
-                },
-                type: "Annotation"
+                'id': 'http://127.0.0.1:81/anno/' + Math.floor(Math.random() * 1000000000),
+                'target': {
+                    'source': '{{ request.build_absolute_uri }}',
+                    'selector': {}
+                }
             };
-            fetch(url, {
+
+            if (type === 'text') {
+                const start = post_text.search(selectedAnnotationText);
+                const end = post_text.search(selectedAnnotationText) + selectedAnnotationText.length;
+                data.target.selector.type = 'TextPositionSelector';
+                data.target.selector.start = start;
+                data.target.selector.end = end;
+            } else if (type === 'image') {
+                const x = document.getElementById('x').value;
+                const y = document.getElementById('y').value;
+                const width = document.getElementById('width').value;
+                const height = document.getElementById('height').value;
+                const imageUrl ='{{ post.image.url }}';
+                data.target.source = imageUrl;
+                data.target.selector.type = 'FragmentSelector';
+                data.target.selector.value = `xywh=${x},${y},${width},${height}`;
+
+                
+            }
+
+            // Send the annotation data to your server...
+            fetch('http://127.0.0.1:81', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -527,7 +400,7 @@
                     console.log(data);
                     console.log(result);
                     annotationModal.hide();
-                })
+                });
         }
 
         function createAnnotationCard(annotation) {
@@ -584,6 +457,160 @@
 
         function fetchAnnotations() {
             const currentUrl = window.location.href; // This gets the current page URL
+        
+            fetch("http://127.0.0.1:81")
+                .then((response) => response.json())
+                .then((annotations) => {
+                    // Filter annotations based on the current page URL
+                    
+                    const filteredAnnotations = annotations.filter(annotation =>
+                        annotation.target.selector &&
+                        annotation.target.selector.type === "FragmentSelector"
+                    );
+        
+                    const annotationContainer = document.getElementById("annotation-container");
+                    filteredAnnotations.forEach((annotation) => {
+                        const card = createAnnotationCard(annotation);
+                        annotationContainer.appendChild(card);
+                    });
+        
+                    // Assuming your post description is stored in a variable named 'postDescription'
+                    //applyAnnotationsToDescription('{{post.text}}', filteredAnnotations);
+                    
+                    // Get the image element
+                    const image = document.getElementById('image');
+                    
+                    // Loop through each annotation
+                    filteredAnnotations.forEach(data => {
+                        // Check if the image source matches the target source
+                        if(image.src.endsWith(data.target.source)) {
+                            // Get the xywh values from the data
+                            const [x, y, w, h] = data.target.selector.value.split('=')[1].split(',');
+                    
+                            // Convert the values to integers
+                            let [xInt, yInt, wInt, hInt] = [parseInt(x), parseInt(y), parseInt(w), parseInt(h)];
+                    
+                            // 2mm equivalent in pixels
+                            const paddingInPx = Math.round(1 * 3.78); 
+                    
+                            const outerDiv = document.createElement('div');
+                            outerDiv.classList.add('annotation-overlay');
+                            outerDiv.style.position = 'absolute';
+                            outerDiv.style.left = `${xInt}px`;
+                            outerDiv.style.top = `${yInt}px`;
+                            outerDiv.style.width = `${wInt}px`;
+                            outerDiv.style.height = `${hInt}px`;
+                            outerDiv.style.border = `${paddingInPx}px solid black`;
+                    
+                            // Create a text box for the annotation body
+                            const textBox = document.createElement('div');
+                            textBox.style.position = 'absolute';
+                            textBox.style.left = '0px';
+                            textBox.style.top = '0px';
+                            textBox.style.color = 'white';
+                            textBox.style.backgroundColor = 'grey';  // Set the background color here
+                            textBox.style.fontSize = '10px';
+                            textBox.textContent = data.body.value;
+                    
+                            // Append the text box to the outer div
+                            outerDiv.appendChild(textBox);
+                    
+                            // Append the outer div to the parent container of the image
+                            const parentContainer = image.parentElement;
+                            parentContainer.appendChild(outerDiv);
+                        }
+                    });
+                    
+                    
+                    
+                });
+        }
+        
+        window.addEventListener('load', fetchAnnotations);
+        
+        
+
+        window.addEventListener('load', (event) => {
+            // Get the overlay element and the image element
+            //const overlay = document.getElementById('overlay');
+            const image = document.getElementById('image');
+          
+            // Get the JSON data
+            const data = {
+              "id": "http://127.0.0.1:81/anno/390662205",
+              "context": "http://www.w3.org/ns/anno.jsonld",
+              "type": "Annotation",
+              "body": {
+                  "type": "TextualBody",
+                  "value": "cscsc",
+                  "format": "text/plain"
+              },
+              "target": {
+                  "source": "/images/images/Sahin_Kapan.jpg",
+                  "selector": {
+                      "type": "FragmentSelector",
+                      "value": "xywh=113,81,464,395"
+                  }
+              },
+              "creation_datetime": "2023-05-13T19:30:59.651935Z"
+            };
+            
+            // Check if the image source matches the target source
+            (image.src.endsWith(data.target.source)) 
+              // Get the xywh values from the data
+              const [x, y, w, h] = data.target.selector.value.split('=')[1].split(',');
+          
+              const overlay = document.createElement('div');
+              overlay.classList.add('annotation-overlay');
+              overlay.style.position = 'absolute';
+              //overlay.style.left = `${x}px`;  // Update the desired position here
+              //overlay.style.top = `${y}px`;   // Update the desired position here
+              //overlay.style.width = `${w}px`; // Update the desired size here
+              //overlay.style.height = `${h}px`; // Update the desired size here
+      
+              // Append the overlay to the parent container of the image
+              const parentContainer = image.parentElement;
+              parentContainer.appendChild(overlay);
+            
+          });
+
+          function saveTextAnnotation(post_id, post_description) {
+            let url = "http://127.0.0.1:81/";
+            let start = post_description.search(selectedAnnotationText)
+            let end = post_description.search(selectedAnnotationText) + selectedAnnotationText.length
+            let target = "{{ request.build_absolute_uri }}"
+            let data = {
+                body: {
+                    type: "TextualBody",
+                    value: document.getElementById('annotation').value,
+                },
+                id: url + "/anno/" + Math.floor(Math.random() * 1000000000),
+                target: {
+                    source: target,
+                    selector: {
+                        type: "TextPositionSelector",
+                        start,
+                        end
+                    }
+                },
+                type: "Annotation"
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            }).then(response => response.json())
+                .then(result => {
+                    console.log(data);
+                    console.log(result);
+                    annotationModal.hide();
+                })
+        }
+
+          function fetchTextAnnotations() {
+            const currentUrl = window.location.href; // This gets the current page URL
 
             fetch("http://127.0.0.1:81")
                 .then((response) => response.json())
@@ -601,9 +628,14 @@
                     applyAnnotationsToDescription('{{post.text}}', filteredAnnotations);
                 });
         }
+        // Görüntüyü temsil eden elementi seçelim
 
         // Call fetchAnnotations() when the page loads
         fetchAnnotations();
+        fetchTextAnnotations();
+
+        // Görüntüyü temsil eden elementi seçelim
+
     </script>
 
 
