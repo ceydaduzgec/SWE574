@@ -100,6 +100,13 @@
                 <button class="btn btn-outline-dark me-2" type="submit">Share</button>
             </form>
 
+            <!-- Report post -->
+            <form method="POST" action="{% url 'report_post' pk=post.id %}">
+                {% csrf_token %}
+                <button class="btn btn-outline-dark me-2" type="submit">Report</button>
+            </form>
+            <!-- ---------------------------------------- -->
+
             <form method="POST" action="{% url "like_post" post.id %}">
                 {% csrf_token %}
                 {% if user in post.likes.all %}

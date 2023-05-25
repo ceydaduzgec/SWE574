@@ -12,6 +12,7 @@ from posts.views import (
     search,
     toggle_bookmark,
     toggle_like,
+    report_post
 )
 
 urlpatterns = [
@@ -29,4 +30,6 @@ urlpatterns = [
     path("tag/<slug:tag_slug>/", post_list, name="post_list_by_tag"),
     path("like/<int:pk>", toggle_like, name="like_post"),
     path("check_link/", check_link, name="check_link"),
+    path("report_post/<int:pk>", report_post, name="report_post")
+
 ]
