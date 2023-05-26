@@ -43,10 +43,6 @@
                 </a>
 
             </p>
-            
-            {% if post.id in reported_posts %}
-            <p> Warning: Your post reported from admin! </p>
-        {% endif %}
 
             <div class="d-flex">
                 <form method="POST" action="{% url 'add_comment_to_post' pk=post.id %}">
