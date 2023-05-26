@@ -156,27 +156,27 @@
 
     </script>
 
-    <script>
-        // sidenav öğesini seçin
-        var sidenav = document.querySelector(".sidenav");
-
-        // sidenav içindeki tüm öğeleri seçin
-        var sidenavItems = sidenav.querySelectorAll(".nav-item");
-
-        // sidenavItems dizisindeki her öğe için bir olay dinleyicisi ekleyin
-        sidenavItems.forEach(function (item) {
-            item.addEventListener("click", function () {
-                // seçilen öğenin sınıfını "active" olarak ayarlayın
-                this.classList.add("active");
-                // diğer öğelerin sınıfını "active" olarak kaldırın
-                sidenavItems.forEach(function (otherItem) {
-                    if (otherItem !== item) {
-                        otherItem.classList.remove("active");
-                    }
-                });
-            });
-        });
-    </script>
+{#    <script>#}
+{#        // sidenav öğesini seçin#}
+{#        var sidenav = document.querySelector(".sidenav");#}
+{##}
+{#        // sidenav içindeki tüm öğeleri seçin#}
+{#        var sidenavItems = sidenav.querySelectorAll(".nav-item");#}
+{##}
+{#        // sidenavItems dizisindeki her öğe için bir olay dinleyicisi ekleyin#}
+{#        sidenavItems.forEach(function (item) {#}
+{#            item.addEventListener("click", function () {#}
+{#                // seçilen öğenin sınıfını "active" olarak ayarlayın#}
+{#                this.classList.add("active");#}
+{#                // diğer öğelerin sınıfını "active" olarak kaldırın#}
+{#                sidenavItems.forEach(function (otherItem) {#}
+{#                    if (otherItem !== item) {#}
+{#                        otherItem.classList.remove("active");#}
+{#                    }#}
+{#                });#}
+{#            });#}
+{#        });#}
+{#    </script>#}
 
 
     {% block javascript %}
