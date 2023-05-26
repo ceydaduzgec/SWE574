@@ -466,7 +466,6 @@
 
         const image = document.getElementById('image');
         let startX, startY;
-
         image.addEventListener('mousedown', (event) => {
             event.preventDefault(); // Disable default behavior
             const rect = image.getBoundingClientRect();
@@ -479,7 +478,7 @@
             const rect = image.getBoundingClientRect();
             let endX = event.clientX - rect.left;
             let endY = event.clientY - rect.top;
-            
+
             // Adjust startX, startY, endX, and endY if necessary
             if (endX < startX) {
                 let temp = startX;
@@ -491,10 +490,10 @@
                 startY = endY;
                 endY = temp;
             }
-        
+
             const width = endX - startX;
             const height = endY - startY;
-        
+
             document.getElementById('x').value = startX;
             document.getElementById('y').value = startY;
             document.getElementById('width').value = width;
@@ -526,11 +525,9 @@
         }
 
         annotatedDescription.addEventListener('mouseup', () => {
-            // Find highlighted text
             const selectedText = window.getSelection().toString();
 
             if (selectedText.length > 0) {
-                // Find starting index of highlighted text in complete description
                 const startIndex = '{{post.text}}'.indexOf(selectedText);
                 const endIndex = startIndex + selectedText.length - 1;
 
@@ -548,7 +545,6 @@
         });
 
         annotationButton.addEventListener('click', () => {
-            // Open the annotation modal
             annotationModal.show();
         })
 
@@ -612,11 +608,6 @@
             };
 
             if (type === 'text') {
-                //const start = post_text.search(selectedAnnotationText);
-                //const end = post_text.search(selectedAnnotationText) + selectedAnnotationText.length;
-                //data.target.selector.type = 'TextPositionSelector';
-                //data.target.selector.start = start;
-                //data.target.selector.end = end;
             } else if (type === 'image') {
                 const x = document.getElementById('x').value;
                 const y = document.getElementById('y').value;
@@ -626,11 +617,7 @@
                 data.target.source = imageUrl;
                 data.target.selector.type = 'FragmentSelector';
                 data.target.selector.value = `xywh=${x},${y},${width},${height}`;
-
-                
             }
-
-            // Send the annotation data to your server...
             fetch('http://127.0.0.1:81', {
                 method: 'POST',
                 headers: {
@@ -670,19 +657,14 @@
 
         function applyAnnotationsToDescription(description, annotations) {
             const descriptionElement = document.getElementById('annotated-description');
-            descriptionElement.textContent = ''; // Clear the existing description
-
-            // Sort the annotations by start index
+            descriptionElement.textContent = '';
             annotations.sort((a, b) => a.target.selector.start - b.target.selector.start);
 
             let lastIndex = 0;
 
             annotations.forEach((annotation) => {
-                // Add the text before the annotation
                 const beforeText = document.createTextNode(description.substring(lastIndex, annotation.target.selector.start));
                 descriptionElement.appendChild(beforeText);
-
-                // Add the annotated text
                 const annotatedText = document.createElement('mark');
                 annotatedText.textContent = description.substring(annotation.target.selector.start, annotation.target.selector.end);
                 annotatedText.title = annotation.body.value; // This will show the annotation when hovering over the text
@@ -691,19 +673,17 @@
 
                 lastIndex = annotation.target.selector.end;
             });
-
-            // Add the remaining text after the last annotation
             const afterText = document.createTextNode(description.substring(lastIndex));
             descriptionElement.appendChild(afterText);
         }
 
         function fetchAnnotations() {
-            const currentUrl = window.location.href; // This gets the current page URL
+            const urlObject = new URL(window.location.href);
+            const currentUrl = urlObject.origin + urlObject.pathname;
 
             fetch("http://127.0.0.1:81")
                 .then((response) => response.json())
                 .then((annotations) => {
-                    // Filter annotations based on the current page URL
                     const filteredAnnotations = annotations.filter(annotation => annotation.target.source === currentUrl);
 
                     const annotationContainer = document.getElementById("annotation-container");
@@ -712,91 +692,65 @@
                         annotationContainer.appendChild(card);
                     });
 
-                    // Assuming your post description is stored in a variable named 'postDescription'
                     applyAnnotationsToDescription('{{post.text}}', filteredAnnotations);
                 });
         }
 
         function fetchImageAnnotations() {
-            const currentUrl = window.location.href; // This gets the current page URL
-        
+            const imageUrl = document.getElementById('image').src; // This gets the current image source URL
+
             fetch("http://127.0.0.1:81")
                 .then((response) => response.json())
                 .then((annotations) => {
-                    // Filter annotations based on the current page URL
-                    
                     const filteredAnnotations = annotations.filter(annotation =>
                         annotation.target.selector &&
-                        annotation.target.selector.type === "FragmentSelector"
+                        annotation.target.selector.type === "FragmentSelector" &&
+                        imageUrl.endsWith(annotation.target.source)
                     );
-        
+
                     const annotationContainer = document.getElementById("annotation-container");
                     filteredAnnotations.forEach((annotation) => {
                         const card = createAnnotationCard(annotation);
                         annotationContainer.appendChild(card);
                     });
-        
-                    // Assuming your post description is stored in a variable named 'postDescription'
-                    //applyAnnotationsToDescription('{{post.text}}', filteredAnnotations);
-                    
-                    // Get the image element
-                    const image = document.getElementById('image');
-                    
-                    // Loop through each annotation
+
                     filteredAnnotations.forEach(data => {
-                        // Check if the image source matches the target source
-                        if(image.src.endsWith(data.target.source)) {
-                            // Get the xywh values from the data
-                            const [x, y, w, h] = data.target.selector.value.split('=')[1].split(',');
-                    
-                            // Convert the values to integers
-                            let [xInt, yInt, wInt, hInt] = [parseInt(x), parseInt(y), parseInt(w), parseInt(h)];
-                    
-                            // 2mm equivalent in pixels
-                            const paddingInPx = Math.round(1 * 3.78); 
-                    
-                            const outerDiv = document.createElement('div');
-                            outerDiv.classList.add('annotation-overlay');
-                            outerDiv.style.position = 'absolute';
-                            outerDiv.style.left = `${xInt}px`;
-                            outerDiv.style.top = `${yInt}px`;
-                            outerDiv.style.width = `${wInt}px`;
-                            outerDiv.style.height = `${hInt}px`;
-                            outerDiv.style.border = `${paddingInPx}px solid black`;
-                    
-                            // Create a text box for the annotation body
-                            const textBox = document.createElement('div');
-                            textBox.style.position = 'absolute';
-                            textBox.style.left = '0px';
-                            textBox.style.top = '0px';
-                            textBox.style.color = 'white';
-                            textBox.style.backgroundColor = 'grey';  // Set the background color here
-                            textBox.style.fontSize = '10px';
-                            textBox.textContent = data.body.value;
-                    
-                            // Append the text box to the outer div
-                            outerDiv.appendChild(textBox);
-                    
-                            // Append the outer div to the parent container of the image
-                            const parentContainer = image.parentElement;
-                            parentContainer.appendChild(outerDiv);
-                        }
+                        const [x, y, w, h] = data.target.selector.value.split('=')[1].split(',');
+
+                        const outerDiv = document.createElement('div');
+                        outerDiv.classList.add('annotation-overlay');
+                        outerDiv.style.position = 'absolute';
+                        outerDiv.style.left = `${x}px`;
+                        outerDiv.style.top = `${y}px`;
+                        outerDiv.style.width = `${w}px`;
+                        outerDiv.style.height = `${h}px`;
+                        outerDiv.style.border = '1px solid black';
+
+                        const textBox = document.createElement('div');
+                        textBox.style.position = 'absolute';
+                        textBox.style.left = '0px';
+                        textBox.style.top = '0px';
+                        textBox.style.color = 'white';
+                        textBox.style.backgroundColor = 'grey';  // Set the background color here
+                        textBox.style.fontSize = '10px';
+                        textBox.textContent = data.body.value;
+
+                        outerDiv.appendChild(textBox);
+
+                        const imageContainer = document.getElementById('image').parentElement;
+                        imageContainer.style.position = 'relative';  // The image container must be relative for the absolute positioning to work
+                        imageContainer.appendChild(outerDiv);
                     });
-                    
-                    
-                    
                 });
         }
 
         window.addEventListener('load', fetchAnnotations);
-        
-        
+
+
+
 
         window.addEventListener('load', (event) => {
-            // Get the overlay element and the image element
-            //const overlay = document.getElementById('overlay');
             const image = document.getElementById('image');
-          
             // Get the JSON data
             const data = {
               "id": "http://127.0.0.1:81/anno/390662205",
@@ -816,28 +770,17 @@
               },
               "creation_datetime": "2023-05-13T19:30:59.651935Z"
             };
-            
-            // Check if the image source matches the target source
-            (image.src.endsWith(data.target.source)) 
-              // Get the xywh values from the data
+            (image.src.endsWith(data.target.source))
               const [x, y, w, h] = data.target.selector.value.split('=')[1].split(',');
-          
+
               const overlay = document.createElement('div');
               overlay.classList.add('annotation-overlay');
               overlay.style.position = 'absolute';
-              //overlay.style.left = `${x}px`;  // Update the desired position here
-              //overlay.style.top = `${y}px`;   // Update the desired position here
-              //overlay.style.width = `${w}px`; // Update the desired size here
-              //overlay.style.height = `${h}px`; // Update the desired size here
-      
-              // Append the overlay to the parent container of the image
               const parentContainer = image.parentElement;
               parentContainer.appendChild(overlay);
-            
-          });
 
-        // Call fetchAnnotations() when the page loads
-        fetchAnnotations();
+          });
+        //fetchAnnotations();
         fetchImageAnnotations();
     </script>
 
