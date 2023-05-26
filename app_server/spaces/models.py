@@ -1,3 +1,5 @@
+from collections import Counter
+
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
@@ -41,6 +43,14 @@ class Space(models.Model):
             return user in self.get_moderators() or user == self.owner
         else:
             return False
+
+    def update_tags_counter(self):
+        posts = self.posts.all()
+        tags_counter = Counter()
+        for post in posts:
+            tags_counter.update(post.tags.names())
+        self.tags_counter = tags_counter
+        self.save()
 
     def __str__(self):
         return self.name
