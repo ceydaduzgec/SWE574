@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="row row-cols-1 row-cols-sm-1 row-cols-mr-6 g-3">
+    {% for post in posts %}
+        <div class="col">
+        <div class="card shadow-sm">
+        <div class="card-body">
+            <a href="{% url 'post_detail' post.id %}" class="text-decoration-none">
+                <h3 class="text-overflow" title="{{ post.title }}">{{ post.title }}</h3>
+            </a>
+
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" width="160" height="160">
+            {% endif %}
+            <textarea class="text-muted" disabled class="selection-text" id="annotated-description"
+                      rows="4">{{ post.text }}</textarea>
+
+            <p class="tags">
+                Tags:
+                {% for tag in post.tags.all %}
+                    <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
+                       data-bs-toggle="tooltip" data-bs-placement="top"
+                       data-bs-custom-class="custom-tooltip"
+                       data-bs-title="{% for tag_description in post.tag_descriptions.all %}
+                                   {{ tag_description.description }}
+                {% endfor %}">
+                        {{ tag.name }}
+                    </a>
+                    {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+            </p>
+
+            <p class="labels">
+                Labels:
+
+                <a href="" class="badge bg-secondary"
+                   data-bs-toggle="tooltip" data-bs-placement="top"
+                   data-bs-custom-class="custom-tooltip">
+
+
+                    {{ post.labels }}
+                </a>
+
+            </p>
+
+            <div class="d-flex">
+                <form method="POST" action="{% url 'add_comment_to_post' pk=post.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-success me-2" type="submit">Comment{% if post.total_comments %}(
+                        {{ post.total_comments }}){% endif %}</button>
+                </form>
+
+                <form method="POST" action="{% url 'bookmark' pk=post.id %}">
+                    {% csrf_token %}
+                    {% if post in user.bookmarks.all %}
+                        <button id="bookmarkButton" class="btn btn-primary" type="submit">Unbookmark</button>
+                    {% else %}
+                        <button id="bookmarkButton" class="btn btn-outline-primary" type="submit">Bookmark</button>
+                    {% endif %}
+                </form>
+
+                <form method="POST" action="{% url 'post_share' pk=post.id %}">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-dark me-2" type="submit">Share</button>
+                </form>
+
+                <form method="POST" action="{% url "like_post" post.id %}">
+                    {% csrf_token %}
+                    {% if user in post.likes.all %}
+                        <button id="likeButton" class="btn btn-outline-primary" type="submit">Unlike
+                            ({{ post.likes.count }})
+                        </button>
+                    {% else %}
+                        <button id="likeButton" class="btn btn-primary" type="submit">Like ({{ post.likes.count }})
+                        </button>
+                    {% endif %}
+                </form>
+
+                {% if post.link %}
+                    <a href="{{ post.link }}" target="_blank" class="btn btn-outline-primary">
+                        Go to> </a>
+                {% endif %}
+                <button id="annotation-button" class="btn btn-outline-dark btn-sm d-none">
+                    Annotate
+                </button>
+
+                <div class="modal fade" id="annotationModal">
+                    <div class="modal-dialog">
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Annotate</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+
+
+                                <div class="mb-3">
+                                    <label for="annotation" class="form-label">Annotation</label>
+                                    <input id="annotation" class="form-control" type="text" name="body_description"
+                                           placeholder="Annotation"
+                                           required/>
+
+                                    <input type="hidden" id="annotation_id" name="source" value="{{ post.id }}"/>
+                                    <input type="hidden" id="annotation-start" name="start"/>
+                                    <input type="hidden" id="annotation-end" name="end"/>
+                                    <input type="hidden" id="annotation_type" name="type" value="text"/>
+                                    <input type="hidden" id="annotation_selector_type" id="annotation_type"
+                                           name="selector_type" value="{{ 0 }}"/>
+                                </div>
+
+                                <button onclick="saveAnnotation( {{ post.id }},'{{ post.text }}')
+                                        class="btn btn-outline-dark">Submit
+                                </button>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal fade" id="annotatedTextModal">
+                    <div class="modal-dialog">
+
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Annotation</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <h6>Description</h6>
+                                <p id="annotated-text"></p>
+                                <h6>Message</h6>
+                                <p id="annotation-body-description"></p>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="d-flex w-100 justify-content-between">
+                        <small class="text-muted">Published: {{ post.published_date }}</small>
+                        <a href="/users/{{ post.author }}" class="text-muted small"> User: {{ post.author }}</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    {% endfor %}
+</div>
+    <div id="annotation-container" class="row row-cols-1 row-cols-sm-1 row-cols-mr-6 g-3">
+        <!-- The annotation cards will be inserted here -->
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        const annotationModal = new bootstrap.Modal('#annotationModal')
+        const annotatedTextModal = new bootstrap.Modal('#annotatedTextModal')
+
+        const annotationButton = document.getElementById('annotation-button');
+        const annotatedDescription = document.getElementById('annotated-description');
+        const annotationStartInput = document.getElementById('annotation-start');
+        const annotationEndInput = document.getElementById('annotation-end');
+        const annotatedText = document.getElementById('annotated-text')
+        const annotationBodyDescription = document.getElementById('annotation-body-description')
+
+        let selectedAnnotationText = ''
+
+
+        const showAnnotationButton = () => {
+            annotationButton.classList.remove('d-none');
+            annotationButton.classList.add('d-block');
+        }
+
+        const hideAnnotationButton = () => {
+            annotationButton.classList.remove('d-block');
+            annotationButton.classList.add('d-none');
+        }
+
+        const showAnnotatedText = (start, end, annotation) => {
+            const originalDescription = '{{post.description}}'
+            annotatedTextModal.show()
+            annotatedText.innerHTML = ''
+            annotationBodyDescription.innerHTML = annotation
+            let modifiedDescription = ''
+
+            for (let i = 0; i < originalDescription.length; i++) {
+                if (i >= start && i < end) {
+                    modifiedDescription += originalDescription[i]
+                } else if (i == end) {
+                    modifiedDescription += originalDescription[i]
+                    const node = document.createElement('mark')
+                    const textNode = document.createTextNode(modifiedDescription)
+                    node.appendChild(textNode)
+                    annotatedText.appendChild(node)
+                } else {
+                    const textNode = document.createTextNode(originalDescription[i])
+                    annotatedText.appendChild(textNode)
+                }
+            }
+
+        }
+
+        annotatedDescription.addEventListener('select', showAnnotationButton);
+
+        annotationButton.addEventListener('click', () => {
+            // Find highlighted text
+            selectedAnnotationText = window.getSelection().toString();
+
+            // Find starting index of highlighted text in complete description
+            const startIndex = '{{post.text}}'.search(selectedAnnotationText)
+            const endIndex = startIndex + selectedAnnotationText.length - 1
+            const started = '{{post.text}}'
+            const len = started.length
+
+            annotationStartInput.value = startIndex
+            annotationEndInput.value = endIndex
+
+            annotationModal.show();
+        })
+
+
+        document.addEventListener("selectionchange", event => {
+            if (window.getSelection) {
+                if (window.getSelection().toString() === '') {
+                    hideAnnotationButton();
+                }
+            }
+        })
+
+        function saveAnnotation(post_id, post_description) {
+
+
+            let url = "http://127.0.0.1:81"
+            let data = {
+                body: {
+                    post_id: post_id,
+                    post_description: post_description,
+                    selected_part: selectedAnnotationText,
+                    annotation_real: document.getElementById('annotation').value,
+                    start: post_description.search(selectedAnnotationText),
+                    end: post_description.search(selectedAnnotationText) + selectedAnnotationText.length,
+                },
+                id: Math.floor(Math.random() * 1000000000),
+                target: "http://127.0.0.1",
+                start: document.getElementById('annotation-start').value,
+                end: document.getElementById('annotation-end').value,
+                type: "Annotation",
+                selector_type: document.getElementById('annotation_selector_type').value,
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            }).then(response => response.json())
+                .then(result => {
+                    console.log(data);
+                    console.log(result);
+                    annotationModal.hide();
+                })
+        }
+
+        function createAnnotationCard(annotation) {
+            const card = document.createElement("div");
+            card.classList.add("card", "shadow-sm");
+
+            const cardBody = document.createElement("div");
+            cardBody.classList.add("card-body");
+
+            const annotationReal = document.createElement("h5");
+            annotationReal.textContent = annotation.body.annotation_real;
+            cardBody.appendChild(annotationReal);
+
+            const postId = document.createElement("p");
+            postId.textContent = `Post ID: ${annotation.body.post_id}`;
+            cardBody.appendChild(postId);
+
+            const selectedPart = document.createElement("p");
+            selectedPart.textContent = `Selected Part: ${annotation.body.selected_part}`;
+            cardBody.appendChild(selectedPart);
+
+            card.appendChild(cardBody);
+            return card;
+        }
+
+        function fetchAnnotations() {
+            fetch("http://127.0.0.1:81")
+                .then((response) => response.json())
+                .then((annotations) => {
+                    const annotationContainer = document.getElementById("annotation-container");
+                    annotations.forEach((annotation) => {
+                        const card = createAnnotationCard(annotation);
+                        annotationContainer.appendChild(card);
+                    });
+                });
+        }
+
+        // Call fetchAnnotations() when the page loads
+        fetchAnnotations();
+    </script>
+
+{% endblock %}

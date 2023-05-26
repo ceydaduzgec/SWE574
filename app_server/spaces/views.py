@@ -27,6 +27,7 @@ def delete_space(request, pk):
         return redirect("my_spaces_list")
 
 
+@login_required
 def grant_permission(request, space_pk, member_pk):
     space = get_object_or_404(Space, pk=space_pk)
     member = get_object_or_404(User, pk=member_pk)
@@ -36,6 +37,7 @@ def grant_permission(request, space_pk, member_pk):
     return redirect("space_members", pk=space.pk)
 
 
+@login_required
 def ungrant_permission(request, space_pk, member_pk):
     space = get_object_or_404(Space, pk=space_pk)
     member = get_object_or_404(User, pk=member_pk)
@@ -75,12 +77,14 @@ def remove_moderator(request, space_pk, moderator_pk):
     return redirect("space_members", pk=space.pk)
 
 
+@login_required
 def join_space(request, pk):
     space = get_object_or_404(Space, pk=pk)
     space.members.add(request.user)
     return redirect("space_detail", pk=pk)
 
 
+@login_required
 def leave_space(request, pk):
     space = get_object_or_404(Space, pk=pk)
     if request.user in space.members.all() or request.user in space.granted_members.all():

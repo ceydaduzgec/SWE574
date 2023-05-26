@@ -123,6 +123,8 @@
                                                 class="nav-link link-dark px-2">Friends</a></li>
                                         <li class="nav-item"><a href="{% url 'my_account' %}"
                                                 class="nav-link link-dark px-2">My Account</a></li>
+                                         <li class="nav-item"><a href="{% url 'my_bookmarks' %}"
+                                                class="nav-link link-dark px-2">My Bookmarks</a></li>
                                     </ul>
                                 </nav>
                             </div>
@@ -170,7 +172,7 @@
                 // these HTTP methods do not require CSRF protection
                 return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
             }
-   
+
 
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))

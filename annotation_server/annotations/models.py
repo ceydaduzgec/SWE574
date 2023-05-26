@@ -15,15 +15,3 @@ class Annotation(models.Model):
         ordering = ["creation_datetime"]
         verbose_name = "annotation"
         verbose_name_plural = "annotations"
-
-    @property
-    def as_dict(self):
-        annotation_dict = {
-            "@context": "http://www.w3.org/ns/anno.jsonld",
-            "id": self.id,
-            "type": self.type,
-            "body": self.body,
-            "target": self.target,
-        }
-
-        return annotation_dict

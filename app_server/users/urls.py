@@ -4,6 +4,7 @@ from users.views import (
     login_request,
     logout_request,
     my_account,
+    my_bookmarks,
     register_request,
     user_detail,
     user_follow,
@@ -43,4 +44,5 @@ urlpatterns = [
     path("users/<username>/", user_detail, name="user_detail"),
     path("users/<username>/follow/", user_follow, name="user_follow"),
     path("myaccount/", my_account, name="my_account"),
+    path("mybookmarks/", my_bookmarks, name="my_bookmarks"),
 ]
