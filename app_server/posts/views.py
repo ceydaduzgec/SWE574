@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from posts.forms import CommentForm, EmailPostForm, PostForm
-from posts.models import Post, ReportedPost, TagDescription
+from posts.models import Post, TagDescription
 from spaces.models import Space
 from taggit.models import Tag
 
@@ -22,20 +22,15 @@ def check_link(request):
 
 @login_required
 def post_list(request, tag_slug=None):
-    print("post_list")
     user = request.user
     spaces = Space.objects.filter(Q(owner=user) | Q(members=user) | Q(granted_members=user) | Q(moderators=user))
     posts = (
-        Post.objects.filter(Q(spaces_in=spaces) | Q(author_in=user.following.all()) | Q(author=user))
+        Post.objects.filter(Q(spaces__in=spaces) | Q(author__in=user.following.all()) | Q(author=user))
         .annotate(total_comments=Count("comments"))
         .order_by("-published_date")
     )
 
-    # Get the reported posts
-    reported_posts = ReportedPost.objects.filter(post__in=posts).values_list("post_id", flat=True)
-
-    # Added reported posts to the context
-    context = {"posts": posts, "reported_posts": reported_posts}
+    context = {"posts": posts}
 
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
@@ -168,18 +163,6 @@ def post_remove(request, pk):
     return redirect("post_list")
 
 
-# post reported by admin
-# design a button for admin to click to report a post without any form
-def report_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.user.is_superuser:
-        # save the post reported table
-        post_reported = ReportedPost.objects.create(post=post, reported_by=request.user)
-        post_reported.save()
-
-    return redirect("post_list")
-
-
 @login_required
 def add_comment_to_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -207,12 +190,12 @@ def search(request):
         posts_s = Post.objects.filter(
             Q(title__icontains=searched)
             | Q(text__icontains=searched)
-            | Q(tags_name_icontains=searched)
-            | Q(tag_descriptions_description_icontains=searched)
+            | Q(tags__name__icontains=searched)
+            | Q(tag_descriptions__description__icontains=searched)
         ).distinct()
 
         # Search spaces with the given keyword
-        spaces_s = Space.objects.filter(Q(name_icontains=searched) | Q(description_icontains=searched))
+        spaces_s = Space.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
 
         return render(
             request,

@@ -42,7 +42,7 @@ class Post(models.Model):
         self.published_date = timezone.now()
         self.save()
 
-    def _str_(self):
+    def __str__(self):
         return self.title
 
     def get_absolute_url(self):
@@ -69,7 +69,7 @@ class TagDescription(models.Model):
     tag = models.ForeignKey("taggit.Tag", on_delete=models.CASCADE, related_name="tag_description")
     description = models.CharField(max_length=200, blank=True, unique=False)
 
-    def _str_(self):
+    def __str__(self):
         return f"{self.tag.name}: {self.description}"
 
 
@@ -90,10 +90,5 @@ class Comment(models.Model):
         self.approved_comment = True
         self.save()
 
-    def _str_(self):
+    def __str__(self):
         return self.text
-
-
-class ReportedPost(models.Model):
-    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE, related_name="reports")
-    reported_by = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
