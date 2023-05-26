@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import auth
 from django.db.models import Count
-from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from posts.models import Post
@@ -119,16 +118,35 @@ def user_follow(request, username):
                 current_user.following.remove(user_to_follow)
             else:
                 current_user.following.add(user_to_follow)
-            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+            return redirect("user_list")  # Redirect to the user_list view after following/unfollowing
 
         except User.DoesNotExist:
-            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+            pass
+
+    return redirect("user_list")  # Redirect to the user_list view if an error occurs
 
 
 @login_required
 def user_list(request):
-    users = User.objects.filter(is_active=True)
-    return render(request, "user_list.html", {"section": "people", "users": users})
+    friends = request.user.following.all()
+
+    # Fetch friend recommendations for the logged-in user based on shared spaces
+    friend_recommendations = (
+        User.objects.exclude(id=request.user.id)
+        .annotate(shared_spaces_count=Count("spaces"))
+        .filter(spaces__in=request.user.spaces.all())
+        .order_by("-shared_spaces_count")[:5]
+    )
+
+    return render(
+        request,
+        "user_list.html",
+        {
+            "section": "friends",
+            "friends": friends,
+            "friend_recommendations": friend_recommendations,
+        },
+    )
 
 
 @login_required
