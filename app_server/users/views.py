@@ -150,3 +150,9 @@ def my_account(request):
 def user_badges(request):
     user_badges = UserBadge.objects.filter(user=request.user)
     return render(request, "badges/user_badges.html", {"user_badges": user_badges})
+
+
+def my_bookmarks(request):
+    user = request.user
+    bookmarks = user.bookmarks.all()
+    return render(request, "my_bookmarks.html", {"posts": bookmarks})
