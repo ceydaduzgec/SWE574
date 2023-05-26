@@ -26,7 +26,7 @@ def post_list(request, tag_slug=None):
     user = request.user
     spaces = Space.objects.filter(Q(owner=user) | Q(members=user) | Q(granted_members=user) | Q(moderators=user))
     posts = (
-        Post.objects.filter(Q(spaces_in=spaces) | Q(author_in=user.following.all()) | Q(author=user))
+        Post.objects.filter(Q(spaces__in=spaces) | Q(author_in=user.following.all()) | Q(author=user))
         .annotate(total_comments=Count("comments"))
         .order_by("-published_date")
     )
