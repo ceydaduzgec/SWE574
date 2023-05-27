@@ -3,8 +3,7 @@ from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import auth
-from django.db.models import Count
-from django.http import HttpResponseRedirect
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from posts.models import Post
@@ -66,11 +65,6 @@ def register_request(request):
 
 
 def logout_request(request):
-    # if not request.user.is_authenticated:
-    #     return redirect("/")
-    #
-    # logout(request)
-    # messages.info(request, "Logged out successfully!"),
     auth.logout(request)
     return redirect("login")
 
@@ -80,8 +74,6 @@ def user_detail(request, username):
     user = get_object_or_404(User, username=username, is_active=True)
 
     all_posts = Post.objects.filter(author=user.id)
-    # most_commented_posts = Post.objects.filter(author_id=request.user.id).annotate(
-    #     total_comments=Count('comments')).order_by('-total_comments')[:3]
     most_commented_posts = (
         Post.objects.filter(author_id=user.id)
         .annotate(total_comments=Count("comments"))
@@ -119,25 +111,48 @@ def user_follow(request, username):
                 current_user.following.remove(user_to_follow)
             else:
                 current_user.following.add(user_to_follow)
-            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+            return redirect("user_list")  # Redirect to the user_list view after following/unfollowing
 
         except User.DoesNotExist:
-            return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+            pass
+
+    return redirect("user_list")  # Redirect to the user_list view if an error occurs
 
 
 @login_required
 def user_list(request):
-    users = User.objects.filter(is_active=True)
-    return render(request, "user_list.html", {"section": "people", "users": users})
+    friends = request.user.following.all()
+    friend_ids = friends.values_list("id", flat=True)
+
+    friend_recommendations = (
+        User.objects.exclude(id__in=friend_ids)
+        .exclude(id=request.user.id)
+        .annotate(shared_spaces_count=Count("spaces"))
+        .filter(Q(spaces__in=request.user.spaces.all()) | Q(owned_spaces__in=request.user.spaces.all()))
+        .order_by("-shared_spaces_count")[:5]
+    )
+
+    return render(
+        request,
+        "user_list.html",
+        {
+            "section": "friends",
+            "friends": friends,
+            "friend_recommendations": friend_recommendations,
+        },
+    )
 
 
 @login_required
 def my_account(request):
     if request.method == "POST":
-        user_form = UserEditForm(instance=request.user, data=request.POST)
+        user_form = UserEditForm(instance=request.user, data=request.POST, files=request.FILES)
         if user_form.is_valid():
             user_form.save()
-
+            messages.success(request, "Your profile was successfully updated!")
+            return redirect("my_account")  # Redirect to the same page for demonstration purposes
+        else:
+            messages.error(request, "Please correct the error below.")
     else:
         user_form = UserEditForm(instance=request.user)
     return render(
@@ -150,3 +165,9 @@ def my_account(request):
 def user_badges(request):
     user_badges = UserBadge.objects.filter(user=request.user)
     return render(request, "badges/user_badges.html", {"user_badges": user_badges})
+
+
+def my_bookmarks(request):
+    user = request.user
+    bookmarks = user.bookmarks.all()
+    return render(request, "my_bookmarks.html", {"posts": bookmarks})

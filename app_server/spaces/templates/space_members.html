@@ -64,7 +64,9 @@
             {% endif %}
           {% endif %}
         {% else %}
-          {{ combined_member.username }}
+          {% comment %} {{ combined_member.username }} {% endcomment %}
+          <a href="/users/{{ combined_member.username }}">{{ combined_member.username }}</a>
+
         {% endif %}
       </li>
     {% empty %}

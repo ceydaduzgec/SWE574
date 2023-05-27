@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.db.models import Q
-from posts.models import Comment, Post
+from posts.models import Comment, Post, TagDescription
 from spaces.models import Space
 
 User = get_user_model()
@@ -25,9 +25,21 @@ class PostForm(forms.ModelForm):
                 spaces = spaces.filter(pk=selected_space.pk)
             self.fields["spaces"].queryset = spaces
 
+        # 'image' alanının zorunlu olmadığını belirtmek için aşağıdaki satırı ekleyin
+        self.fields["image"].required = False
+
     class Meta:
         model = Post
         fields = ("title", "link", "tags", "labels", "text", "upload", "image", "spaces")
+
+
+class TagDescriptionForm(forms.ModelForm):
+    class Meta:
+        model = TagDescription
+        fields = (
+            "tag",
+            "description",
+        )
 
 
 class CommentForm(forms.ModelForm):

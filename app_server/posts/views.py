@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 from posts.forms import CommentForm, EmailPostForm, PostForm
-from posts.models import Post
+from posts.models import Post, TagDescription
 from spaces.models import Space
 from taggit.models import Tag
 
@@ -43,7 +43,7 @@ def post_list(request, tag_slug=None):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    comments = post.comments
+    comments = post.comments.all()
 
     # Get the moderators of the spaces of the post
     moderators = []
@@ -72,7 +72,6 @@ def post_detail(request, pk):
 
 @login_required
 def post_new(request):
-    # Get the space_pk parameter from the URL
     space_pk = request.GET.get("space_pk")
     if space_pk:
         space = get_object_or_404(Space, pk=space_pk)
@@ -94,13 +93,30 @@ def post_new(request):
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
+
+            # Check if an image was uploaded
+            if "image" not in request.FILES:
+                post.image = "none.jpg"
+
             post.save()
+
             # Get the selected spaces from the form and add them to the post
             selected_spaces = form.cleaned_data.get("spaces")
             if selected_spaces:
                 post.spaces.set(selected_spaces)
 
             post.tags.add(*form.cleaned_data["tags"])
+
+            tag_descriptions_data = request.POST.getlist("tag_descriptions[]")
+
+            for tag_description_data in tag_descriptions_data:
+                tag_name, description = tag_description_data.split(":", 1)
+                tag, _ = Tag.objects.get_or_create(name=tag_name)
+                tag_description, _ = TagDescription.objects.get_or_create(tag=tag, description=description)
+                post.tag_descriptions.add(tag_description)
+
+            # Save the post instance with the new tag descriptions
+            post.save()
 
             return redirect("post_detail", pk=post.pk)
     else:
@@ -116,12 +132,16 @@ def post_new(request):
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
-            post.image = request.FILES.get("image")
+
+            # heck if an image was uploaded
+            if "image" not in request.FILES:
+                post.image = None
+
             post.tags.clear()  # clear existing tags
             tags = form.cleaned_data["tags"]
             if isinstance(tags, list):
@@ -165,7 +185,6 @@ def add_comment_to_post(request, pk):
             return redirect("post_detail", pk=post.pk)
     else:
         form = CommentForm()
-    # List of similar posts
 
     return render(request, "add_comment_to_post.html", {"form": form})
 
@@ -177,11 +196,17 @@ def search(request):
 
         # Search posts with the given keyword
         posts_s = Post.objects.filter(
-            Q(title__icontains=searched) | Q(text__icontains=searched) | Q(tags__name__icontains=searched)
+            Q(title__icontains=searched)
+            | Q(text__icontains=searched)
+            | Q(tags__name__icontains=searched)
+            | Q(tag_descriptions__description__icontains=searched)
+            | Q(labels__icontains=searched)
         ).distinct()
 
         # Search spaces with the given keyword
         spaces_s = Space.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
+
+        users = User.objects.filter(Q(username__icontains=searched) | Q(first_name__icontains=searched))
 
         return render(
             request,
@@ -190,6 +215,7 @@ def search(request):
                 "searched": searched,
                 "posts_s": posts_s,
                 "spaces_s": spaces_s,
+                "users": users,
             },
         )
     else:
@@ -239,6 +265,7 @@ def post_share(request, pk):
             sent = True
     else:
         form = EmailPostForm()
+
     return render(request, "share.html", {"post": post, "form": form, "sent": sent})
 
 

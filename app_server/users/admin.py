@@ -17,7 +17,7 @@ class FollowerInline(admin.TabularInline):
 class UserAdmin(BaseUserAdmin):
     list_display = ("username", "is_active", "is_staff", "is_superuser")
     list_filter = ("is_active", "is_staff", "is_superuser")
-    search_fields = ("username", "first_name", "last_name")
+    search_fields = ("username", "first_name", "last_name", "photo", "bio", "email")
     inlines = (FollowerInline,)
     fieldsets = (
         (
@@ -33,6 +33,7 @@ class UserAdmin(BaseUserAdmin):
                     "username",
                     "first_name",
                     "last_name",
+                    "photo",
                 )
             },
         ),

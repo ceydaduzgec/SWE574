@@ -2,11 +2,19 @@
 {% block content %}
   <h1>My Spaces</h1>
   {% if spaces %}
-    <ul>
+    <div>
       {% for space in spaces %}
-        <li><a href="{% url 'space_detail' pk=space.pk %}">{{ space.name }}</a></li>
+        <!-- <li><a href="{% url 'space_detail' pk=space.pk %}">{{ space.name }}</a></li> -->
+        <div class="card my-1" style="width: 18rem;">
+          <!-- <img src="..." class="card-img-top" alt="..."> -->
+          <div class="card-body">
+            <h5 class="card-title">{{ space.name }}</h5>
+            <p class="card-text">{{ space.created_date }}</p>
+            <a href="{% url 'space_detail' pk=space.pk %}">{{ space.name }}</a>
+          </div>
+        </div>
       {% endfor %}
-    </ul>
+      </div>
     {% if recommended_spaces %}
       <h2>Recommended Spaces:</h2>
       <ul>
