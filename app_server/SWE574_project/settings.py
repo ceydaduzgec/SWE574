@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "taggit",
     "easy_thumbnails",
     "corsheaders",  # CORS
-    "core",
 ]
 
 if DEBUG:
