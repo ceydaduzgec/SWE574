@@ -113,11 +113,13 @@
 
                         <p class="labels">
                             Labels:
-                            <a href="" class="badge bg-secondary"
-                               data-bs-toggle="tooltip" data-bs-placement="top"
-                               data-bs-custom-class="custom-tooltip">
-                                {{ post.labels }}
-                            </a>
+                            {% for label in post.get_labels_list %}
+                                <a href="" class="badge bg-secondary"
+                                   data-bs-toggle="tooltip" data-bs-placement="top"
+                                   data-bs-custom-class="custom-tooltip">
+                                    {{ label }}
+                                </a>
+                            {% endfor %}
                         </p>
                     </div>
                 </div>
