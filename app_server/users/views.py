@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import auth
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from posts.models import Post
@@ -124,12 +124,11 @@ def user_list(request):
     friends = request.user.following.all()
     friend_ids = friends.values_list("id", flat=True)
 
-    # Fetch friend recommendations for the logged-in user based on shared spaces
     friend_recommendations = (
         User.objects.exclude(id__in=friend_ids)
         .exclude(id=request.user.id)
         .annotate(shared_spaces_count=Count("spaces"))
-        .filter(spaces__in=request.user.spaces.all())
+        .filter(Q(spaces__in=request.user.spaces.all()) | Q(owned_spaces__in=request.user.spaces.all()))
         .order_by("-shared_spaces_count")[:5]
     )
 
