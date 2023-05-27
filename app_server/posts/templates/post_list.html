@@ -31,7 +31,7 @@
                     <div class="row">
                         <p class="col-md-9">{{ post.text }}</p>
                         <div class="col-md-3">
-                            {% if post.image %}
+                            {% if post.image and post.image.name != 'none.jpg' %}
                                 <div class="img-container">
                                     <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid"/>
                                 </div>
