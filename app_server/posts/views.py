@@ -72,7 +72,6 @@ def post_detail(request, pk):
 
 @login_required
 def post_new(request):
-    # Get the space_pk parameter from the URL
     space_pk = request.GET.get("space_pk")
     if space_pk:
         space = get_object_or_404(Space, pk=space_pk)
@@ -96,7 +95,7 @@ def post_new(request):
             post.published_date = timezone.now()
 
             # Check if an image was uploaded
-            if 'image' not in request.FILES:
+            if "image" not in request.FILES:
                 post.image = "none.jpg"
 
             post.save()
@@ -140,7 +139,7 @@ def post_edit(request, pk):
             post.published_date = timezone.now()
 
             # Check if an image was uploaded
-            if 'image' not in request.FILES:
+            if "image" not in request.FILES:
                 post.image = None
 
             post.tags.clear()  # clear existing tags
