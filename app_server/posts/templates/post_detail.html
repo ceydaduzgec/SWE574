@@ -71,11 +71,11 @@
                             Loading...
                         </div>
 
-                        {% if post.image %}
+                        {% if post.image and post.image.name != "none.jpg" %}
                             <div class="d-flex justify-content-center">
                                 <div style="position: relative;">
                                     <img id="image" src="{{ post.image.url }}" alt="{{ post.title }}"
-                                         style="position: relative; top: 0; left: 0; width: 500px; height: auto;">
+                                        style="position: relative; top: 0; left: 0; width: 500px; height: auto;">
                                 </div>
                                 <form id="annotation-form" style="display:none;">
                                     <input type="hidden" id="x" name="x">
@@ -91,6 +91,7 @@
                                 </form>
                             </div>
                         {% endif %}
+
 
 
                         <hr>

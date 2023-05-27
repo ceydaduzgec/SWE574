@@ -43,7 +43,7 @@ def post_list(request, tag_slug=None):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    comments = post.comments
+    comments = post.comments.all()
 
     # Get the moderators of the spaces of the post
     moderators = []
@@ -72,7 +72,6 @@ def post_detail(request, pk):
 
 @login_required
 def post_new(request):
-    # Get the space_pk parameter from the URL
     space_pk = request.GET.get("space_pk")
     if space_pk:
         space = get_object_or_404(Space, pk=space_pk)
@@ -94,7 +93,13 @@ def post_new(request):
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
+
+            # Check if an image was uploaded
+            if "image" not in request.FILES:
+                post.image = "none.jpg"
+
             post.save()
+
             # Get the selected spaces from the form and add them to the post
             selected_spaces = form.cleaned_data.get("spaces")
             if selected_spaces:
@@ -127,12 +132,16 @@ def post_new(request):
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
             post.published_date = timezone.now()
-            post.image = request.FILES.get("image")
+
+            # heck if an image was uploaded
+            if "image" not in request.FILES:
+                post.image = None
+
             post.tags.clear()  # clear existing tags
             tags = form.cleaned_data["tags"]
             if isinstance(tags, list):
@@ -176,7 +185,6 @@ def add_comment_to_post(request, pk):
             return redirect("post_detail", pk=post.pk)
     else:
         form = CommentForm()
-    # List of similar posts
 
     return render(request, "add_comment_to_post.html", {"form": form})
 
@@ -253,6 +261,7 @@ def post_share(request, pk):
             sent = True
     else:
         form = EmailPostForm()
+
     return render(request, "share.html", {"post": post, "form": form, "sent": sent})
 
 

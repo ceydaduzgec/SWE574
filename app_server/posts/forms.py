@@ -25,6 +25,9 @@ class PostForm(forms.ModelForm):
                 spaces = spaces.filter(pk=selected_space.pk)
             self.fields["spaces"].queryset = spaces
 
+        # 'image' alanının zorunlu olmadığını belirtmek için aşağıdaki satırı ekleyin
+        self.fields["image"].required = False
+
     class Meta:
         model = Post
         fields = ("title", "link", "tags", "labels", "text", "upload", "image", "spaces")
