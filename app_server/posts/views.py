@@ -96,7 +96,7 @@ def post_new(request):
             post.published_date = timezone.now()
 
             # Check if an image was uploaded
-            if 'image' not in request.FILES:
+            if "image" not in request.FILES:
                 post.image = "none.jpg"
 
             post.save()
@@ -140,7 +140,7 @@ def post_edit(request, pk):
             post.published_date = timezone.now()
 
             # Check if an image was uploaded
-            if 'image' not in request.FILES:
+            if "image" not in request.FILES:
                 post.image = None
 
             post.tags.clear()  # clear existing tags
