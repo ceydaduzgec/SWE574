@@ -200,6 +200,7 @@ def search(request):
             | Q(text__icontains=searched)
             | Q(tags__name__icontains=searched)
             | Q(tag_descriptions__description__icontains=searched)
+            | Q(labels__icontains=searched)
         ).distinct()
 
         # Search spaces with the given keyword
