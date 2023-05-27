@@ -162,21 +162,6 @@ def my_account(request):
     )
 
 
-# @login_required
-# def my_account(request):
-#     if request.method == "POST":
-#         user_form = UserEditForm(instance=request.user, data=request.POST)
-#         if user_form.is_valid():
-#             user_form.save()
-#     else:
-#         user_form = UserEditForm(instance=request.user)
-#     return render(
-#         request,
-#         "my_account.html",
-#         {"user_form": user_form},
-#     )
-
-
 def user_badges(request):
     user_badges = UserBadge.objects.filter(user=request.user)
     return render(request, "badges/user_badges.html", {"user_badges": user_badges})

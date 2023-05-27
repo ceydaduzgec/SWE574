@@ -20,7 +20,7 @@ class Post(models.Model):
     tags = TaggableManager(blank=True)
     tag_descriptions = models.ManyToManyField("TagDescription", blank=True)
     labels = models.CharField(max_length=200, blank=True)
-    text = models.CharField(max_length=2000, blank=True)
+    text = models.CharField(max_length=20000, blank=True)
     upload = models.FileField(upload_to="uploads/", null=True, blank=True)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
