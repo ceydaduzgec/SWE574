@@ -29,12 +29,14 @@ class Command(BaseCommand):
         ]
 
         users = User.objects.all()
+        existing_space_names = Space.objects.values_list("name", flat=True)
 
         for name in space_names:
-            space, _ = Space.objects.get_or_create(name=name, owner=random.choice(users))
-            space.members.add(*users)
-            space.moderators.add(random.choice(users))
-            space.save()
+            if name not in existing_space_names:
+                space = Space.objects.create(name=name, owner=random.choice(users))
+                space.members.set(users)
+                space.moderators.add(random.choice(users))
+                space.save()
 
         spaces = Space.objects.all()
 
@@ -68,6 +70,7 @@ class Command(BaseCommand):
                 "space_name": "Cat Memes",
                 "link": "https://www.youtube.com/watch?v=LuYsO5DgLrc",
                 "tags": "cats, memes, funny",
+                "labels": "humor",
             },
             {
                 "title": "The latest smartphone for tech geeks",
@@ -75,6 +78,7 @@ class Command(BaseCommand):
                 "space_name": "Tech Geeks",
                 "link": "https://www.howtogeek.com/734936/best-android-phones/",
                 "tags": "tech, smartphones, android",
+                "labels": "technology",
             },
             {
                 "title": "The ultimate pizza recipe",
@@ -82,6 +86,7 @@ class Command(BaseCommand):
                 "space_name": "Pizza Lovers",
                 "link": "https://tasty.co/recipe/ultimate-homemade-pizza",
                 "tags": "pizza, recipes, food",
+                "labels": "cooking",
             },
             {
                 "title": "How to make the perfect cold brew",
@@ -89,6 +94,7 @@ class Command(BaseCommand):
                 "space_name": "Coffee Addicts",
                 "link": "https://cooking.nytimes.com/recipes/1017355-cold-brewed-iced-coffee",
                 "tags": "coffee, recipes, drinks",
+                "labels": "beverages",
             },
             {
                 "title": "The best books of 2021",
@@ -96,6 +102,7 @@ class Command(BaseCommand):
                 "space_name": "Book Club",
                 "link": "https://www.goodreads.com/choiceawards/best-books-2021",
                 "tags": "books, reading, literature",
+                "labels": "books",
             },
             {
                 "title": "The best travel destinations in Europe",
@@ -103,6 +110,7 @@ class Command(BaseCommand):
                 "space_name": "Travel Enthusiasts",
                 "link": "https://www.cntraveler.com/galleries/2015-07-07/top-10-cities-in-europe-readers-choice-awards-2015",
                 "tags": "travel, europe, destinations",
+                "labels": "travel",
             },
             {
                 "title": "The best fitness apps",
@@ -110,6 +118,7 @@ class Command(BaseCommand):
                 "space_name": "Fitness Gurus",
                 "link": "https://www.healthline.com/health/fitness-exercise/top-iphone-android-apps",
                 "tags": "fitness, tech, health",
+                "labels": "fitness",
             },
             {
                 "title": "The best game development tools",
@@ -117,6 +126,7 @@ class Command(BaseCommand):
                 "space_name": "Game Developers",
                 "link": "https://www.gamedesigning.org/career/tools/",
                 "tags": "game development, tech, programming",
+                "labels": "game development",
             },
             {
                 "title": "The best photography tips",
@@ -124,6 +134,7 @@ class Command(BaseCommand):
                 "space_name": "Photography",
                 "link": "https://www.techradar.com/how-to/photography-video-capture/cameras/77-photography-techniques-tips-and-tricks-for-taking-pictures-of-anything-1320775",
                 "tags": "photography, tips, art",
+                "labels": "photography",
             },
             {
                 "title": "The best cooking tips",
@@ -131,19 +142,23 @@ class Command(BaseCommand):
                 "space_name": "Cooking Tips",
                 "link": "https://www.bbcgoodfood.com/howto/guide/top-10-cooking-tips",
                 "tags": "cooking, tips, food",
+                "labels": "cooking",
             },
         ]
 
         for post_data in posts_data:
             space = Space.objects.filter(name=post_data["space_name"]).first()
             if space:
-                post = Post(
-                    author=random.choice(User.objects.all()),
-                    title=post_data["title"],
-                    text=post_data["content"],
-                    link=post_data["link"],
-                )
-                post.save()
-                post.spaces.add(space)
-                post.tags.add(*post_data["tags"].split(", "))
+                if not Post.objects.filter(title=post_data["title"]).exists():
+                    post = Post(
+                        author=random.choice(User.objects.all()),
+                        title=post_data["title"],
+                        text=post_data["content"],
+                        link=post_data["link"],
+                        labels=post_data["labels"],
+                    )
+                    post.save()
+                    post.spaces.add(space)
+                    post.tags.add(*post_data["tags"].split(", "))
+
         print("Mock data created.")
