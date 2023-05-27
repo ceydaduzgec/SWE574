@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from posts.models import Post
 from users.forms import NewUserForm, UserEditForm
+from django.db.models import Q
 
 from .models import Badge, UserBadge
 
@@ -118,7 +119,6 @@ def user_follow(request, username):
 
     return redirect("user_list")  # Redirect to the user_list view if an error occurs
 
-
 @login_required
 def user_list(request):
     friends = request.user.following.all()
@@ -129,7 +129,7 @@ def user_list(request):
         User.objects.exclude(id__in=friend_ids)
         .exclude(id=request.user.id)
         .annotate(shared_spaces_count=Count("spaces"))
-        .filter(spaces__in=request.user.spaces.all())
+        .filter(Q(spaces__in=request.user.spaces.all()) | Q(owned_spaces__in=request.user.spaces.all()))
         .order_by("-shared_spaces_count")[:5]
     )
 
@@ -142,6 +142,7 @@ def user_list(request):
             "friend_recommendations": friend_recommendations,
         },
     )
+
 
 
 @login_required
