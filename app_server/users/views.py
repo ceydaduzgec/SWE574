@@ -146,9 +146,13 @@ def user_list(request):
 @login_required
 def my_account(request):
     if request.method == "POST":
-        user_form = UserEditForm(instance=request.user, data=request.POST)
+        user_form = UserEditForm(instance=request.user, data=request.POST, files=request.FILES)
         if user_form.is_valid():
             user_form.save()
+            messages.success(request, "Your profile was successfully updated!")
+            return redirect("my_account")  # Redirect to the same page for demonstration purposes
+        else:
+            messages.error(request, "Please correct the error below.")
     else:
         user_form = UserEditForm(instance=request.user)
     return render(
@@ -156,6 +160,21 @@ def my_account(request):
         "my_account.html",
         {"user_form": user_form},
     )
+
+
+# @login_required
+# def my_account(request):
+#     if request.method == "POST":
+#         user_form = UserEditForm(instance=request.user, data=request.POST)
+#         if user_form.is_valid():
+#             user_form.save()
+#     else:
+#         user_form = UserEditForm(instance=request.user)
+#     return render(
+#         request,
+#         "my_account.html",
+#         {"user_form": user_form},
+#     )
 
 
 def user_badges(request):
