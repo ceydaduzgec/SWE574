@@ -1,5 +1,22 @@
 {% extends 'base.html' %}
+<style>
+.img-container {
+    width: 100%;  /* Or any other width you want */
+    height: 200px;  /* Or any other height you want */
+    overflow: hidden;  /* This ensures that the image doesn't overflow the div */
+}
 
+.img-container .img-fluid {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;  /* This ensures the image covers the entire div */
+}
+.card {
+    height: 500px; /* İstediğiniz yüksekliği ayarlayın. */
+    overflow: auto; /* İçeriği otomatik kaydırmaya ayarlayın. */
+}
+
+</style>
 {% block content %}
     <div class="row">
         {% for post in posts %}
@@ -11,14 +28,16 @@
                         </a>
                     </div>
                     <div class="card-body">
-                        <div class="row">
-                            <p class="col-md-9">{{ post.text }}</p>
-                            <div class="col-md-3">
-                                {% if post.image %}
+                    <div class="row">
+                        <p class="col-md-9">{{ post.text }}</p>
+                        <div class="col-md-3">
+                            {% if post.image %}
+                                <div class="img-container">
                                     <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid"/>
-                                {% endif %}
-                            </div>
+                                </div>
+                            {% endif %}
                         </div>
+                    </div>
 
 
                         {#                        <textarea class="text-muted" disabled class="selection-text" id="annotated-description"#}

@@ -10,7 +10,7 @@
           <div class="card-body">
             <h5 class="card-title">{{ space.name }}</h5>
             <p class="card-text">{{ space.created_date }}</p>
-            <a href=="{% url 'space_detail' pk=space.pk %}" class="btn btn-primary">Go to space</a>
+            <a href="{% url 'space_detail' pk=space.pk %}" class="btn btn-primary">Go to space</a>
           </div>
         </div>
       {% endfor %}
