@@ -8,7 +8,7 @@ from .models import Annotation
 from .serializers import AnnotationSerializer
 
 
-# http://127.0.0.1:81/
+# http://ec2-52-91-248-162.compute-1.amazonaws.com:81/
 class AnnotationList(APIView):
     """
     List all annotations, or create a new annotation.
@@ -27,7 +27,7 @@ class AnnotationList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# http://127.0.0.1:81/<id> : http://example.org/anno2
+# http://ec2-52-91-248-162.compute-1.amazonaws.com:81/<id> : http://example.org/anno2
 class AnnotationDetail(APIView):
     """
     Retrieve, update or delete a annotation instance.
@@ -58,7 +58,7 @@ class AnnotationDetail(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# example: http://127.0.0.1:81/search/?query=TextualBody
+# example: http://ec2-52-91-248-162.compute-1.amazonaws.com:81/search/?query=TextualBody
 class AnnotationSearch(APIView):
     def get(self, request):
         query = request.GET.get("query", "").strip()
