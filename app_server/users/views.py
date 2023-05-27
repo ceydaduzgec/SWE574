@@ -65,11 +65,6 @@ def register_request(request):
 
 
 def logout_request(request):
-    # if not request.user.is_authenticated:
-    #     return redirect("/")
-    #
-    # logout(request)
-    # messages.info(request, "Logged out successfully!"),
     auth.logout(request)
     return redirect("login")
 
@@ -79,8 +74,6 @@ def user_detail(request, username):
     user = get_object_or_404(User, username=username, is_active=True)
 
     all_posts = Post.objects.filter(author=user.id)
-    # most_commented_posts = Post.objects.filter(author_id=request.user.id).annotate(
-    #     total_comments=Count('comments')).order_by('-total_comments')[:3]
     most_commented_posts = (
         Post.objects.filter(author_id=user.id)
         .annotate(total_comments=Count("comments"))
@@ -129,10 +122,12 @@ def user_follow(request, username):
 @login_required
 def user_list(request):
     friends = request.user.following.all()
+    friend_ids = friends.values_list("id", flat=True)
 
     # Fetch friend recommendations for the logged-in user based on shared spaces
     friend_recommendations = (
-        User.objects.exclude(id=request.user.id)
+        User.objects.exclude(id__in=friend_ids)
+        .exclude(id=request.user.id)
         .annotate(shared_spaces_count=Count("spaces"))
         .filter(spaces__in=request.user.spaces.all())
         .order_by("-shared_spaces_count")[:5]
@@ -155,7 +150,6 @@ def my_account(request):
         user_form = UserEditForm(instance=request.user, data=request.POST)
         if user_form.is_valid():
             user_form.save()
-
     else:
         user_form = UserEditForm(instance=request.user)
     return render(
