@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 "space_name": "Cat Memes",
                 "link": "https://www.youtube.com/watch?v=LuYsO5DgLrc",
                 "tags": "cats, memes, funny",
-                "labels": "humor, entertainment",
+                "labels": "humor",
             },
             {
                 "title": "The latest smartphone for tech geeks",
@@ -78,7 +78,7 @@ class Command(BaseCommand):
                 "space_name": "Tech Geeks",
                 "link": "https://www.howtogeek.com/734936/best-android-phones/",
                 "tags": "tech, smartphones, android",
-                "labels": "technology, gadgets",
+                "labels": "technology",
             },
             {
                 "title": "The ultimate pizza recipe",
@@ -86,7 +86,7 @@ class Command(BaseCommand):
                 "space_name": "Pizza Lovers",
                 "link": "https://tasty.co/recipe/ultimate-homemade-pizza",
                 "tags": "pizza, recipes, food",
-                "labels": "cooking, recipes",
+                "labels": "cooking",
             },
             {
                 "title": "How to make the perfect cold brew",
@@ -94,7 +94,7 @@ class Command(BaseCommand):
                 "space_name": "Coffee Addicts",
                 "link": "https://cooking.nytimes.com/recipes/1017355-cold-brewed-iced-coffee",
                 "tags": "coffee, recipes, drinks",
-                "labels": "beverages, coffee",
+                "labels": "beverages",
             },
             {
                 "title": "The best books of 2021",
@@ -102,7 +102,7 @@ class Command(BaseCommand):
                 "space_name": "Book Club",
                 "link": "https://www.goodreads.com/choiceawards/best-books-2021",
                 "tags": "books, reading, literature",
-                "labels": "books, literature",
+                "labels": "books",
             },
             {
                 "title": "The best travel destinations in Europe",
@@ -110,7 +110,7 @@ class Command(BaseCommand):
                 "space_name": "Travel Enthusiasts",
                 "link": "https://www.cntraveler.com/galleries/2015-07-07/top-10-cities-in-europe-readers-choice-awards-2015",
                 "tags": "travel, europe, destinations",
-                "labels": "travel, destinations",
+                "labels": "travel",
             },
             {
                 "title": "The best fitness apps",
@@ -118,7 +118,7 @@ class Command(BaseCommand):
                 "space_name": "Fitness Gurus",
                 "link": "https://www.healthline.com/health/fitness-exercise/top-iphone-android-apps",
                 "tags": "fitness, tech, health",
-                "labels": "fitness, health",
+                "labels": "fitness",
             },
             {
                 "title": "The best game development tools",
@@ -126,7 +126,7 @@ class Command(BaseCommand):
                 "space_name": "Game Developers",
                 "link": "https://www.gamedesigning.org/career/tools/",
                 "tags": "game development, tech, programming",
-                "labels": "game development, programming",
+                "labels": "game development",
             },
             {
                 "title": "The best photography tips",
@@ -134,7 +134,7 @@ class Command(BaseCommand):
                 "space_name": "Photography",
                 "link": "https://www.techradar.com/how-to/photography-video-capture/cameras/77-photography-techniques-tips-and-tricks-for-taking-pictures-of-anything-1320775",
                 "tags": "photography, tips, art",
-                "labels": "photography, art",
+                "labels": "photography",
             },
             {
                 "title": "The best cooking tips",
@@ -142,7 +142,7 @@ class Command(BaseCommand):
                 "space_name": "Cooking Tips",
                 "link": "https://www.bbcgoodfood.com/howto/guide/top-10-cooking-tips",
                 "tags": "cooking, tips, food",
-                "labels": "cooking, food",
+                "labels": "cooking",
             },
         ]
 
