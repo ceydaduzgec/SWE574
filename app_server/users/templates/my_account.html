@@ -5,6 +5,10 @@
 {% block content %}
 
 
+        <style>
+
+        </style>
+
 
     <style>
         .profile.pic {
@@ -14,6 +18,9 @@
             border-radius: 50%;
         }
 
+          .clearablefileinput input[type="checkbox"] {
+            display: none;
+        }
     </style>
 
     <br>
@@ -56,16 +63,46 @@
                     <form method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
                         {% for field in user_form %}
-                        <div class="mb-3">
-                            <label class="form-label">{{field.label}}</label>
-                            <input class="form-control" type="text" value="{{ field.value }}" >
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ field.errors }}
+                                    </div>
+                                {% endif %}
+                            </div>
                         {% endfor %}
-
                         <div class="mb-3">
                             <button type="submit" class="btn btn-primary"> Save changes</button>
                         </div>
                     </form>
+
+                    {#                    <form method="POST" enctype="multipart/form-data">#}
+                    {#                        {% csrf_token %}#}
+                    {#                        {% for field in user_form %}#}
+                    {#                            <div class="mb-3">#}
+                    {#                                <label class="form-label">{{ field.label }}</label>#}
+                    {#                                {{ field }}#}
+                    {#                                {% if field.errors %}#}
+                    {#                                    <div class="alert alert-danger">#}
+                    {#                                        {{ field.errors }}#}
+                    {#                                    </div>#}
+                    {#                                {% endif %}#}
+                    {#                            </div>#}
+                    {#                        {% endfor %}#}
+                    {##}
+                    {#                        {% for field in user_form %}#}
+                    {#                        <div class="mb-3">#}
+                    {#                            <label class="form-label">{{field.label}}</label>#}
+                    {#                            <input class="form-control" type="text" value="{{ field.value }}" >#}
+                    {#                        </div>#}
+                    {#                        {% endfor %}#}
+                    {##}
+                    {#                        <div class="mb-3">#}
+                    {#                            <button type="submit" class="btn btn-primary"> Save changes</button>#}
+                    {#                        </div>#}
+                    {#                    </form>#}
 
 
                 </div>
