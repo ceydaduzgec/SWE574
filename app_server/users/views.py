@@ -3,12 +3,11 @@ from django.contrib.auth import authenticate, get_user_model, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import auth
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from posts.models import Post
 from users.forms import NewUserForm, UserEditForm
-from django.db.models import Q
 
 from .models import Badge, UserBadge
 
@@ -119,12 +118,12 @@ def user_follow(request, username):
 
     return redirect("user_list")  # Redirect to the user_list view if an error occurs
 
+
 @login_required
 def user_list(request):
     friends = request.user.following.all()
     friend_ids = friends.values_list("id", flat=True)
 
-    # Fetch friend recommendations for the logged-in user based on shared spaces
     friend_recommendations = (
         User.objects.exclude(id__in=friend_ids)
         .exclude(id=request.user.id)
@@ -142,7 +141,6 @@ def user_list(request):
             "friend_recommendations": friend_recommendations,
         },
     )
-
 
 
 @login_required
