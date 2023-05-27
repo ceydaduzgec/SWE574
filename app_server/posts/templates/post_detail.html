@@ -696,7 +696,7 @@
 
             const selectedPart = document.createElement("p");
             selectedPart.classList.add("mb-1");
-            selectedPart.textContent = `Selected Part: ${annotation.target.selector.start} to ${annotation.target.selector.end}`;
+            selectedPart.textContent = `Creator: ${annotation.body.creator}`;
             card.appendChild(selectedPart);
 
             const bottomBorder = document.createElement("hr");
