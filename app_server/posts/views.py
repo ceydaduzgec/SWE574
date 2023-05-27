@@ -138,7 +138,7 @@ def post_edit(request, pk):
             post.author = request.user
             post.published_date = timezone.now()
 
-            # Check if an image was uploaded
+            # heck if an image was uploaded
             if "image" not in request.FILES:
                 post.image = None
 
