@@ -46,10 +46,6 @@ class User(AbstractUser):
     def get_absolute_url(self):
         return reverse("user_detail", kwargs={"username": self.username})
 
-    # @property
-    # def followers(self):
-    #     self.followers.all()
-
 
 class Badge(models.Model):
     name = models.CharField(max_length=100)

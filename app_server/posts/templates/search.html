@@ -12,11 +12,23 @@
             <a href="{% url 'post_detail' post.id %}">{{ post}} - {{ post.title}}  </a><br/>
         {% endfor %}
 
-          <br>
-  <h2>Space Results</h2>
-  {% for space in spaces_s %}
-    <a href="{% url 'space_detail' space.id %}">{{ space }} - {{ space.name }}</a><br>
-  {% endfor %}
+        <br>
+        <h2>Space Results</h2>
+        {% for space in spaces_s %}
+          <a href="{% url 'space_detail' space.id %}">{{ space }} - {{ space.name }}</a><br>
+        {% endfor %}
+
+        <br>
+        <h2>User Results</h2>
+        {% for user in users %}
+          <a href="{% url 'user_detail' user.id %}">{{ user }} - {{ user.username }}</a><br>
+        {% endfor %}
+
+        <br>
+        <h2>Annotation Results</h2>
+        {% for annotation in annotations %}
+          <a href="{% url 'user_detail' user.id %}">{{ user }} - {{ user.username }}</a><br>
+        {% endfor %}
 
     {% else %}
         <h1> You forgot to search ... </h1>

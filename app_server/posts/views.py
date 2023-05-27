@@ -205,6 +205,8 @@ def search(request):
         # Search spaces with the given keyword
         spaces_s = Space.objects.filter(Q(name__icontains=searched) | Q(description__icontains=searched))
 
+        users = User.objects.filter(Q(username__icontains=searched) | Q(first_name__icontains=searched))
+
         return render(
             request,
             "search.html",
@@ -212,6 +214,7 @@ def search(request):
                 "searched": searched,
                 "posts_s": posts_s,
                 "spaces_s": spaces_s,
+                "users": users,
             },
         )
     else:
