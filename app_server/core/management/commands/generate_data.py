@@ -29,12 +29,14 @@ class Command(BaseCommand):
         ]
 
         users = User.objects.all()
+        existing_space_names = Space.objects.values_list("name", flat=True)
 
         for name in space_names:
-            space, _ = Space.objects.get_or_create(name=name, owner=random.choice(users))
-            space.members.add(*users)
-            space.moderators.add(random.choice(users))
-            space.save()
+            if name not in existing_space_names:
+                space = Space.objects.create(name=name, owner=random.choice(users))
+                space.members.set(users)
+                space.moderators.add(random.choice(users))
+                space.save()
 
         spaces = Space.objects.all()
 
@@ -137,13 +139,15 @@ class Command(BaseCommand):
         for post_data in posts_data:
             space = Space.objects.filter(name=post_data["space_name"]).first()
             if space:
-                post = Post(
-                    author=random.choice(User.objects.all()),
-                    title=post_data["title"],
-                    text=post_data["content"],
-                    link=post_data["link"],
-                )
-                post.save()
-                post.spaces.add(space)
-                post.tags.add(*post_data["tags"].split(", "))
+                if not Post.objects.filter(title=post_data["title"]).exists():
+                    post = Post(
+                        author=random.choice(User.objects.all()),
+                        title=post_data["title"],
+                        text=post_data["content"],
+                        link=post_data["link"],
+                    )
+                    post.save()
+                    post.spaces.add(space)
+                    post.tags.add(*post_data["tags"].split(", "))
+
         print("Mock data created.")
