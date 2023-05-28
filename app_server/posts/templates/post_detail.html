@@ -444,6 +444,7 @@
                 body: {
                     type: "TextualBody",
                     value: document.getElementById('annotationText').value,
+                    creator: "{{ user.username }}"
                 },
                 id: url + "/anno/" + Math.floor(Math.random() * 1000000000),
                 target: {
@@ -479,7 +480,7 @@
                     'type': 'TextualBody',
                     'value': annotation,
                     'format': 'text/plain',
-                    'creator': '{{post.author}}'
+                    'creator': '{{user.username}}'
                 },
                 'id': 'http://127.0.0.1:81/anno/' + Math.floor(Math.random() * 1000000000),
                 'target': {
@@ -640,3 +641,4 @@
 
 
 {% endblock %}
+#
