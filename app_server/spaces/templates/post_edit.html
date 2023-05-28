@@ -141,6 +141,7 @@
         function getWikidataInfo(event) {
             if ($('#toggleSemanticTags').is(':checked')) {
                 var tags = event.target.value.split(',').map(tag => tag.trim());
+
                 $('#tagInfo').html('');
 
                 tags.forEach(tag => {
