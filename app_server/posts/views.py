@@ -161,7 +161,6 @@ def post_edit(request, pk):
     return render(request, "post_editor.html", {"form": form, "post": post})
 
 
-
 @require_POST
 @login_required
 def post_remove(request, pk):
@@ -197,7 +196,7 @@ def search(request):
     if request.method == "POST":
         searched = request.POST["searched"]
         searched = searched.lower()
-
+        #
         # Search posts with the given keyword
         posts_s = Post.objects.filter(
             Q(title__icontains=searched)
