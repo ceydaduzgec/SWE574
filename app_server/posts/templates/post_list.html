@@ -39,25 +39,40 @@
                                 {% endif %}
                             </div>
                         </div>
-
+                        <p class="tags">
+                            Tags:
+                            {% for tag in post.tags.all %}
+                                {% for tag_description in post.tag_descriptions.all %}
+                                    {% if tag_description.tag == tag %}
+                                        <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
+                                           data-bs-toggle="tooltip" data-bs-placement="top"
+                                           data-bs-custom-class="custom-tooltip"
+                                           data-bs-title="{{ tag_description.description }}">
+                                            {{ tag.name }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
 
                         {#                        <textarea class="text-muted" disabled class="selection-text" id="annotated-description"#}
                         {#                                  rows="4"></textarea>#}
 
-                        <p class="tags">
-                            Tags:
-                            {% for tag in post.tags.all %}
-                                <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
-                                   data-bs-toggle="tooltip" data-bs-placement="top"
-                                   data-bs-custom-class="custom-tooltip"
-                                   data-bs-title="{% for tag_description in post.tag_descriptions.all %}
-                                   {{ tag_description.description }}
-                {% endfor %}">
-                                    {{ tag.name }}
-                                </a>
-                                {% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </p>
+                        {#                        <p class="tags">#}
+                        {#                            Tags:#}
+                        {#                            {% for tag in post.tags.all %}#}
+                        {#                                <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"#}
+                        {#                                   data-bs-toggle="tooltip" data-bs-placement="top"#}
+                        {#                                   data-bs-custom-class="custom-tooltip"#}
+                        {#                                   data-bs-title="{% for tag_description in post.tag_descriptions.all %}#}
+                        {#                                   {{ tag_description.description }}#}
+                        {#                {% endfor %}">#}
+                        {#                                    {{ tag.name }}#}
+                        {#                                </a>#}
+                        {#                                {% if not forloop.last %}, {% endif %}#}
+                        {#                            {% endfor %}#}
+                        {#                        </p>#}
 
                         <p class="labels">
                             Labels:

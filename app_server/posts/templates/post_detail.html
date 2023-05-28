@@ -75,7 +75,7 @@
                             <div class="d-flex justify-content-center">
                                 <div style="position: relative;">
                                     <img id="image" src="{{ post.image.url }}" alt="{{ post.title }}"
-                                        style="position: relative; top: 0; left: 0; width: 500px; height: auto;">
+                                         style="position: relative; top: 0; left: 0; width: 500px; height: auto;">
                                 </div>
                                 <form id="annotation-form" style="display:none;">
                                     <input type="hidden" id="x" name="x">
@@ -95,21 +95,38 @@
 
 
                         <hr>
+                        <!-- ... -->
 
                         <p class="tags">
                             Tags:
                             {% for tag in post.tags.all %}
-                                <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
-                                   data-bs-toggle="tooltip" data-bs-placement="top"
-                                   data-bs-custom-class="custom-tooltip"
-                                   data-bs-title="{% for tag_description in post.tag_descriptions.all %}
-                                   {{ tag_description.description }}
-                {% endfor %}">
-                                    {{ tag.name }}
-                                </a>
+                                {% for tag_description in post.tag_descriptions.all %}
+                                    {% if tag_description.tag == tag %}
+                                        <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
+                                           data-bs-toggle="tooltip" data-bs-placement="top"
+                                           data-bs-custom-class="custom-tooltip"
+                                           data-bs-title="{{ tag_description.description }}">
+                                            {{ tag.name }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
                                 {% if not forloop.last %}, {% endif %}
                             {% endfor %}
                         </p>
+                        {#                        <p class="tags">#}
+                        {#                            Tags:#}
+                        {#                            {% for tag in post.tags.all %}#}
+                        {#                                <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"#}
+                        {#                                   data-bs-toggle="tooltip" data-bs-placement="top"#}
+                        {#                                   data-bs-custom-class="custom-tooltip"#}
+                        {#                                   data-bs-title="{% for tag_description in post.tag_descriptions.all %}#}
+                        {#                                   {{ tag_description.description }}#}
+                        {#                {% endfor %}">#}
+                        {#                                    {{ tag.name }}#}
+                        {#                                </a>#}
+                        {#                                {% if not forloop.last %}, {% endif %}#}
+                        {#                            {% endfor %}#}
+                        {#                        </p>#}
 
                         <p class="labels">
                             Labels:
@@ -296,72 +313,73 @@
 
     <script>
         {% if post.image %}
-        const image = document.getElementById('image');
-        if (image) {
-            let startX, startY;
-            image.addEventListener('mousedown', (event) => {
-                event.preventDefault(); // Disable default behavior
-                const rect = image.getBoundingClientRect();
-                startX = event.clientX - rect.left;
-                startY = event.clientY - rect.top;
-                //document.getElementById('annotation-form').style.display = 'block';
-            });
+            const image = document.getElementById('image');
+            if (image) {
+                let startX, startY;
+                image.addEventListener('mousedown', (event) => {
+                    event.preventDefault(); // Disable default behavior
+                    const rect = image.getBoundingClientRect();
+                    startX = event.clientX - rect.left;
+                    startY = event.clientY - rect.top;
+                    //document.getElementById('annotation-form').style.display = 'block';
+                });
 
-            image.addEventListener('mouseup', (event) => {
-                const rect = image.getBoundingClientRect();
-                let endX = event.clientX - rect.left;
-                let endY = event.clientY - rect.top;
+                image.addEventListener('mouseup', (event) => {
+                        const rect = image.getBoundingClientRect();
+                        let endX = event.clientX - rect.left;
+                        let endY = event.clientY - rect.top;
 
-                // Adjust startX, startY, endX, and endY if necessary
-                if (endX < startX) {
-                    let temp = startX;
-                    startX = endX;
-                    endX = temp;
-                }
-                if (endY < startY) {
-                    let temp = startY;
-                    startY = endY;
-                    endY = temp;
-                }
+                        // Adjust startX, startY, endX, and endY if necessary
+                        if (endX < startX) {
+                            let temp = startX;
+                            startX = endX;
+                            endX = temp;
+                        }
+                        if (endY < startY) {
+                            let temp = startY;
+                            startY = endY;
+                            endY = temp;
+                        }
 
-                const width = endX - startX;
-                const height = endY - startY;
+                        const width = endX - startX;
+                        const height = endY - startY;
 
-                document.getElementById('x').value = startX;
-                document.getElementById('y').value = startY;
-                document.getElementById('width').value = width;
-                document.getElementById('height').value = height;
+                        document.getElementById('x').value = startX;
+                        document.getElementById('y').value = startY;
+                        document.getElementById('width').value = width;
+                        document.getElementById('height').value = height;
 
-                let newAnno = document.querySelector('.new-annotation');
-                if (newAnno) newAnno.remove();
+                        let newAnno = document.querySelector('.new-annotation');
+                        if (newAnno) newAnno.remove();
 
 
-                const imageContainer = document.getElementById('image').parentElement;
-                imageContainer.style.position = 'relative';  // The image container must be relative for the absolute positioning to work
+                        const imageContainer = document.getElementById('image').parentElement;
+                        imageContainer.style.position = 'relative';  // The image container must be relative for the absolute positioning to work
 
-                const outerDiv = document.createElement('div');
-                outerDiv.classList.add('new-annotation');
-                outerDiv.style.position = 'absolute';
-                outerDiv.style.left = `${startX}px`;
-                outerDiv.style.top = `${startY}px`;
-                outerDiv.style.width = `${width}px`;
-                outerDiv.style.height = `${height}px`;
-                outerDiv.style.border = '2px solid red';
+                        const outerDiv = document.createElement('div');
+                        outerDiv.classList.add('new-annotation');
+                        outerDiv.style.position = 'absolute';
+                        outerDiv.style.left = `${startX}px`;
+                        outerDiv.style.top = `${startY}px`;
+                        outerDiv.style.width = `${width}px`;
+                        outerDiv.style.height = `${height}px`;
+                        outerDiv.style.border = '2px solid red';
 
-                imageContainer.appendChild(outerDiv);
+                        imageContainer.appendChild(outerDiv);
 
-                let newAnnotationImageText = document.querySelector('#annotation-form').cloneNode(true);
-                newAnnotationImageText.style.display = 'block'
-                newAnnotationImageText.style.position = 'absolute';
-                newAnnotationImageText.style.left = `${width + 5}px`;
-                document.querySelector('.new-annotation').appendChild(newAnnotationImageText);
+                        let newAnnotationImageText = document.querySelector('#annotation-form').cloneNode(true);
+                        newAnnotationImageText.style.display = 'block'
+                        newAnnotationImageText.style.position = 'absolute';
+                        newAnnotationImageText.style.left = `${width + 5}px`;
+                        document.querySelector('.new-annotation').appendChild(newAnnotationImageText);
 
-            //<div class="annotation-overlay drawer">
-            //  <div class="text">Çizim</div>
-            //    </div>
-        }
-        )
-        ;}
+                        //<div class="annotation-overlay drawer">
+                        //  <div class="text">Çizim</div>
+                        //    </div>
+                    }
+                )
+                ;
+            }
         {% endif %}
 
 
