@@ -40,11 +40,6 @@
                    value="
 
 
-
-
-
-
-
                            {% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">
             <div id="TagsHelp" class="form-text">Provide a Tag</div>
             <div class="form-check">
@@ -55,18 +50,42 @@
             </div>
             <button type="button" class="btn btn-primary" id="add-tag-button">Add Tag</button>
         </div>
-        <div id="tagInfo">{{ post.semantic_tags }}</div>
+        <div id="tagInfo"></div>
+        <input type="hidden" id="semanticTagsInput" name="semantic_tags">
 
-        <div id="add-tag-modal" style="display: none;">
-            <label for="new-tag">New Tag:</label>
-            <input type="text" id="new-tag"/>
-
-            {#            <label for="tag-description">Description:</label>#}
-            {#            <select id="tag-description"></select>#}
-
-
-            <button type="button" id="save-tag-button">Save Tag</button>
-        </div>
+        {#        <div class="mb-3">#}
+        {#            <label for="tags" class="form-label">Tags:</label>#}
+        {#            <input name="tags" type="Tags" class="form-control" id="exampleTags" aria-describedby="TagsHelp"#}
+        {#                   value="#}
+        {##}
+        {##}
+        {##}
+        {##}
+        {##}
+        {##}
+        {##}
+        {#                           {% for tag in post.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}">#}
+        {#            <div id="TagsHelp" class="form-text">Provide a Tag</div>#}
+        {#            <div class="form-check">#}
+        {#                <input class="form-check-input" type="checkbox" value="" id="toggleSemanticTags">#}
+        {#                <label class="form-check-label" for="toggleSemanticTags">#}
+        {#                    Semantic Tags On/Off#}
+        {#                </label>#}
+        {#            </div>#}
+        {#            <button type="button" class="btn btn-primary" id="add-tag-button">Add Tag</button>#}
+        {#        </div>#}
+        {#        <div id="tagInfo">{{ post.semantic_tags }}</div>#}
+        {##}
+        {#        <div id="add-tag-modal" style="display: none;">#}
+        {#            <label for="new-tag">New Tag:</label>#}
+        {#            <input type="text" id="new-tag"/>#}
+        {##}
+        {#            <label for="tag-description">Description:</label>#}
+        {#            <select id="tag-description"></select>#}
+        {##}
+        {##}
+        {#            <button type="button" id="save-tag-button">Save Tag</button>#}
+        {#        </div>#}
 
         <div class="form-group">
             <label for="{{ form.labels.id_for_label }}">Labels:</label>
@@ -135,7 +154,8 @@
         });
     </script>
 
-     <script>
+
+    <script>
         $(document).ready(function () {
             var initialTags = $('#exampleTags').val().split(',').map(tag => tag.trim());
             initialTags.forEach(tag => getWikidataInfo({target: {value: tag}}));
@@ -171,8 +191,8 @@
 
                         // Ensure that the newly appended select dropdown is functional
                         $('#' + selectId).on('change', function () {
-                            // You can handle dropdown change event here
                             console.log($(this).val());
+                            updateSemanticTagsInput(tag, $(this).val());
                         });
                     } else {
                         tagInfoDiv.append('<p>No semantic tag found</p>');
@@ -207,7 +227,87 @@
             $('#add-tag-modal').hide();
             $('#new-tag').val("");
         }
+
+        function updateSemanticTagsInput(tag, description) {
+            let semanticTags = JSON.parse($('#semanticTagsInput').val() || '{}');
+            semanticTags[tag] = description;
+            $('#semanticTagsInput').val(JSON.stringify(semanticTags));
+        }
     </script>
+
+    {#    <script>#}
+    {#        $(document).ready(function () {#}
+    {#            var initialTags = $('#exampleTags').val().split(',').map(tag => tag.trim());#}
+    {#            initialTags.forEach(tag => getWikidataInfo({target: {value: tag}}));#}
+    {#            $('#exampleTags').on('change', getWikidataInfo);#}
+    {#            $('#toggleSemanticTags').on('click', toggleSemanticTags);#}
+    {#            $('#add-tag-button').on('click', openAddTagModal);#}
+    {#            $('#save-tag-button').on('click', saveNewTag);#}
+    {#        });#}
+    {##}
+    {#        function getWikidataInfo(event) {#}
+    {#            var tag = event.target.value;#}
+    {#            var tagInfoDiv = $('#tagInfo');#}
+    {#            $.ajax({#}
+    {#                url: 'https://www.wikidata.org/w/api.php',#}
+    {#                data: {#}
+    {#                    action: 'wbsearchentities',#}
+    {#                    language: 'en',#}
+    {#                    format: 'json',#}
+    {#                    search: tag#}
+    {#                },#}
+    {#                dataType: 'jsonp',#}
+    {#                success: function (data) {#}
+    {#                    if (data.search.length > 0) {#}
+    {#                        var selectId = "desc_" + tag.replace(/ /g, "_");  // Replace spaces with underscores#}
+    {#                        var tagInfo = `<p><strong>${tag}</strong>: <select id="${selectId}">`;#}
+    {#                        for (let result of data.search) {#}
+    {#                            if (result.description) { // Check if the description exists before adding it to options#}
+    {#                                tagInfo += `<option value="${result.description}">${result.description}</option>`;#}
+    {#                            }#}
+    {#                        }#}
+    {#                        tagInfo += `</select></p>`;#}
+    {#                        tagInfoDiv.append(tagInfo);#}
+    {##}
+    {#                        // Ensure that the newly appended select dropdown is functional#}
+    {#                        $('#' + selectId).on('change', function () {#}
+    {#                            // You can handle dropdown change event here#}
+    {#                            console.log($(this).val());#}
+    {#                        });#}
+    {#                    } else {#}
+    {#                        tagInfoDiv.append('<p>No semantic tag found</p>');#}
+    {#                    }#}
+    {#                },#}
+    {#                error: function () {#}
+    {#                    tagInfoDiv.append('<p>Error retrieving semantic tag</p>');#}
+    {#                }#}
+    {#            });#}
+    {#        }#}
+    {##}
+    {#        function toggleSemanticTags() {#}
+    {#            var tagInfoDiv = $('#tagInfo');#}
+    {#            if ($('#toggleSemanticTags').is(':checked')) {#}
+    {#                tagInfoDiv.show();#}
+    {#            } else {#}
+    {#                tagInfoDiv.hide();#}
+    {#            }#}
+    {#        }#}
+    {##}
+    {#        function openAddTagModal() {#}
+    {#            $('#add-tag-modal').show();#}
+    {#        }#}
+    {##}
+    {#        function saveNewTag() {#}
+    {#            let newTag = $('#new-tag').val();#}
+    {#            if (newTag) {#}
+    {#                getWikidataInfo({target: {value: newTag}});#}
+    {#                let currentTags = $('#exampleTags').val();#}
+    {#                $('#exampleTags').val(currentTags ? currentTags + ', ' + newTag : newTag);#}
+    {#            }#}
+    {#            $('#add-tag-modal').hide();#}
+    {#            $('#new-tag').val("");#}
+    {#        }#}
+    {#    </script>#}
 
 
 {% endblock %}
