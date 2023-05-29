@@ -173,4 +173,4 @@ EMAIL_USE_TLS = True
 
 ABSOLUTE_URL_OVERRIDES = {"settings.AUTH_USER_MODEL": lambda u: reverse_lazy("user_detail", args=[u.username])}
 
-ANNOTATION_URL = "http://localhost:81"  # TODO: Change this to the actual URL after deployment
+ANNOTATION_URL = "http://ec2-52-91-248-162.compute-1.amazonaws.com:81"  # "http://127.0.0.1:81"

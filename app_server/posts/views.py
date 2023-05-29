@@ -1,3 +1,5 @@
+import requests
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -211,6 +213,16 @@ def search(request):
 
         users = User.objects.filter(Q(username__icontains=searched) | Q(first_name__icontains=searched))
 
+        annotation_search_url = settings.ANNOTATION_URL + "/search/?query=" + searched
+        response = requests.get(annotation_search_url).json()
+        annotations = []
+        for annotation in response:
+            formatted_annotation = {
+                "post": annotation["target"]["source"],
+                "body": annotation["body"]["value"],
+            }
+            annotations.append(formatted_annotation)
+
         return render(
             request,
             "search.html",
@@ -219,6 +231,7 @@ def search(request):
                 "posts_s": posts_s,
                 "spaces_s": spaces_s,
                 "users": users,
+                "annotations": annotations,
             },
         )
     else:
