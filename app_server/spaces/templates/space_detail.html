@@ -31,7 +31,7 @@
       {% for post in space.posts.all %}
         <div class="col">
           <div class="card">
-            {% if post.image %}
+              {% if post.image and post.image.name != "none.jpg" %}
               <img src="{{ post.image.url }}" class="card-img-top" alt="Post image">
             {% endif %}
             <div class="card-body">
