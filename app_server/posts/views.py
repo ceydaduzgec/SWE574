@@ -138,11 +138,14 @@ def post_edit(request, pk):
             post.author = request.user
             post.published_date = timezone.now()
 
-            # heck if an image was uploaded
-            if "image" not in request.FILES:
-                post.image = None
+            # Check if an image was uploaded
+            if "image" in request.FILES:
+                post.image = form.cleaned_data["image"]
+            else:
+                if not post.image:  # Eğer post.image zaten doluysa (varsa), değişiklik yapmayın
+                    post.image = "none.jpg"  # Yeni kayıtta resim seçilmemişse "none.jpg" olarak ayarla
 
-            post.tags.clear()  # clear existing tags
+            post.tags.clear()  # Clear existing tags
             tags = form.cleaned_data["tags"]
             if isinstance(tags, list):
                 tags = ",".join(tags)
@@ -193,7 +196,7 @@ def search(request):
     if request.method == "POST":
         searched = request.POST["searched"]
         searched = searched.lower()
-
+        #
         # Search posts with the given keyword
         posts_s = Post.objects.filter(
             Q(title__icontains=searched)

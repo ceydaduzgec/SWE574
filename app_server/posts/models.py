@@ -64,6 +64,9 @@ class Post(models.Model):
             space.tags_counter = Counter(tags)
             space.save()
 
+    def get_labels_list(self):
+        return self.labels.split(",") if self.labels else []
+
 
 class TagDescription(models.Model):
     tag = models.ForeignKey("taggit.Tag", on_delete=models.CASCADE, related_name="tag_description")

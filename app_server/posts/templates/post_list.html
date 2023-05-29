@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
 <style>
-.img-container {
-    width: 100%;  /* Or any other width you want */
-    height: 200px;  /* Or any other height you want */
-    overflow: hidden;  /* This ensures that the image doesn't overflow the div */
-}
+    .img-container {
+        width: 100%; /* Or any other width you want */
+        height: 200px; /* Or any other height you want */
+        overflow: hidden; /* This ensures that the image doesn't overflow the div */
+    }
 
-.img-container .img-fluid {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;  /* This ensures the image covers the entire div */
-}
-.card {
-    height: 500px; /* İstediğiniz yüksekliği ayarlayın. */
-    overflow: auto; /* İçeriği otomatik kaydırmaya ayarlayın. */
-}
+    .img-container .img-fluid {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* This ensures the image covers the entire div */
+    }
+
+    .card {
+        height: 500px; /* İstediğiniz yüksekliği ayarlayın. */
+        overflow: auto; /* İçeriği otomatik kaydırmaya ayarlayın. */
+    }
 
 </style>
 {% block content %}
@@ -28,48 +29,75 @@
                         </a>
                     </div>
                     <div class="card-body">
-                    <div class="row">
-                        <p class="col-md-9">{{ post.text }}</p>
-                        <div class="col-md-3">
-                            {% if post.image and post.image.name != "none.jpg" %}
-                                <div class="img-container">
-                                    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid"/>
-                                </div>
-                            {% endif %}
+                        <div class="row">
+                            <p class="col-md-9">{{ post.text }}</p>
+                            <div class="col-md-3">
+                                {% if post.image and post.image.name != "none.jpg" %}
+                                    <div class="img-container">
+                                        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid"/>
+                                    </div>
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
-
-
-                        {#                        <textarea class="text-muted" disabled class="selection-text" id="annotated-description"#}
-                        {#                                  rows="4"></textarea>#}
-
                         <p class="tags">
                             Tags:
                             {% for tag in post.tags.all %}
-                                <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
-                                   data-bs-toggle="tooltip" data-bs-placement="top"
-                                   data-bs-custom-class="custom-tooltip"
-                                   data-bs-title="{% for tag_description in post.tag_descriptions.all %}
-                                   {{ tag_description.description }}
-                {% endfor %}">
-                                    {{ tag.name }}
-                                </a>
+                                {% for tag_description in post.tag_descriptions.all %}
+                                    {% if tag_description.tag == tag %}
+                                        <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"
+                                           data-bs-toggle="tooltip" data-bs-placement="top"
+                                           data-bs-custom-class="custom-tooltip"
+                                           data-bs-title="{{ tag_description.description }}">
+                                            {{ tag.name }}
+                                        </a>
+                                    {% endif %}
+                                {% endfor %}
                                 {% if not forloop.last %}, {% endif %}
                             {% endfor %}
                         </p>
 
+                        {#                        <textarea class="text-muted" disabled class="selection-text" id="annotated-description"#}
+                        {#                                  rows="4"></textarea>#}
+
+                        {#                        <p class="tags">#}
+                        {#                            Tags:#}
+                        {#                            {% for tag in post.tags.all %}#}
+                        {#                                <a href="{% url 'post_list_by_tag' tag.slug %}" class="badge bg-danger"#}
+                        {#                                   data-bs-toggle="tooltip" data-bs-placement="top"#}
+                        {#                                   data-bs-custom-class="custom-tooltip"#}
+                        {#                                   data-bs-title="{% for tag_description in post.tag_descriptions.all %}#}
+                        {#                                   {{ tag_description.description }}#}
+                        {#                {% endfor %}">#}
+                        {#                                    {{ tag.name }}#}
+                        {#                                </a>#}
+                        {#                                {% if not forloop.last %}, {% endif %}#}
+                        {#                            {% endfor %}#}
+                        {#                        </p>#}
+
                         <p class="labels">
                             Labels:
-
-                            <a href="" class="badge bg-secondary"
-                               data-bs-toggle="tooltip" data-bs-placement="top"
-                               data-bs-custom-class="custom-tooltip">
-
-
-                                {{ post.labels }}
-                            </a>
-
+                            {% for label in post.get_labels_list %}
+                                <a href="" class="badge bg-secondary"
+                                   data-bs-toggle="tooltip" data-bs-placement="top"
+                                   data-bs-custom-class="custom-tooltip">
+                                    {{ label }}
+                                </a>
+                            {% endfor %}
                         </p>
+
+
+                        {#                        <p class="labels">#}
+                        {#                            Labels:#}
+                        {##}
+                        {#                            <a href="" class="badge bg-secondary"#}
+                        {#                               data-bs-toggle="tooltip" data-bs-placement="top"#}
+                        {#                               data-bs-custom-class="custom-tooltip">#}
+                        {##}
+                        {##}
+                        {#                                {{ post.labels }}#}
+                        {#                            </a>#}
+                        {##}
+                        {#                        </p>#}
 
                         <div class="d-flex">
                             <form method="POST" action="{% url 'add_comment_to_post' pk=post.id %}">
