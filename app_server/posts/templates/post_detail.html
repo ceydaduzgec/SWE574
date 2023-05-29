@@ -436,7 +436,7 @@
         })
 
         function saveAnnotation(post_id, post_description) {
-            let url = "http://ec2-52-91-248-162.compute-1.amazonaws.com:81/";
+            let url = "http://ec2-52-91-248-162.compute-1.amazonaws.com:81";
             let start = post_description.search(selectedAnnotationText)
             let end = post_description.search(selectedAnnotationText) + selectedAnnotationText.length
             let target = "{{ request.build_absolute_uri }}"
