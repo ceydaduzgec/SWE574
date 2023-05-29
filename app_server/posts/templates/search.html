@@ -27,7 +27,7 @@
         <br>
         <h2>Annotation Results</h2>
         {% for annotation in annotations %}
-          <a href="{% url 'user_detail' user.id %}">{{ user }} - {{ user.username }}</a><br>
+          <a href={{ annotation.post }}>{{ annotation.body }}</a><br>
         {% endfor %}
 
     {% else %}
