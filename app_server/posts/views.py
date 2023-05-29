@@ -32,13 +32,13 @@ def post_list(request, tag_slug=None):
         .order_by("-published_date")
     )
 
-    context = {"posts": posts}
+    context = {}
 
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
         posts = posts.filter(tags__in=[tag])
         context["tag"] = tag
-
+    context = {"posts": posts}
     return render(request, "post_list.html", context)
 
 
