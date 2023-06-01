@@ -6,6 +6,7 @@ from posts.views import (
     post_detail,
     post_edit,
     post_list,
+    post_list_by_labels,
     post_new,
     post_remove,
     post_share,
@@ -27,6 +28,7 @@ urlpatterns = [
     path("post/search/", search, name="search"),
     path("myresearch/", my_research, name="my_research"),  # TODO: what is the difference between search
     path("tag/<slug:tag_slug>/", post_list, name="post_list_by_tag"),
+    path("labels/<str:label>/", post_list_by_labels, name="post_list_by_labels"),
     path("like/<int:pk>", toggle_like, name="like_post"),
     path("check_link/", check_link, name="check_link"),
 ]

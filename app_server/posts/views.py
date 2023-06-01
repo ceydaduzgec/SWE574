@@ -311,3 +311,11 @@ def toggle_bookmark(request, pk):
         user.bookmarks.add(post)
 
     return HttpResponseRedirect(request.META.get("HTTP_REFERER"))
+
+
+@login_required
+def post_list_by_labels(request, label):
+    posts = Post.objects.filter(labels__icontains=label).order_by("-published_date")
+    context = {"posts": posts}
+
+    return render(request, "post_list.html", context)
