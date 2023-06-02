@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 
-
 {% block content %}
 
     {% if searched %}
@@ -9,25 +8,25 @@
         <br/>
         <h2> Post Results </h2>
         {% for post in posts_s %}
-            <a href="{% url 'post_detail' post.id %}">{{ post}} - {{ post.title}}  </a><br/>
+            <a href="{% url 'post_detail' post.id %}">{{ post.title }}</a><br/>
         {% endfor %}
 
         <br>
         <h2>Space Results</h2>
         {% for space in spaces_s %}
-          <a href="{% url 'space_detail' space.id %}">{{ space }} - {{ space.name }}</a><br>
+          <a href="{% url 'space_detail' space.id %}">{{ space.name }}</a><br>
         {% endfor %}
 
         <br>
         <h2>User Results</h2>
         {% for user in users %}
-          <a href="{% url 'user_detail' user.id %}">{{ user }} - {{ user.username }}</a><br>
+          <a href="{% url 'user_detail' user.username %}">{{ user.username }}</a><br>
         {% endfor %}
 
         <br>
         <h2>Annotation Results</h2>
         {% for annotation in annotations %}
-          <a href={{ annotation.post }}>{{ annotation.body }}</a><br>
+          <a href="{{ annotation.post }}">{{ annotation.body }}</a><br>
         {% endfor %}
 
     {% else %}

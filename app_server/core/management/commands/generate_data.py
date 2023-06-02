@@ -1,4 +1,5 @@
 import random
+from datetime import datetime
 
 from django.core.management import BaseCommand
 from faker import Faker
@@ -101,15 +102,15 @@ class Command(BaseCommand):
                 "content": "Check out the best books of 2021 that every book lover should read.",
                 "space_name": "Book Club",
                 "link": "https://www.goodreads.com/choiceawards/best-books-2021",
-                "tags": "books, reading, literature",
-                "labels": "books",
+                "tags": "books, literature",
+                "labels": "reading",
             },
             {
                 "title": "The best travel destinations in Europe",
                 "content": "Discover the best travel destinations in Europe that every travel enthusiast should visit.",
                 "space_name": "Travel Enthusiasts",
                 "link": "https://www.cntraveler.com/galleries/2015-07-07/top-10-cities-in-europe-readers-choice-awards-2015",
-                "tags": "travel, europe, destinations",
+                "tags": "europe, destinations",
                 "labels": "travel",
             },
             {
@@ -117,7 +118,7 @@ class Command(BaseCommand):
                 "content": "Check out the best fitness apps that will help you stay in shape.",
                 "space_name": "Fitness Gurus",
                 "link": "https://www.healthline.com/health/fitness-exercise/top-iphone-android-apps",
-                "tags": "fitness, tech, health",
+                "tags": "tech, health",
                 "labels": "fitness",
             },
             {
@@ -125,7 +126,7 @@ class Command(BaseCommand):
                 "content": "Discover the best game development tools that every game developer should know about.",
                 "space_name": "Game Developers",
                 "link": "https://www.gamedesigning.org/career/tools/",
-                "tags": "game development, tech, programming",
+                "tags": "tech, programming",
                 "labels": "game development",
             },
             {
@@ -133,7 +134,7 @@ class Command(BaseCommand):
                 "content": "Check out the best photography tips that will help you take amazing photos.",
                 "space_name": "Photography",
                 "link": "https://www.techradar.com/how-to/photography-video-capture/cameras/77-photography-techniques-tips-and-tricks-for-taking-pictures-of-anything-1320775",
-                "tags": "photography, tips, art",
+                "tags": "tips, art",
                 "labels": "photography",
             },
             {
@@ -141,21 +142,27 @@ class Command(BaseCommand):
                 "content": "Discover the best cooking tips that will help you become a better cook.",
                 "space_name": "Cooking Tips",
                 "link": "https://www.bbcgoodfood.com/howto/guide/top-10-cooking-tips",
-                "tags": "cooking, tips, food",
+                "tags": "tips, food",
                 "labels": "cooking",
             },
         ]
+
+        start_date = datetime.strptime("2023-02-03", "%Y-%m-%d")
+        end_date = datetime.now()
 
         for post_data in posts_data:
             space = Space.objects.filter(name=post_data["space_name"]).first()
             if space:
                 if not Post.objects.filter(title=post_data["title"]).exists():
+                    randomized_date = start_date + random.random() * (end_date - start_date)
                     post = Post(
                         author=random.choice(User.objects.all()),
                         title=post_data["title"],
                         text=post_data["content"],
                         link=post_data["link"],
                         labels=post_data["labels"],
+                        image="none.jpg",
+                        published_date=randomized_date.strftime("%Y-%m-%d %H:%M:%S"),
                     )
                     post.save()
                     post.spaces.add(space)
